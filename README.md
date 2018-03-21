@@ -6,3 +6,9 @@
 DataEntry("url").joinProgressDialog(activity).formBody(map).post<T> {TODO()}
 
 # 页面实现
+activity：
+https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/activity/auth/LoginActivity.kt
+xml:
+https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/res/layout/activity_login.xml
+view model:
+https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/model/Login.kt
