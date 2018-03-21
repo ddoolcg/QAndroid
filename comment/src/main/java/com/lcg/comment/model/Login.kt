@@ -41,7 +41,7 @@ open class Login(activity: BaseActivity) : BaseObservableMe(activity) {
     fun login(view: View) {
         if (!check())
             return
-        val map = hashMapOf("username" to username, "pwd" to MD5.GetMD5Code(password))
+        val map = hashMapOf("username" to username, "password" to MD5.GetMD5Code(password))
         DataEntry(HttpUrl.login).joinProgressDialog(activity).formBody(map).post<AuthUser> {
             BaseApplication.getInstance().token = it.token
             PreferenceHandler.getInstance().setConfigFull(it)

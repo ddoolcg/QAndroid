@@ -14,3 +14,6 @@ https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/res/layout/acti
 
 view model:
 https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/model/Login.kt
+
+# 开启友盟统计
+在AndroidManifest.xml文件中修改 <meta-data android:name="UMENG_APPKEY" android:value="您的UMENG_APPKEY"/>

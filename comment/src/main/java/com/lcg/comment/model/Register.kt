@@ -34,7 +34,7 @@ class Register(activity: BaseActivity) : Login(activity) {
     fun register(view: View) {
         if (!check())
             return
-        val map = hashMapOf("username" to username, "pwd" to MD5.GetMD5Code(password))
+        val map = hashMapOf("username" to username, "password" to MD5.GetMD5Code(password))
         DataEntry(HttpUrl.register).joinProgressDialog(activity).formBody(map).post<AuthUser> {
             BaseApplication.getInstance().token = it.token
             PreferenceHandler.getInstance().setConfigFull(it)
