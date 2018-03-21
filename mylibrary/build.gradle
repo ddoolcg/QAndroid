@@ -1,0 +1,38 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+android {
+    compileSdkVersion 25
+    buildToolsVersion '26.0.2'
+
+    defaultConfig {
+        minSdkVersion 10
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    dataBinding {
+        enabled true
+    }
+}
+
+dependencies {
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    api 'com.android.support:support-v4:25.4.0'
+    api 'com.android.support:recyclerview-v7:25.4.0'
+    api 'com.squareup.okhttp3:okhttp:3.8.0'
+    api 'com.android.support:support-annotations:27.1.0'
+    api 'com.umeng.analytics:analytics:latest.integration'
+    api 'com.github.bumptech.glide:glide:3.8.0'
+    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    //AS的bug 这条注释放这里有用的
+    kapt 'com.android.databinding:compiler:3.0.1'
+    //AS的BUG上条必须放到最后
+}

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="bg_base">#2D5C5D</color>
+    <color name="base_theme">#FF8500</color>
+    <color name="black">#414141</color>
+    <color name="text_content">#868686</color>
+    <color name="dialog_transparent">#cc000000</color>
+    <!-- V5 start -->
+    <color name="bg_title">#FFF6F6F7</color>
+    <color name="bg_cover">#FFEFEFF4</color>
+    <color name="bg_item">#FFF8F8FB</color>
+    <color name="bg_item_light">#FFFFFFFF</color>
+    <color name="bg_tip_element">#FFA7A7AA</color>
+    <!--  -->
+    <color name="text_orange">#FFFE9712</color>
+    <color name="text_gray">#FF7A7E83</color>
+    <color name="text_black">#FF31353B</color>
+    <color name="text_white">#FFFFFFFF</color>
+    <color name="text_hint">#FFBDBDBD</color>
+    <!--  -->
+    <color name="line_title">#FFA7A7AA</color>
+    <color name="line_content">#FFD9D9D9</color>
+    <color name="line_main">#FFC0C0C1</color>
+    <!--  -->
+    <color name="green_dark">#FF008000</color>
+    <color name="red">#FFF60A0A</color>
+    <!--  -->
+    <color name="btn_normal">#FFFE9712</color>
+    <color name="btn_disable">#FF9F9F9F</color>
+    <color name="btn_pressed">#FFFEAB41</color>
+    <color name="pb_bg">#FFD9D9D9</color>
+    <!-- v5 end -->
+    <!-- 常用色 -->
+    <color name="yellow">#FFFFC323</color>
+    <color name="blue">#FF23AAFF</color>
+    <color name="orange">#FFFF8B23</color>
+    <color name="green">#93cf45</color>
+</resources>

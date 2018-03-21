@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="android.text.TextUtils"/>
+
+        <variable
+            name="item"
+            type="com.lcg.comment.model.ItemListTitle"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="@{item::click}">
+
+            <TextView
+                android:id="@+id/tv_primary"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:gravity="bottom"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:text="@{item.primary}"
+                android:textColor="@color/text_content"
+                android:textSize="@dimen/text_14"/>
+
+            <TextView
+                android:id="@+id/tv_secondary"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:drawableRight="@{TextUtils.isEmpty(item.secondary) ? (item.check ? @drawable/icon_zk : @drawable/icon_sq) : null}"
+                android:gravity="bottom"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:text="@{item.secondary}"
+                android:textColor="@color/text_content"
+                android:textSize="@dimen/text_12"/>
+        </LinearLayout>
+
+        <View style="@style/view_line_content"/>
+    </LinearLayout>
+</layout>

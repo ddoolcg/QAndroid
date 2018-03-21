@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.text.TextUtils"/>
+
+        <variable
+            name="login"
+            type="com.lcg.comment.model.Login"/>
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_cover">
+
+        <include
+            android:id="@+id/i_title"
+            layout="@layout/common_title"
+            app:data="@{login}"/>
+
+        <ImageView
+            android:id="@+id/iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/i_title"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="@dimen/distance_item"
+            android:src="@mipmap/ic_launcher"/>
+
+        <EditText
+            android:id="@+id/et_username"
+            style="@style/edit"
+            android:layout_below="@+id/iv"
+            android:hint="用户名（手机号码）"
+            android:inputType="number"
+            android:text="@={login.username}"/>
+
+        <EditText
+            android:id="@+id/et_password"
+            style="@style/edit"
+            android:layout_below="@+id/et_username"
+            android:ems="10"
+            android:hint="密码(3-10位)"
+            android:inputType="textPassword"
+            android:text="@={login.password}"/>
+
+        <Button
+            android:id="@+id/btn_login"
+            style="@style/btn_single"
+            android:layout_below="@+id/et_password"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:enabled="@{!TextUtils.isEmpty(login.username) &amp;&amp; !TextUtils.isEmpty(login.password)}"
+            android:onClick="@{login.login}"
+            android:text="登录"/>
+
+        <TextView
+            android:id="@+id/tv_forget_password"
+            style="@style/text_content"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/btn_login"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:gravity="center"
+            android:onClick="@{login::gotoResetPassword}"
+            android:text="忘记密码？"
+            android:visibility="invisible"/>
+
+        <TextView
+            android:id="@+id/tv_regist"
+            style="@style/text_content"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/tv_forget_password"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center"
+            android:onClick="@{login::gotoRegister}"
+            android:text="立即注册"
+            android:textColor="@color/blue"/>
+    </RelativeLayout>
+</layout>

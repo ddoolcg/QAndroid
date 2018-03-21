@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_gravity="bottom"
+              android:background="#FFFFFFFF"
+              android:gravity="center_horizontal"
+              android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_head"
+        style="@style/lib_text_16_black_wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="标题"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#FFD9D9D9"/>
+
+    <TextView
+        android:id="@+id/tv_tip"
+        style="@style/lib_text_14_gray_wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:lineSpacingMultiplier="1.5"
+        android:padding="16dp"
+        android:scrollbars="vertical"
+        android:text="内容"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#FFD9D9D9"/>
+
+    <Button
+        android:id="@+id/btn_positive_up"
+        style="@style/lib_text_16_black_wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@null"
+        android:textColor="#FFFE9712"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="7dp"
+        android:background="#FFD9D9D9"/>
+
+    <Button
+        android:id="@+id/btn_negative"
+        style="@style/lib_text_16_black_wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@null"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#FFD9D9D9"/>
+
+    <Button
+        android:id="@+id/btn_positive_down"
+        style="@style/lib_text_16_black_wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@null"
+        android:textColor="#FFFE9712"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#FFD9D9D9"/>
+</LinearLayout>

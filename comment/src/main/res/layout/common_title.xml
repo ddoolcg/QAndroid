@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="android.text.TextUtils" />
+
+        <variable
+            name="data"
+            type="com.lcg.mylibrary.BaseObservableMe" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/ll_title"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:background="@color/bg_title"
+                  android:clipToPadding="true"
+                  android:fitsSystemWindows="true"
+                  android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:background="@null"
+                android:onClick="@{data.clickLeft}"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:drawableLeft="@{data.leftText.equals(@string/back) ? @drawable/icon_back : null}"
+                android:text="@{data.leftText.equals(@string/back) ? null : data.leftText}"
+                android:textColor="@color/text_orange"
+                android:textSize="@dimen/text_14"
+                android:visibility="@{(data == null || data.showBack) ? View.VISIBLE : View.INVISIBLE}" />
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="@{data.titleText}"
+                android:textColor="@color/text_content"
+                android:textSize="@dimen/text_16" />
+
+            <Button
+                android:id="@+id/btn_right"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@android:color/transparent"
+                android:drawableRight="@{data.rightText.equals(@string/more) ? @drawable/icon_more : null}"
+                android:gravity="center_vertical"
+                android:onClick="@{data.clickRight}"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:text="@{data.rightText.equals(@string/more) ? null : data.rightText}"
+                android:textColor="@color/btn_text_orange"
+                android:textSize="@dimen/text_14"
+                android:visibility="@{(data==null || TextUtils.isEmpty(data.rightText)) ? View.INVISIBLE : View.VISIBLE}"/>
+        </RelativeLayout>
+
+        <View
+            style="@style/view_line_content"
+            android:background="@color/line_title" />
+    </LinearLayout>
+</layout>
