@@ -8,11 +8,11 @@ DataEntry("url").joinProgressDialog(activity).formBody(map).post<T> {TODO()}
 ~~~
 
 # SharedPreferences操作
-##操作类
+## 操作类
 ~~~kotlin
 PreferenceKTX
 ~~~
-##多次put采用Any扩展
+## 多次put采用Any扩展
 ~~~kotlin
 preferenceEdit {
     putBoolean()
@@ -20,8 +20,8 @@ preferenceEdit {
 }
 ~~~
 
-#view的一些实用扩展
-##doOnGlobalLayout
+# view的一些实用扩展
+## doOnGlobalLayout
 ~~~kotlin
 view.doOnGlobalLayout {
     if (Boolean) {
@@ -32,13 +32,13 @@ view.doOnGlobalLayout {
     }
 }
 ~~~
-##doOnPreDraw
+## doOnPreDraw
 ~~~kotlin
 view.doOnPreDraw {
     action()
 }
 ~~~
-##ViewGroup
+## ViewGroup
 ~~~kotlin
 viewGroup += view//addView
 viewGroup -= view//removeView
