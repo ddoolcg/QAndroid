@@ -1,3 +1,19 @@
+
+# 关于使用
+~~~gradle
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+~~~
+~~~gradle
+dependencies {
+    api 'com.github.ddoolcg:QAndroid:v1.0'
+}
+~~~
+
 # QAndroid
 简单小巧、快速的android app开发框架。基于dataBinding的mvvm架构、使用kotlin开发跟迅捷。
 框架已经集成okhttp、glide、fastjson和友盟统计。
