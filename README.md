@@ -3,11 +3,48 @@
 框架已经集成okhttp、glide、fastjson和友盟统计。
 
 # 联网调用
-~~~java
+~~~kotlin
 DataEntry("url").joinProgressDialog(activity).formBody(map).post<T> {TODO()}
 ~~~
 
-# 页面实现
+# SharedPreferences操作
+##操作类
+~~~kotlin
+PreferenceKTX
+~~~
+##多次put采用Any扩展
+~~~kotlin
+preferenceEdit {
+    putBoolean()
+    putString()
+}
+~~~
+
+#view的一些实用扩展
+##doOnGlobalLayout
+~~~kotlin
+view.doOnGlobalLayout {
+    if (Boolean) {
+        action()
+        true
+    } else {
+        false
+    }
+}
+~~~
+##doOnPreDraw
+~~~kotlin
+view.doOnPreDraw {
+    action()
+}
+~~~
+##ViewGroup
+~~~kotlin
+viewGroup += view//addView
+viewGroup -= view//removeView
+~~~
+
+# 页面实现demo
 activity:
 https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/activity/auth/LoginActivity.kt
 

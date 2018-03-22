@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.os.Process;
 
+import com.lcg.mylibrary.utils.PreferenceKTX;
 import com.umeng.analytics.MobclickAgent;
 
 import java.util.List;
@@ -56,7 +57,6 @@ public abstract class BaseApplication extends Application {
         for (ActivityManager.RunningAppProcessInfo info : runningAppProcesses) {
             if (info.pid == myPid) {
                 if (!info.processName.contains(":")) {
-                    PreferenceHandler.getInstance().init(this);
                     MobclickAgent.setScenarioType(this, MobclickAgent.EScenarioType.E_UM_NORMAL);
                     MobclickAgent.enableEncrypt(true);
                     MobclickAgent.setCatchUncaughtExceptions(false);
@@ -75,7 +75,7 @@ public abstract class BaseApplication extends Application {
      */
     public String getToken() {
         if (token == null) {
-            token = PreferenceHandler.getInstance().getString(TOKEN, "");
+            token = PreferenceKTX.getString(TOKEN, "");
         }
         return token;
     }
@@ -88,7 +88,7 @@ public abstract class BaseApplication extends Application {
             token = "";
         }
         this.token = token;
-        PreferenceHandler.getInstance().setString(TOKEN, token);
+        PreferenceKTX.setString(TOKEN, token);
     }
 
     /**
