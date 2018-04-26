@@ -1,6 +1,22 @@
+
 # QAndroid
 简单小巧、快速的android app开发框架。基于dataBinding的mvvm架构、使用kotlin开发跟迅捷。
 框架已经集成okhttp、glide、fastjson和友盟统计。
+
+# 关于使用
+~~~gradle
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+~~~
+~~~gradle
+dependencies {
+    api 'com.github.ddoolcg:QAndroid:v1.0'
+}
+~~~
 
 # 联网调用
 ~~~kotlin
@@ -8,11 +24,11 @@ DataEntry("url").joinProgressDialog(activity).formBody(map).post<T> {TODO()}
 ~~~
 
 # SharedPreferences操作
-##操作类
+## 操作类
 ~~~kotlin
 PreferenceKTX
 ~~~
-##多次put采用Any扩展
+## 多次put采用Any扩展
 ~~~kotlin
 preferenceEdit {
     putBoolean()
@@ -20,8 +36,8 @@ preferenceEdit {
 }
 ~~~
 
-#view的一些实用扩展
-##doOnGlobalLayout
+# view的一些实用扩展
+## doOnGlobalLayout
 ~~~kotlin
 view.doOnGlobalLayout {
     if (Boolean) {
@@ -32,13 +48,13 @@ view.doOnGlobalLayout {
     }
 }
 ~~~
-##doOnPreDraw
+## doOnPreDraw
 ~~~kotlin
 view.doOnPreDraw {
     action()
 }
 ~~~
-##ViewGroup
+## ViewGroup
 ~~~kotlin
 viewGroup += view//addView
 viewGroup -= view//removeView
