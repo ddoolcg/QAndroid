@@ -1,4 +1,4 @@
-package com.xuebaedu.teacher.adapter
+package com.lcg.comment.adapter
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -12,7 +12,7 @@ import com.lcg.comment.R
  * @version 1.0
  * @since 2017/10/31 20:07
  */
-class FooterViewHolder(itemView: View, listener: FooterViewHolder.LoadListener) : RecyclerView.ViewHolder(itemView) {
+class FooterViewHolder(itemView: View, listener: LoadListener) : RecyclerView.ViewHolder(itemView) {
     private var pb: View? = null
     private var tv: TextView? = null
 

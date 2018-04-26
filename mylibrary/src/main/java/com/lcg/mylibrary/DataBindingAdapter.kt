@@ -1,4 +1,4 @@
-package com.xuebaedu.teacher
+package com.lcg.mylibrary
 
 import android.databinding.BindingAdapter
 import android.text.Html
