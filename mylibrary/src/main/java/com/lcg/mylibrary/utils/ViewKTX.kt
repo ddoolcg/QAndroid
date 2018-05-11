@@ -243,12 +243,12 @@ inline fun ViewGroup.MarginLayoutParams.updateMargins(
 
 /**通过DataBindingUtil去setContentView
  * @see[DataBindingUtil.setContentView]*/
-inline fun <reified T : ViewDataBinding> Activity.setContentViewBinding(layoutResID: Int): T {
+inline fun <T : ViewDataBinding> Activity.setContentViewBinding(layoutResID: Int): T {
     return DataBindingUtil.setContentView(this, layoutResID)
 }
 
 /**通过DataBindingUtil去inflate
  * @see[DataBindingUtil.inflate]*/
-inline fun <reified T : ViewDataBinding> LayoutInflater.inflateBinding(layoutResID: Int, parent: ViewGroup, attachToParent: Boolean = false): T {
+inline fun <T : ViewDataBinding> LayoutInflater.inflateBinding(layoutResID: Int, parent: ViewGroup, attachToParent: Boolean = false): T {
     return DataBindingUtil.inflate(this, layoutResID, parent, attachToParent)
 }
