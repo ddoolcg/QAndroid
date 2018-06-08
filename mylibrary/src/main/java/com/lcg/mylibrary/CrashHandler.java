@@ -154,7 +154,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
     private void sendMsg(final File file, String msg) {
         if (!TextUtils.isEmpty(APPLOGS)) {
             HashMap<String, String> params = new HashMap<>();
-            params.put("toemail", "leichuguang@xuebaedu.com");
+            params.put("toemail", "475825657@qq.com");
             params.put("title", file.getName());
             int ver = 0;
             try {

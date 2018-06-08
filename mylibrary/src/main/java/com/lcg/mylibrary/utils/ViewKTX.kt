@@ -1,6 +1,10 @@
 package com.lcg.mylibrary.utils
 
+import android.app.Activity
+import android.databinding.DataBindingUtil
+import android.databinding.ViewDataBinding
 import android.support.annotation.Px
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
@@ -235,4 +239,16 @@ inline fun ViewGroup.MarginLayoutParams.updateMargins(
         @Px bottom: Int = bottomMargin
 ) {
     setMargins(left, top, right, bottom)
+}
+
+/**通过DataBindingUtil去setContentView
+ * @see[DataBindingUtil.setContentView]*/
+inline fun <T : ViewDataBinding> Activity.setContentViewBinding(layoutResID: Int): T {
+    return DataBindingUtil.setContentView(this, layoutResID)
+}
+
+/**通过DataBindingUtil去inflate
+ * @see[DataBindingUtil.inflate]*/
+inline fun <T : ViewDataBinding> LayoutInflater.inflateBinding(layoutResID: Int, parent: ViewGroup, attachToParent: Boolean = false): T {
+    return DataBindingUtil.inflate(this, layoutResID, parent, attachToParent)
 }

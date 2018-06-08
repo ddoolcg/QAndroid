@@ -351,7 +351,7 @@ public class HttpManager {
     private File getCacheFile(String url) {
         File esd = Environment
                 .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        String path = esd.getPath() + "/.xueba/file/";
+        String path = esd.getPath() + "/.qAndroid/file/";
         File f;
         if (url.endsWith(".apk")) {
             String[] split = url.split("/");
