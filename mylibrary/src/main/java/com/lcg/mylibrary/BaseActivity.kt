@@ -49,7 +49,7 @@ open class BaseActivity : FragmentActivity() {
      * @param call 网络请求的call
      */
     @JvmOverloads
-    fun showProgressDialog(msg: String, call: Call, cancelable: Boolean = true) {
+    fun showProgressDialog(msg: String, call: Call?, cancelable: Boolean = true) {
         if (mProgressDialog == null)
             mProgressDialog = ProgressDialog(this)
         mProgressDialog!!.setCancelable(cancelable)
