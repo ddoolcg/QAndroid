@@ -33,6 +33,6 @@ dependencies {
     api 'com.github.bumptech.glide:glide:3.8.0'
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     //AS的bug 这条注释放这里有用的
-    kapt "com.android.databinding:compiler:$binding_version"
+    kapt "com.android.databinding:compiler:3.0.1"
     //AS的BUG上条必须放到最后
 }
