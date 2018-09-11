@@ -25,6 +25,6 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     api project(':mylibrary')
-    kapt "com.android.databinding:compiler:$binding_version"
+    kapt 'com.android.databinding:compiler:3.0.1'
     //AS的BUG上条必须放到最后
 }

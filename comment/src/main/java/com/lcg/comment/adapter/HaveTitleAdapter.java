@@ -13,6 +13,7 @@ import com.lcg.comment.BR;
 import com.lcg.comment.R;
 import com.lcg.comment.bean.ListTitle;
 import com.lcg.comment.model.ItemListTitle;
+import com.xuebaedu.teacher.adapter.FooterViewHolder;
 
 import java.util.ArrayList;
 
