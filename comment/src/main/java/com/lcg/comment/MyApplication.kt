@@ -7,6 +7,7 @@ import com.lcg.mylibrary.BaseApplication
 import com.lcg.mylibrary.CrashHandler
 import com.lcg.mylibrary.utils.L
 import com.lcg.mylibrary.utils.UIUtils
+import com.lcg.mylibrary.utils.saveToken
 
 /**
  * MyApplication
@@ -22,7 +23,7 @@ class MyApplication : BaseApplication() {
     }
 
     override fun gotoLoin(showToast: Boolean) {
-        token = ""
+        saveToken(null)
         val context = UIUtils.getContext()
         var flag = true
         for (activity in BaseActivity.activities) {

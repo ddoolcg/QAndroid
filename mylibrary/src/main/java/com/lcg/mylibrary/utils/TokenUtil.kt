@@ -34,10 +34,6 @@ fun getToken(): String {
  * 存储认证的token
  */
 fun saveToken(token: String?) {
-    var token = token
-    if (token == null) {
-        token = ""
-    }
-    Token.token = token
-    PreferenceKTX.setString(TOKEN, token)
+    Token.token = token ?: ""
+    PreferenceKTX.setString(TOKEN, Token.token!!)
 }
