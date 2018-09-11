@@ -5,9 +5,9 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import com.lcg.mylibrary.BaseApplication;
 import com.lcg.mylibrary.utils.L;
 import com.lcg.mylibrary.utils.MD5;
+import com.lcg.mylibrary.utils.TokenUtilKt;
 import com.lcg.mylibrary.utils.UIUtils;
 
 import java.io.File;
@@ -65,7 +65,7 @@ public class HttpManager {
         Builder builder = new Builder()
                 .addHeader("Content-Type", "application/json")
                 .addHeader("os", "android");
-        String token = BaseApplication.getInstance().getToken();
+        String token = TokenUtilKt.getToken();
         if (!TextUtils.isEmpty(token)) {
             builder.addHeader("token", token);
             builder.addHeader("Authorization", token);

@@ -9,11 +9,11 @@ import com.lcg.comment.HttpUrl
 import com.lcg.comment.activity.auth.LoginActivity
 import com.lcg.comment.bean.AuthUser
 import com.lcg.mylibrary.BaseActivity
-import com.lcg.mylibrary.BaseApplication
 import com.lcg.mylibrary.net.DataEntry
 import com.lcg.mylibrary.utils.MD5
 import com.lcg.mylibrary.utils.PreferenceKTX
 import com.lcg.mylibrary.utils.UIUtils
+import com.lcg.mylibrary.utils.saveToken
 
 /**
  * 注册
@@ -36,7 +36,7 @@ class Register(activity: BaseActivity) : Login(activity) {
             return
         val map = hashMapOf("username" to username, "password" to MD5.GetMD5Code(password))
         DataEntry(HttpUrl.register).joinProgressDialog(activity).formBody(map).post<AuthUser> {
-            BaseApplication.getInstance().token = it.token
+            saveToken(it.token)
             PreferenceKTX.setConfig(it)
             try {
                 val clazz: Class<Activity> = Class.forName("com.lcg.expressbus.MainActivity") as Class<Activity>

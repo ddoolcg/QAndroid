@@ -5,14 +5,17 @@ import android.text.TextUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONType;
 import com.alibaba.fastjson.parser.Feature;
-import com.lcg.mylibrary.BaseApplication;
 import com.lcg.mylibrary.bean.SimpleData;
 import com.lcg.mylibrary.utils.L;
+import com.lcg.mylibrary.utils.Token;
 import com.lcg.mylibrary.utils.UIUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 /**
  * 基本数据处理器，主线程执行on方法。S为成功的数据类型，E为错误的数据类型。
@@ -47,16 +50,19 @@ public abstract class BaseDataHandler<S, E> implements DataHandler {
     public void fail(final int code, String errorData) {
         L.w("NET", "code=" + code + " errorData=" + errorData + "");
         if (code == 401) {
-            BaseApplication.getInstance().gotoLoin(false);
-        } else {
-            final Object data = parseData(errorData, 1);
-            UIUtils.runInMainThread(new Runnable() {
-                @Override
-                public void run() {
-                    onFail(code, (E) data);
-                }
-            });
+            Function1<Boolean, Unit> subscriber = Token.INSTANCE.getLoginSubscriber();
+            if (subscriber != null) {
+                subscriber.invoke(false);
+                return;
+            }
         }
+        final Object data = parseData(errorData, 1);
+        UIUtils.runInMainThread(new Runnable() {
+            @Override
+            public void run() {
+                onFail(code, (E) data);
+            }
+        });
     }
 
     @Override

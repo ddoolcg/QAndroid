@@ -1,13 +1,12 @@
 package com.lcg.mylibrary;
 
-import android.app.ActivityManager;
 import android.app.Application;
-import android.os.Process;
 
-import com.lcg.mylibrary.utils.PreferenceKTX;
-import com.umeng.analytics.MobclickAgent;
+import com.lcg.mylibrary.utils.Token;
+import com.lcg.mylibrary.utils.UIUtils;
 
-import java.util.List;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 /**
  * BaseApplication
@@ -18,77 +17,17 @@ import java.util.List;
  */
 
 public abstract class BaseApplication extends Application {
-    public final static String TOKEN = "token";
-    public long mThreadId;
-    private static BaseApplication instance;
-    private String token;
-
-    public static BaseApplication getInstance() {
-        return instance;
-    }
-
     @Override
     public void onCreate() {
-        initCrashHandler();
         super.onCreate();
-        instance = this;
-        mThreadId = Thread.currentThread().getId();
-        initMainProcesses();
-    }
-
-    /**
-     * 异常奔溃的信息处理器初始化
-     */
-    private void initCrashHandler() {
-        CrashHandler crashHandler = CrashHandler
-                .getInstance(getApplicationContext());
-        // 注册crashHandler
-        Thread.setDefaultUncaughtExceptionHandler(crashHandler);
-    }
-
-    /**
-     * 主进程初始化
-     */
-    public void initMainProcesses() {
-        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = am
-                .getRunningAppProcesses();
-        int myPid = Process.myPid();
-        for (ActivityManager.RunningAppProcessInfo info : runningAppProcesses) {
-            if (info.pid == myPid) {
-                if (!info.processName.contains(":")) {
-                    MobclickAgent.setScenarioType(this, MobclickAgent.EScenarioType.E_UM_NORMAL);
-                    MobclickAgent.enableEncrypt(true);
-                    MobclickAgent.setCatchUncaughtExceptions(false);
-                    // 发送上一次没有发送的异常
-                    CrashHandler
-                            .getInstance(getApplicationContext()).sendPreviousReportsToServer();
-                    onInitMainProcesses();
-                }
-                break;
+        if (UIUtils.init(this)) onInitMainProcesses();
+        Token.INSTANCE.init("token", new Function1<Boolean, Unit>() {
+            @Override
+            public Unit invoke(Boolean aBoolean) {
+                gotoLoin(aBoolean);
+                return null;
             }
-        }
-    }
-
-    /**
-     * 认证的token
-     */
-    public String getToken() {
-        if (token == null) {
-            token = PreferenceKTX.getString(TOKEN, "");
-        }
-        return token;
-    }
-
-    /**
-     * 设置认证的token
-     */
-    public void setToken(String token) {
-        if (token == null) {
-            token = "";
-        }
-        this.token = token;
-        PreferenceKTX.setString(TOKEN, token);
+        });
     }
 
     /**

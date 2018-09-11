@@ -1,6 +1,8 @@
 package com.lcg.mylibrary.utils;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.Application;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -10,6 +12,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Process;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -20,7 +23,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.lcg.mylibrary.BaseApplication;
+import com.lcg.mylibrary.CrashHandler;
+import com.umeng.analytics.MobclickAgent;
+
+import java.util.List;
 
 public class UIUtils {
     private static Toast toast;
@@ -28,13 +34,54 @@ public class UIUtils {
     private static Handler handler;
     private static DisplayMetrics sMetrics;
     private static PackageInfo pi;
+    private static long mThreadId;
+    private static Application application;
+
+    /**
+     * 初始化
+     */
+    public static boolean init(Application app) {
+        mThreadId = Thread.currentThread().getId();
+        application = app;
+        //异常奔溃的信息处理器初始化
+        CrashHandler crashHandler = CrashHandler
+                .getInstance(app);
+        Thread.setDefaultUncaughtExceptionHandler(crashHandler);
+        //
+        return initMainProcesses(app);
+    }
+
+    /**
+     * 在主进程初始化友盟统计，发送奔溃日志的服务
+     */
+    private static boolean initMainProcesses(Application app) {
+        ActivityManager am = (ActivityManager) app.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = am
+                .getRunningAppProcesses();
+        int myPid = Process.myPid();
+        for (ActivityManager.RunningAppProcessInfo info : runningAppProcesses) {
+            if (info.pid == myPid) {
+                if (!info.processName.contains(":")) {
+                    MobclickAgent.setScenarioType(app, MobclickAgent.EScenarioType.E_UM_NORMAL);
+                    MobclickAgent.enableEncrypt(true);
+                    MobclickAgent.setCatchUncaughtExceptions(false);
+                    // 发送上一次没有发送的异常
+                    CrashHandler.getInstance(app.getApplicationContext())
+                            .sendPreviousReportsToServer();
+                    return true;
+                }
+                break;
+            }
+        }
+        return false;
+    }
 
     public static Context getContext() {
-        return BaseApplication.getInstance();
+        return application;
     }
 
     public static long getMainThreadId() {
-        return BaseApplication.getInstance().mThreadId;
+        return mThreadId;
     }
 
     /**
@@ -119,7 +166,7 @@ public class UIUtils {
     /**
      * 延时在主线程执行runnable
      */
-    public static boolean postDelayed(long delayMillis,Runnable runnable) {
+    public static boolean postDelayed(long delayMillis, Runnable runnable) {
         return getHandler().postDelayed(runnable, delayMillis);
     }
 
@@ -227,9 +274,8 @@ public class UIUtils {
 
     private static void showToast(String str) {
         if (toast == null) {
-            BaseApplication instance = BaseApplication.getInstance();
-            toast = new Toast(instance);
-            toastTV = new TextView(instance);
+            toast = new Toast(application);
+            toastTV = new TextView(application);
             toastTV.setTextColor(0xFFFFFFFF);
             toastTV.setBackgroundColor(0xFFA7A7AA);
             toastTV.setPadding(10, 5, 10, 5);
@@ -267,7 +313,7 @@ public class UIUtils {
     /**
      * 获取application中指定的meta-data
      *
-     * @return 如果没有获取成功(没有对应值，或者异常)，则返回值为空
+     * @return 如果没有获取成功(没有对应值 ， 或者异常)，则返回值为空
      */
     public static String getAppMetaData(Context ctx, String key) {
         if (ctx == null || TextUtils.isEmpty(key)) {
