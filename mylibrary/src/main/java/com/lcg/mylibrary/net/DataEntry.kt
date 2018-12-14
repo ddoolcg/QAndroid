@@ -12,14 +12,14 @@ import java.util.*
  * @version 1.0
  * @since 2017/8/23 14:43
  */
-class DataEntry(val url: String) {
+open class DataEntry(val url: String) {
     private var formMap: HashMap<String, String>? = null
     private var body: String? = null
     private var baseActivity: BaseActivity? = null
     private var msg: String? = null
     private var finish2Close = true
     private var fail: ((code: Int, data: String?) -> Unit)? = null
-    private fun <T> baseDataHandler(observable: ((data: T) -> Unit)?): BaseDataHandler<T, String> {
+    protected open fun <T> baseDataHandler(observable: ((data: T) -> Unit)?): BaseDataHandler<T, String> {
         return object : BaseDataHandler<T, String>() {
             override fun onStart() {
                 baseActivity?.showProgressDialog(msg!!, null)
