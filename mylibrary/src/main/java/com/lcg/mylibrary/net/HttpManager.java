@@ -115,6 +115,7 @@ public class HttpManager {
      * post请求
      */
     public Call post(String url, String content, final DataHandler handler) {
+        L.d("net_put", content);
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), content);
         //
         Request request = addHeaders().url(url).post(requestBody).build();
@@ -215,6 +216,7 @@ public class HttpManager {
      * 请求
      */
     private Call request(final DataHandler handler, Request request) {
+        L.d(request.toString());
         Call call = client.newCall(request);
         handler.start();
         call.enqueue(new Callback() {
