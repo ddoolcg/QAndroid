@@ -4,7 +4,7 @@ import com.lcg.mylibrary.utils.Token.TOKEN
 import com.lcg.mylibrary.utils.Token.token
 
 /**
- * TODO
+ * token认证
  *
  * @author lei.chuguang Email:475825657@qq.com
  * @version 1.0
