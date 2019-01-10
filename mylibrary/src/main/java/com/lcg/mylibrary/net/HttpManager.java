@@ -1,7 +1,6 @@
 package com.lcg.mylibrary.net;
 
 import android.content.pm.PackageInfo;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -270,9 +269,20 @@ public class HttpManager {
     /**
      * 文件下载
      */
-    public Call download(String url, final FileDownloadHanler handler) {
-        final File file = getCacheFile(url);
-        final long startsPoint = file.length();
+    public Call download(String url, FileDownloadHanler handler) {
+        return download(url, getCacheFile(url), handler);
+    }
+
+    /**
+     * 文件下载
+     *
+     * @param url      URL
+     * @param saveFile 保存的文件
+     * @param handler  回调处理
+     * @return
+     */
+    public Call download(String url, final File saveFile, final FileDownloadHanler handler) {
+        final long startsPoint = saveFile.length();
         final Request request = new Builder()
                 .addHeader("RANGE", "bytes=" + startsPoint + "-").url(url).build();
         Call call = client.newCall(request);
@@ -296,7 +306,7 @@ public class HttpManager {
                     // 随机访问文件，可以指定断点续传的起始位置
                     RandomAccessFile randomAccessFile = null;
                     try {
-                        randomAccessFile = new RandomAccessFile(file, "rwd");
+                        randomAccessFile = new RandomAccessFile(saveFile, "rwd");
                         //Chanel NIO中的用法，由于RandomAccessFile没有使用缓存策略，直接使用会使得下载速度变慢，亲测缓存下载3.3
                         // 秒的文件，用普通的RandomAccessFile需要20多秒。
                         channelOut = randomAccessFile.getChannel();
@@ -310,7 +320,7 @@ public class HttpManager {
                         while ((len = in.read(buffer)) != -1 && !call.isCanceled()) {
                             mappedBuffer.put(buffer, 0, len);
                             bytesWritten += len;
-                            handler.progress(bytesWritten, totalLenght, file);
+                            handler.progress(bytesWritten, totalLenght, saveFile);
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -333,12 +343,12 @@ public class HttpManager {
                     if (call.isCanceled())
                         return;
                     handler.netFinish();
-                    handler.success(file);
+                    handler.success(saveFile);
                 } else {
                     handler.netFinish();
                     int code = response.code();
                     if (code == 416)
-                        handler.success(file);
+                        handler.success(saveFile);
                     else
                         handler.fail(code);
                 }
@@ -351,9 +361,8 @@ public class HttpManager {
      * 文件下载保存位置
      */
     private File getCacheFile(String url) {
-        File esd = Environment
-                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        String path = esd.getPath() + "/.qAndroid/file/";
+        File esd = UIUtils.getContext().getCacheDir();
+        String path = esd.getPath() + "/";
         File f;
         if (url.endsWith(".apk")) {
             String[] split = url.split("/");
