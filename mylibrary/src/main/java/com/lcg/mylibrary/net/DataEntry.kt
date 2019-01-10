@@ -157,6 +157,7 @@ open class DataEntry(private val url: String) {
     }
 
     companion object {
+        /**默认统一处理接口调用失败*/
         @JvmStatic
         var failDefault: ((code: Int, data: String?) -> Unit)? = null
     }

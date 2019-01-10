@@ -14,13 +14,18 @@ allprojects {
 ~~~
 ~~~gradle
 dependencies {
-    api 'com.github.ddoolcg:QAndroid:1.2.6'
+    api 'com.github.ddoolcg:QAndroid:1.2.7'
 }
 ~~~
 
 # 联网调用
 ~~~kotlin
+//lambda不支持泛型套泛型的解析方式
 DataEntry("url").joinProgressDialog(activity).formBody(map).post<T> {TODO()}
+//抽象方法实现的方式调用，支持泛型套泛型的解析方式
+DataEntry("url").joinProgressDialog(activity).formBody(map).post<T>(OnSuccessListener)
+//默认统一处理接口调用失败
+DataEntry.failDefault={code,data-> }
 ~~~
 
 # SharedPreferences操作
