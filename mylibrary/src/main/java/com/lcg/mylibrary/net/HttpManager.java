@@ -267,7 +267,7 @@ public class HttpManager {
     }
 
     /**
-     * 文件下载
+     * 文件下载，文件保存在CacheDir
      */
     public Call download(String url, FileDownloadHanler handler) {
         return download(url, getCacheFile(url), handler);
