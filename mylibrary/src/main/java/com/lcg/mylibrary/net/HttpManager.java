@@ -58,6 +58,9 @@ public class HttpManager {
         client = builder.build();
     }
 
+    /**
+     * 初始化一个默认header
+     */
     public void initDefaultHeaders(HashMap<String, String> header) {
         this.header.clear();
         if (header != null)
