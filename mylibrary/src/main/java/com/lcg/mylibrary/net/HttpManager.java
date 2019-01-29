@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.lcg.mylibrary.utils.L;
 import com.lcg.mylibrary.utils.MD5;
+import com.lcg.mylibrary.utils.Token;
 import com.lcg.mylibrary.utils.TokenUtilKt;
 import com.lcg.mylibrary.utils.UIUtils;
 
@@ -18,6 +19,7 @@ import java.net.URLEncoder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -44,6 +46,7 @@ import static okhttp3.Request.Builder;
 public class HttpManager {
     private static HttpManager ourInstance = new HttpManager();
     private OkHttpClient client;
+    private final HashMap<String, String> header = new HashMap<>();
 
     public static HttpManager getInstance() {
         return ourInstance;
@@ -53,6 +56,12 @@ public class HttpManager {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectionPool(new ConnectionPool(3, 5, TimeUnit.MINUTES));
         client = builder.build();
+    }
+
+    public void initDefaultHeaders(HashMap<String, String> header) {
+        this.header.clear();
+        if (header != null)
+            this.header.putAll(header);
     }
 
     /**
@@ -66,14 +75,23 @@ public class HttpManager {
                 .addHeader("os", "android");
         String token = TokenUtilKt.getToken();
         if (!TextUtils.isEmpty(token)) {
-            builder.addHeader("token", token);
-            builder.addHeader("Authorization", token);
+            builder.addHeader(Token.INSTANCE.getTOKEN(), token);
         }
         PackageInfo packageInfo = UIUtils.getPackageInfo();
         if (packageInfo != null)
             builder.addHeader("ver", packageInfo.versionCode + "");
         else
             builder.addHeader("ver", "-1");
+        for (Map.Entry<String, String> entry : header.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (!TextUtils.isEmpty(key))
+                if (TextUtils.isEmpty(value)) {
+                    builder.removeHeader(key);
+                } else {
+                    builder.addHeader(key, value);
+                }
+        }
         return builder;
     }
 
