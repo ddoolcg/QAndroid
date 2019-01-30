@@ -15,10 +15,10 @@ import java.util.*
 open class DataEntry(private val url: String) {
     private var formMap: HashMap<String, String>? = null
     private var body: String? = null
-    private var baseActivity: BaseActivity? = null
-    private var msg: String? = null
-    private var finish2Close = true
-    private var fail: ((code: Int, data: String?) -> Unit)? = null
+    protected var baseActivity: BaseActivity? = null
+    protected var msg: String? = null
+    protected var finish2Close = true
+    protected var fail: ((code: Int, data: String?) -> Unit)? = null
     protected open fun <T> baseDataHandler(observable: ((data: T) -> Unit)? = null, listener: OnSuccessListener<T>? = null): DataHandler{
         return object : BaseDataHandler<T, String>() {
             override fun onStart() {
