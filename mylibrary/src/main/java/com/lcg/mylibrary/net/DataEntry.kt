@@ -19,7 +19,7 @@ open class DataEntry(private val url: String) {
     protected var msg: String? = null
     protected var finish2Close = true
     protected var fail: ((code: Int, data: String?) -> Unit)? = null
-    protected open fun <T> baseDataHandler(observable: ((data: T) -> Unit)? = null, listener: OnSuccessListener<T>? = null): DataHandler{
+    protected open fun <T> baseDataHandler(observable: ((data: T?) -> Unit)? = null, listener: OnSuccessListener<T>? = null): DataHandler {
         return object : BaseDataHandler<T, String>() {
             override fun onStart() {
                 baseActivity?.showProgressDialog(msg!!, null)
@@ -38,8 +38,9 @@ open class DataEntry(private val url: String) {
                 }
             }
 
-            override fun onSuccess(code: Int, data: T) {
+            override fun onSuccess(code: Int, data: T?) {
                 listener?.onSuccess(data)
+                observable?.invoke(data)
             }
 
             override fun getType(position: Int): Type {
@@ -93,12 +94,12 @@ open class DataEntry(private val url: String) {
     }
 
     /** 不支持泛型套泛型的解析方式*/
-    fun <T> get(observable: ((data: T) -> Unit)? = null) {
+    fun <T> get(observable: ((data: T?) -> Unit)? = null) {
         HttpManager.getInstance().get(url, formMap, baseDataHandler(observable = observable))
     }
 
     /** 不支持泛型套泛型的解析方式*/
-    fun <T> post(observable: ((data: T) -> Unit)? = null) {
+    fun <T> post(observable: ((data: T?) -> Unit)? = null) {
         when {
             formMap != null -> HttpManager.getInstance().post(url, formMap, baseDataHandler(observable = observable))
             body != null -> HttpManager.getInstance().post(url, body, baseDataHandler(observable = observable))
@@ -107,7 +108,7 @@ open class DataEntry(private val url: String) {
     }
 
     /** 不支持泛型套泛型的解析方式*/
-    fun <T> delete(observable: ((data: T) -> Unit)? = null) {
+    fun <T> delete(observable: ((data: T?) -> Unit)? = null) {
         when {
             formMap != null -> HttpManager.getInstance().delete(url, formMap, baseDataHandler(observable = observable))
             body != null -> HttpManager.getInstance().delete(url, body, baseDataHandler(observable = observable))
@@ -116,7 +117,7 @@ open class DataEntry(private val url: String) {
     }
 
     /** 不支持泛型套泛型的解析方式*/
-    fun <T> put(observable: ((data: T) -> Unit)? = null) {
+    fun <T> put(observable: ((data: T?) -> Unit)? = null) {
         when {
             formMap != null -> HttpManager.getInstance().put(url, formMap, baseDataHandler(observable = observable))
             body != null -> HttpManager.getInstance().put(url, body, baseDataHandler(observable = observable))
@@ -165,5 +166,5 @@ open class DataEntry(private val url: String) {
 
 /**数据成功监听，支持泛型套泛型*/
 abstract class OnSuccessListener<T> {
-    abstract fun onSuccess(data: T)
+    abstract fun onSuccess(data: T?)
 }
