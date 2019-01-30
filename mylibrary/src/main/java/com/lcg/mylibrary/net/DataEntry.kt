@@ -19,7 +19,7 @@ open class DataEntry(private val url: String) {
     private var msg: String? = null
     private var finish2Close = true
     private var fail: ((code: Int, data: String?) -> Unit)? = null
-    protected open fun <T> baseDataHandler(observable: ((data: T) -> Unit)? = null, listener: OnSuccessListener<T>? = null): BaseDataHandler<T, String> {
+    protected open fun <T> baseDataHandler(observable: ((data: T) -> Unit)? = null, listener: OnSuccessListener<T>? = null): DataHandler{
         return object : BaseDataHandler<T, String>() {
             override fun onStart() {
                 baseActivity?.showProgressDialog(msg!!, null)
