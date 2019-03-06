@@ -13,24 +13,19 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import com.hjq.toast.ToastUtils;
 import com.lcg.mylibrary.CrashHandler;
 import com.umeng.analytics.MobclickAgent;
 
 import java.util.List;
 
 public class UIUtils {
-    private static Toast toast;
-    private static TextView toastTV;
     private static Handler handler;
     private static DisplayMetrics sMetrics;
     private static PackageInfo pi;
@@ -43,6 +38,7 @@ public class UIUtils {
     public static boolean init(Application app) {
         mThreadId = Thread.currentThread().getId();
         application = app;
+        ToastUtils.init(app, MyToastStyle.INSTANCE);
         //异常奔溃的信息处理器初始化
         CrashHandler crashHandler = CrashHandler
                 .getInstance(app);
@@ -273,28 +269,7 @@ public class UIUtils {
     }
 
     private static void showToast(String str) {
-        if (toast == null) {
-            toast = new Toast(application);
-            toastTV = new TextView(application);
-            toastTV.setTextColor(0xFFFFFFFF);
-            toastTV.setBackgroundColor(0xFFA7A7AA);
-            toastTV.setPadding(10, 5, 10, 5);
-            toast.setView(toastTV);
-            toast.setGravity(Gravity.CENTER, 0, 100);
-        }
-        // toast.cancel();
-        toastTV.setText(Html.fromHtml(str));
-        int length = str.length();
-        if (length > 5) {
-            length = length > 20 ? 20 : length;
-            toast.setDuration(length * 250);
-        } else {
-            toast.setDuration(Toast.LENGTH_SHORT);
-        }
-        try {
-            toast.show();
-        } catch (Exception e) {
-        }
+        ToastUtils.show(str);
     }
 
     /**
