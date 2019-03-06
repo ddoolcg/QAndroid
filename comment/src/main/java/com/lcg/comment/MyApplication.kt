@@ -19,7 +19,7 @@ import com.lcg.mylibrary.utils.saveToken
 class MyApplication : BaseApplication() {
     override fun onInitMainProcesses() {
         L.DEBUG = BuildConfig.DEBUG
-        CrashHandler.APPLOGS = "http://ddoolcg.pythonanywhere.com/error"
+        CrashHandler.APPLOGS = "https://ddoolcg.pythonanywhere.com/error"
     }
 
     override fun gotoLoin(showToast: Boolean) {

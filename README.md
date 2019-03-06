@@ -14,8 +14,24 @@ allprojects {
 ~~~
 ~~~gradle
 dependencies {
-    api 'com.github.ddoolcg:QAndroid:1.2.7'
+    api 'com.github.ddoolcg:QAndroid:1.3.9'
 }
+~~~
+
+#UIUtils工具类需要初始化、自定义http认证，参考BaseApplication实现
+~~~java
+@Override
+public void onCreate() {
+     super.onCreate();
+     if (UIUtils.init(this)) onInitMainProcesses();
+     Token.INSTANCE.init("token", new Function1<Boolean, Unit>() {
+         @Override
+         public Unit invoke(Boolean aBoolean) {
+              gotoLoin(aBoolean);
+              return null;
+          }
+      });
+  }
 ~~~
 
 # 联网调用
@@ -80,3 +96,7 @@ https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/co
 ~~~xml
 <meta-data android:name="UMENG_APPKEY" android:value="您的UMENG_APPKEY"/>
 ~~~
+
+#DataEntry无法满足你的需求可参考：
+https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/net/Base200DataHandler.java
+https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/net/MyDataEntry.kt
