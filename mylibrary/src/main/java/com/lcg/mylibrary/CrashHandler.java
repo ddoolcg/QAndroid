@@ -179,7 +179,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
                         }
 
                         @Override
-                        public void success(int code, String successData) {
+                        public void success(String successData) {
                             file.delete();
                         }
                     });

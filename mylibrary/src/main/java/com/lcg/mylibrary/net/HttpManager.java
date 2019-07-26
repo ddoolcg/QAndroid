@@ -305,14 +305,14 @@ public class HttpManager {
     /**
      * 文件下载，文件保存在CacheDir
      */
-    public Call download(String url, FileDownloadHanler handler) {
+    public Call download(String url, FileDownloadHandler handler) {
         return download(url, getCacheFile(url), handler);
     }
 
     /**
      * 文件下载
      */
-    public Call download(String url, final File file, final FileDownloadHanler handler) {
+    public Call download(String url, final File file, final FileDownloadHandler handler) {
         final long startsPoint = file.length();
         final Request request = new Builder()
                 .addHeader("RANGE", "bytes=" + startsPoint + "-")

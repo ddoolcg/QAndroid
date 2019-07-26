@@ -15,7 +15,7 @@ import java.io.File;
  * @since 2016/10/19 17:35
  */
 
-public abstract class FileDownloadHanler {
+public abstract class FileDownloadHandler {
     /**
      * 请求真正开始，否则还在队列中。
      */
