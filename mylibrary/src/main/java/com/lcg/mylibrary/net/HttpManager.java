@@ -1,6 +1,7 @@
 package com.lcg.mylibrary.net;
 
 import android.content.pm.PackageInfo;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -26,6 +27,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.ConnectionPool;
 import okhttp3.FormBody;
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -47,6 +49,7 @@ public class HttpManager {
     private static HttpManager ourInstance = new HttpManager();
     private OkHttpClient client;
     private final HashMap<String, String> header = new HashMap<>();
+    private Interceptor mInterceptor;
 
     public static HttpManager getInstance() {
         return ourInstance;
@@ -55,6 +58,18 @@ public class HttpManager {
     private HttpManager() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectionPool(new ConnectionPool(3, 5, TimeUnit.MINUTES));
+        builder.addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(@NonNull Chain chain) throws IOException {
+                if (mInterceptor != null) {
+                    Response intercept = mInterceptor.intercept(chain);
+                    mInterceptor = null;
+                    return intercept;
+                } else {
+                    return chain.proceed(chain.request());
+                }
+            }
+        });
         client = builder.build();
     }
 
@@ -253,7 +268,7 @@ public class HttpManager {
                     return;
                 handler.netFinish();
                 if (response.isSuccessful()) {
-                    handler.success(response.code(), data);
+                    handler.success(data);
                 } else {
                     handler.fail(response.code(), data);
                 }
@@ -296,28 +311,23 @@ public class HttpManager {
 
     /**
      * 文件下载
-     *
-     * @param url      URL
-     * @param saveFile 保存的文件
-     * @param handler  回调处理
-     * @return
      */
-    public Call download(String url, final File saveFile, final FileDownloadHanler handler) {
-        final long startsPoint = saveFile.length();
+    public Call download(String url, final File file, final FileDownloadHanler handler) {
+        final long startsPoint = file.length();
         final Request request = new Builder()
-                .addHeader("RANGE", "bytes=" + startsPoint + "-").url(url).build();
+                .addHeader("RANGE", "bytes=" + startsPoint + "-")
+                .url(url).build();
         Call call = client.newCall(request);
+        handler.start();
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                handler.start();
                 handler.netFinish();
-                handler.fail(-1);
+                handler.fail(-1, e);
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                handler.start();
+            public void onResponse(Call call, Response response) {
                 if (response.isSuccessful()) {
                     if (call.isCanceled())
                         return;
@@ -327,26 +337,26 @@ public class HttpManager {
                     // 随机访问文件，可以指定断点续传的起始位置
                     RandomAccessFile randomAccessFile = null;
                     try {
-                        randomAccessFile = new RandomAccessFile(saveFile, "rwd");
+                        randomAccessFile = new RandomAccessFile(file, "rwd");
                         //Chanel NIO中的用法，由于RandomAccessFile没有使用缓存策略，直接使用会使得下载速度变慢，亲测缓存下载3.3
                         // 秒的文件，用普通的RandomAccessFile需要20多秒。
                         channelOut = randomAccessFile.getChannel();
                         // 内存映射，直接使用RandomAccessFile，是用其seek方法指定下载的起始位置，使用缓存下载，在这里指定下载位置。
-                        long totalLenght = body.contentLength();
+                        long totalLength = body.contentLength();
                         MappedByteBuffer mappedBuffer = channelOut.map(FileChannel.MapMode
-                                .READ_WRITE, startsPoint, totalLenght);
+                                .READ_WRITE, startsPoint, totalLength);
                         byte[] buffer = new byte[1024];
                         int len;
                         long bytesWritten = startsPoint;
                         while ((len = in.read(buffer)) != -1 && !call.isCanceled()) {
                             mappedBuffer.put(buffer, 0, len);
                             bytesWritten += len;
-                            handler.progress(bytesWritten, totalLenght, saveFile);
+                            handler.progress(bytesWritten, totalLength);
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                         handler.netFinish();
-                        handler.fail(0);
+                        handler.fail(0, e);
                         call.cancel();
                     } finally {
                         try {
@@ -364,26 +374,28 @@ public class HttpManager {
                     if (call.isCanceled())
                         return;
                     handler.netFinish();
-                    handler.success(saveFile);
+                    handler.success(file);
                 } else {
                     handler.netFinish();
                     int code = response.code();
                     if (code == 416)
-                        handler.success(saveFile);
+                        handler.success(file);
                     else
-                        handler.fail(code);
+                        handler.fail(code, null);
                 }
             }
         });
         return call;
     }
 
+    private static final String sPath = "/" + UIUtils.getPackageInfo().packageName + "/.temp/";
+
     /**
      * 文件下载保存位置
      */
-    private File getCacheFile(String url) {
-        File esd = UIUtils.getContext().getCacheDir();
-        String path = esd.getPath() + "/";
+    public File getCacheFile(String url) {
+        File esd = Environment.getExternalStorageDirectory();
+        String path = esd.getPath() + sPath;
         File f;
         if (url.endsWith(".apk")) {
             String[] split = url.split("/");
@@ -397,5 +409,12 @@ public class HttpManager {
 
     public OkHttpClient getClient() {
         return client;
+    }
+
+    /**
+     * 设置过滤器
+     */
+    public void setInterceptor(Interceptor mInterceptor) {
+        this.mInterceptor = mInterceptor;
     }
 }

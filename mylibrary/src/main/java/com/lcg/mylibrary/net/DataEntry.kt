@@ -38,7 +38,7 @@ open class DataEntry(private val url: String) {
                 }
             }
 
-            override fun onSuccess(code: Int, data: T) {
+            override fun onSuccess(data: T) {
                 listener?.onSuccess(data)
                 observable?.invoke(data)
             }

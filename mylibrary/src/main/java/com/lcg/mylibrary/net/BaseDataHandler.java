@@ -66,15 +66,15 @@ public abstract class BaseDataHandler<S, E> implements DataHandler {
     }
 
     @Override
-    public void success(final int code, String successData) {
+    public void success(String successData) {
         L.d("NET", successData);
 //        L.file("-------------\n" + successData);
         final Object data = parseData(successData, 0);
-        if (data == null) fail(code, successData);
+        if (data == null) fail(200, successData);
         else UIUtils.runInMainThread(new Runnable() {
             @Override
             public void run() {
-                onSuccess(code, (S) data);
+                onSuccess((S) data);
             }
         });
     }
@@ -162,8 +162,7 @@ public abstract class BaseDataHandler<S, E> implements DataHandler {
     /**
      * 服务器返回正确的数据时调用
      *
-     * @param code
      * @param data
      */
-    public abstract void onSuccess(int code, S data);
+    public abstract void onSuccess(S data);
 }

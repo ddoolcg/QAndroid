@@ -25,7 +25,7 @@ public interface DataHandler {
     void fail(int code, String errorData);
 
     /**
-     * 请求成功，code为200-300
+     * 请求成功
      */
-    void success(int code, String successData);
+    void success(String successData);
 }
