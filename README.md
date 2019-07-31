@@ -18,7 +18,7 @@ dependencies {
 }
 ~~~
 
-#UIUtils工具类需要初始化、自定义http认证，参考BaseApplication实现
+# UIUtils工具类需要初始化、自定义http认证，参考BaseApplication实现
 ~~~java
 @Override
 public void onCreate() {
