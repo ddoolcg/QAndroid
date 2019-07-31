@@ -97,6 +97,6 @@ https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/co
 <meta-data android:name="UMENG_APPKEY" android:value="您的UMENG_APPKEY"/>
 ~~~
 
-#DataEntry无法满足你的需求可参考：
+# DataEntry无法满足你的需求可参考：
 https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/net/Base200DataHandler.java
 https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/net/MyDataEntry.kt
