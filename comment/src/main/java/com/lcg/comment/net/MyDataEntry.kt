@@ -12,17 +12,14 @@ import java.lang.reflect.Type
 var host = "https://ddoolcg.pythonanywhere.com"
 
 /**
- * 我的联网框架
+ * 自定义的联网框架
  *
  * @author lei.chuguang Email:475825657@qq.com
  * @version 1.0
  * @since 2019/1/30 10:53
  */
 class MyDataEntry(path: String) : DataEntry(host + path) {
-    override fun <T> baseDataHandler(
-            observable: ((data: T?) -> Unit)?,
-            listener: OnSuccessListener<T>?
-    ): DataHandler {
+    override fun <T> baseDataHandler(observable: ((data: T) -> Unit)?, listener: OnSuccessListener<T>?): DataHandler {
         return object : Base200DataHandler<T>() {
             override fun onStart() {
                 L.i(Token.TOKEN + "-->" + getToken())
@@ -42,7 +39,7 @@ class MyDataEntry(path: String) : DataEntry(host + path) {
                 }
             }
 
-            override fun onSuccess(data: T?) {
+            override fun onSuccess(data: T) {
                 listener?.onSuccess(data)
                 observable?.invoke(data)
             }

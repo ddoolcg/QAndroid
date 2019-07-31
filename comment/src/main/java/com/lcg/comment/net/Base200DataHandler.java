@@ -15,7 +15,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
 /**
- * 基本数据处理器，主线程执行on方法。S为成功的数据类型，E为错误的数据类型。
+ * 正常数据和错误都通过200放回的数据处理器，主线程执行on方法。
  *
  * @author lei.chuguang Email:475825657@qq.com
  * @version 1.0
@@ -55,7 +55,7 @@ public abstract class Base200DataHandler<D> implements DataHandler {
     }
 
     @Override
-    public void success(final int code, String successData) {
+    public void success(String successData) {
         L.d(successData);
         try {
             final JSONObject jsonObject = JSON.parseObject(successData);
@@ -76,7 +76,8 @@ public abstract class Base200DataHandler<D> implements DataHandler {
                 } else {
                     data = jsonObject.getString("data");
                 }
-                UIUtils.runInMainThread(new Runnable() {
+                if (data == null) onFail("0", successData);
+                else UIUtils.runInMainThread(new Runnable() {
                     @Override
                     public void run() {
                         onSuccess((D) data);
@@ -85,7 +86,7 @@ public abstract class Base200DataHandler<D> implements DataHandler {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            onFail(code + "", "服务器数据异常");
+            onFail("0", "服务器数据异常");
         }
     }
 
