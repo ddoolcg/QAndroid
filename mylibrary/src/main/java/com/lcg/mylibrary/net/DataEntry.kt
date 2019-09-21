@@ -31,12 +31,12 @@ open class DataEntry(private val url: String) {
             }
 
             override fun onFail(code: Int, data: String?) {
-                var break: Boolean = false
+                var breakable = false
                 if (fail != null)
-                    break = fail!!.invoke(code, data)
-                if (!break && failDefault != null)
-                    break = failDefault!!.invoke(code, data)
-                if (!break)
+                    breakable = fail!!.invoke(code, data)
+                if (!breakable && failDefault != null)
+                    breakable = failDefault!!.invoke(code, data)
+                if (!breakable)
                     super.onFail(code, data)
             }
 
@@ -89,8 +89,11 @@ open class DataEntry(private val url: String) {
         return this
     }
 
-    /**捕获服务器的失败*/
-    fun catchFail(observable: ((code: Int, data: String?) -> Unit)?): DataEntry {
+    /**捕获服务器的失败
+     * @param observable observable返回值表示是否中断。<br/>
+     * 生命周期为failDefault->observable->框架默认实现
+     */
+    fun catchFail(observable: ((code: Int, data: String?) -> Boolean)?): DataEntry {
         fail = observable
         return this
     }
@@ -160,7 +163,10 @@ open class DataEntry(private val url: String) {
     }
 
     companion object {
-        /**默认统一处理接口调用失败*/
+        /**
+         * 默认统一处理接口调用失败，函数返回值表示是否中断。<br/>
+         * 生命周期为failDefault->catchFail->框架默认实现
+         */
         @JvmStatic
         var failDefault: ((code: Int, data: String?) -> Boolean)? = null
     }
