@@ -14,7 +14,9 @@ import com.lcg.mylibrary.utils.UIUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.RandomAccessFile;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.MappedByteBuffer;
@@ -257,8 +259,12 @@ public class HttpManager {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                StringWriter info = new StringWriter();
+                PrintWriter printWriter = new PrintWriter(info);
+                e.printStackTrace(printWriter);
+                printWriter.close();
                 handler.netFinish();
-                handler.fail(-1, "");
+                handler.fail(-1, info.toString());
             }
 
             @Override
