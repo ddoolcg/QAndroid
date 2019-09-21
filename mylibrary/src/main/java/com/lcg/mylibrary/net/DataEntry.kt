@@ -31,7 +31,7 @@ open class DataEntry(private val url: String) {
             }
 
             override fun onFail(code: Int, data: String?) {
-                var break = false
+                var break: Boolean = false
                 if (fail != null)
                     break = fail!!.invoke(code, data)
                 if (!break && failDefault != null)
