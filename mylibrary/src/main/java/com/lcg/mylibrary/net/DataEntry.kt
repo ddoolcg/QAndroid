@@ -18,7 +18,7 @@ open class DataEntry(private val url: String) {
     protected var baseActivity: BaseActivity? = null
     protected var msg: String? = null
     protected var finish2Close = true
-    protected var fail: ((code: Int, data: String?) -> Unit)? = null
+    protected var fail: ((code: Int, data: String?) -> Boolean)? = null
     protected open fun <T> baseDataHandler(observable: ((data: T) -> Unit)? = null, listener: OnSuccessListener<T>? = null): DataHandler {
         return object : BaseDataHandler<T, String>() {
             override fun onStart() {
@@ -31,11 +31,13 @@ open class DataEntry(private val url: String) {
             }
 
             override fun onFail(code: Int, data: String?) {
-                when {
-                    fail != null -> fail!!.invoke(code, data)
-                    failDefault != null -> failDefault!!.invoke(code, data)
-                    else -> super.onFail(code, data)
-                }
+                var break = false
+                if (fail != null)
+                    break = fail!!.invoke(code, data)
+                if (!break && failDefault != null)
+                    break = failDefault!!.invoke(code, data)
+                if (!break)
+                    super.onFail(code, data)
             }
 
             override fun onSuccess(data: T) {
@@ -160,7 +162,7 @@ open class DataEntry(private val url: String) {
     companion object {
         /**默认统一处理接口调用失败*/
         @JvmStatic
-        var failDefault: ((code: Int, data: String?) -> Unit)? = null
+        var failDefault: ((code: Int, data: String?) -> Boolean)? = null
     }
 }
 
