@@ -4,7 +4,7 @@ import android.app.Activity
 import android.databinding.Bindable
 import android.text.TextUtils
 import android.view.View
-import com.lcg.comment.BR
+import com.android.databinding.library.baseAdapters.BR
 import com.lcg.comment.HttpUrl
 import com.lcg.comment.activity.auth.LoginActivity
 import com.lcg.comment.bean.AuthUser

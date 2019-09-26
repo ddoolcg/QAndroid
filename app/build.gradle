@@ -21,6 +21,10 @@ android {
     dataBinding {
         enabled true
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -31,6 +35,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation project(':comment')
+    implementation "android.arch.lifecycle:common-java8:1.1.1"
     kapt "com.android.databinding:compiler:$binding_version"
     //AS的BUG上条必须放到最后
 }

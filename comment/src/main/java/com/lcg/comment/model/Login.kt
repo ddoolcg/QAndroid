@@ -4,7 +4,7 @@ import android.app.Activity
 import android.databinding.Bindable
 import android.text.TextUtils
 import android.view.View
-import com.lcg.comment.BR
+import com.android.databinding.library.baseAdapters.BR
 import com.lcg.comment.HttpUrl
 import com.lcg.comment.activity.auth.RegisterActivity
 import com.lcg.comment.bean.AuthUser
@@ -22,13 +22,13 @@ import com.lcg.mylibrary.utils.*
  */
 open class Login(activity: BaseActivity) : BaseObservableMe(activity) {
     @get:Bindable
-    var username: String = ""
+    var username: String = "13552182889"
         set(username) {
             field = username
             notifyPropertyChanged(BR.username)
         }
     @get:Bindable
-    var password: String = ""
+    var password: String = "11"
         set(password) {
             field = password
             notifyPropertyChanged(BR.password)
