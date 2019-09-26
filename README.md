@@ -86,7 +86,7 @@ viewGroup -= view//removeView
 
 # List简单实现
 ## Fragment
-基于dataBinding的实现的ListFragment，函数说明：
+#### 基于dataBinding的实现的ListFragment，函数说明：
 | name              | 说明 |
 | ----------------- | ------------- |
 | loadData          | 装载数据列表，会清除掉历史数据 |
@@ -99,7 +99,7 @@ viewGroup -= view//removeView
 ~~~kotlin
 CommentAdapter(items, R.layout.item_demo, BR.item)
 ~~~
-构造函数说明：
+#### 构造函数说明：
 | name              | 说明 |
 | ----------------- | ------------- |
 | data              | 数据列表 |
