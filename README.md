@@ -48,11 +48,11 @@ DataEntry.failDefault={code,data->
 ~~~
 
 # SharedPreferences操作
-## 操作类
+#### 操作类
 ~~~kotlin
 PreferenceKTX
 ~~~
-## 多次put采用Any扩展
+#### 多次put采用Any扩展
 ~~~kotlin
 preferenceEdit {
     putBoolean()
@@ -61,7 +61,7 @@ preferenceEdit {
 ~~~
 
 # view的一些实用扩展
-## doOnGlobalLayout
+#### doOnGlobalLayout
 ~~~kotlin
 view.doOnGlobalLayout {
     if (Boolean) {
@@ -72,20 +72,20 @@ view.doOnGlobalLayout {
     }
 }
 ~~~
-## doOnPreDraw
+#### doOnPreDraw
 ~~~kotlin
 view.doOnPreDraw {
     action()
 }
 ~~~
-## ViewGroup
+#### ViewGroup
 ~~~kotlin
 viewGroup += view//addView
 viewGroup -= view//removeView
 ~~~
 
 # List简单实现
-## Fragment
+#### Fragment
 基于dataBinding的实现的ListFragment，函数说明：
 
 | name              | 说明 |
@@ -95,7 +95,7 @@ viewGroup -= view//removeView
 | removeItem        | 移除一条数据 |
 | filter            | 过滤，需要复写item的toString()，多个关键字以空格分隔 |
 
-## RecyclerView.Adapter
+#### RecyclerView.Adapter
 基于dataBinding的实现的CommentAdapter
 ~~~kotlin
 CommentAdapter(items, R.layout.item_demo, BR.item)
@@ -125,7 +125,7 @@ model:
 https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/model/Login.kt
 
 
-## ListActivity
+#### ListActivity
 activity:
 
 https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/ListActivity.kt
