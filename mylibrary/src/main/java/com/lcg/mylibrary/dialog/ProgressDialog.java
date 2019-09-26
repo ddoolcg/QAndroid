@@ -1,17 +1,17 @@
 package com.lcg.mylibrary.dialog;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.databinding.DataBindingUtil;
 import android.os.Build;
+import android.support.annotation.LayoutRes;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.lcg.mylibrary.R;
-import com.lcg.mylibrary.databinding.DialogLoadingBinding;
 
 import okhttp3.Call;
 
@@ -22,17 +22,29 @@ import okhttp3.Call;
  * @version 1.0
  * @since 2016/10/21 11:45
  */
-
 public class ProgressDialog extends Dialog {
-    private DialogLoadingBinding mBinding;
     private Call mCall;
+    private TextView tvMsg;
+    @LayoutRes
+    private static int sLayout = R.layout.dialog_loading;
+
+    /**
+     * 设置进度对话框的layout布局
+     *
+     * @param layout ID for an XML layout resource to load (e.g.,
+     *               <code>R.layout.dialog_loading</code>)
+     */
+    public static void setLayout(@LayoutRes int layout) {
+        sLayout = layout;
+    }
 
     public ProgressDialog(Context context) {
         super(context, R.style.dialog_style);
         if (context instanceof Activity)
             setOwnerActivity((Activity) context);
-        mBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.dialog_loading, null, false);
-        setContentView(mBinding.getRoot());
+        View view = LayoutInflater.from(context).inflate(sLayout, null);
+        tvMsg = view.findViewById(R.id.tv_msg);
+        setContentView(view);
         setOnCancelListener(new OnCancelListener() {
 
             @Override
@@ -44,9 +56,15 @@ public class ProgressDialog extends Dialog {
         });
     }
 
-    @SuppressLint("NewApi")
     public void show(String msg) {
-        mBinding.setMsg(msg);
+        if (tvMsg != null) {
+            if (TextUtils.isEmpty(msg)) {
+                tvMsg.setVisibility(View.GONE);
+            } else {
+                tvMsg.setVisibility(View.VISIBLE);
+                tvMsg.setText(msg);
+            }
+        }
         boolean b = true;
         if (Build.VERSION.SDK_INT >= 17) {
             b = getOwnerActivity() == null || !getOwnerActivity().isDestroyed();
@@ -56,7 +74,7 @@ public class ProgressDialog extends Dialog {
     }
 
     public void dismiss(String msg) throws Exception {
-        if (TextUtils.isEmpty(msg) || mBinding.tvMsg.getText().toString().equals(msg)) {
+        if (tvMsg == null || TextUtils.isEmpty(msg) || tvMsg.getText().toString().equals(msg)) {
             dismiss();
         } else {
             throw new Exception("没有<" + msg + ">消息对话框实体");
