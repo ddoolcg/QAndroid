@@ -114,13 +114,16 @@ activity:
 
 https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/activity/auth/LoginActivity.kt
 
+
 xml:
 
 https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/res/layout/activity_login.xml
 
+
 model:
 
 https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/model/Login.kt
+
 
 ## ListActivity
 activity:
@@ -138,6 +141,7 @@ val bundle = Bundle().apply {
 }
 ListActivity.start(this@MainActivity, ListViewModelDemo::class.java, bundle)
 ~~~
+
 
 # 开启友盟统计
 在AndroidManifest.xml文件中修改 
