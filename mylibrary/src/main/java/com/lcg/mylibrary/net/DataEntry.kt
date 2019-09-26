@@ -48,10 +48,10 @@ open class DataEntry(private val url: String) {
             override fun getType(position: Int): Type {
                 if (position == 0) {
                     if (observable != null) {
-                        observable.javaClass.declaredMethods?.filter {
+                        observable.javaClass.declaredMethods.filter {
                             it.returnType.isAssignableFrom(Void.TYPE)
                                     || it.returnType == Unit::class.java
-                        }?.forEach { return it.parameterTypes[0] }
+                        }.forEach { return it.parameterTypes[0] }
                         return String::class.java
                     } else {
                         val clazz = listener?.javaClass

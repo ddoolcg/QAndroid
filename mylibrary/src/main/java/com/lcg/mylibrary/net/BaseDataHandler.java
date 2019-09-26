@@ -87,12 +87,12 @@ public abstract class BaseDataHandler<S, E> implements DataHandler {
         if (!type2.equals(String.class)) {
             try {
                 Object obj = JSON.parseObject(successData, type2, new Feature[0]);
-                Class<? extends Object> class2 = obj.getClass();
+                Class<?> class2 = obj.getClass();
                 JSONType annotation = class2.getAnnotation(JSONType.class);
                 if (annotation != null) {
                     String[] orders = annotation.orders();
-                    for (int i = 0; i < orders.length; i++) {
-                        Field field2 = class2.getDeclaredField(orders[i]);
+                    for (String order : orders) {
+                        Field field2 = class2.getDeclaredField(order);
                         field2.setAccessible(true);
                         Object object = field2.get(obj);
                         if (object == null) {
