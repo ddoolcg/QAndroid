@@ -111,20 +111,27 @@ CommentAdapter(items, R.layout.item_demo, BR.item)
 
 # 页面实现demo
 activity:
+
 https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/activity/auth/LoginActivity.kt
 
 xml:
+
 https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/res/layout/activity_login.xml
 
 model:
+
 https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/model/Login.kt
 
 ## ListActivity
 activity:
+
 https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/ListActivity.kt
+
 model:
+
 https://github.com/ddoolcg/QAndroid/blob/master/app/src/main/java/com/lcg/expressbus/model/ListViewModelDemo.kt
 调用：
+
 ~~~kotlin
 val bundle = Bundle().apply {
     putString("id", "my id")
