@@ -87,12 +87,12 @@ viewGroup -= view//removeView
 # List简单实现
 ## Fragment
 基于dataBinding的实现的ListFragment，函数说明：
-|name              | 说明|
-|----------------- | -------------|
-|loadData          | 装载数据列表，会清除掉历史数据|
-|addData           | 添加数据列表，不会清除掉历史数据|
-|removeItem        | 移除一条数据|
-|filter            | 过滤，需要复写item的toString()，多个关键字以空格分隔|
+| name              | 说明 |
+| ----------------- | ------------- |
+| loadData          | 装载数据列表，会清除掉历史数据 |
+| addData           | 添加数据列表，不会清除掉历史数据 |
+| removeItem        | 移除一条数据 |
+| filter            | 过滤，需要复写item的toString()，多个关键字以空格分隔 |
 
 ## RecyclerView.Adapter
 基于dataBinding的实现的CommentAdapter
@@ -100,12 +100,12 @@ viewGroup -= view//removeView
 CommentAdapter(items, R.layout.item_demo, BR.item)
 ~~~
 构造函数说明：
-|name              | 说明|
-|----------------- | -------------|
-|data              | 数据列表|
-|mLayoutId         | layout布局|
-|mVariableId       | BR ID，也就是xml的data|
-|mFooterViewHolder | 底部的加载更多，为null表示无该功能|
+| name              | 说明 |
+| ----------------- | ------------- |
+| data              | 数据列表 |
+| mLayoutId         | layout布局 |
+| mVariableId       | BR ID，也就是xml的data |
+| mFooterViewHolder | 底部的加载更多，为null表示无该功能 |
 
 # 页面实现demo
 activity:
