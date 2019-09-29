@@ -20,13 +20,13 @@ import java.util.*
  * @version 1.0
  * @since 2016/10/13 11:03
  */
-
 open class BaseActivity : FragmentActivity() {
     private var mProgressDialog: ProgressDialog? = null
+    /**手机状态栏是否被设置过*/
+    private var statusBySet = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (translucentStatus)
-            setTranslucentStatus()
+        setTranslucentStatus(translucentStatusTheme)
         super.onCreate(savedInstanceState)
         activities.add(this)
     }
@@ -92,16 +92,21 @@ open class BaseActivity : FragmentActivity() {
     /**
      * 设置状态栏透明
      */
-    private fun setTranslucentStatus() {
-        // 5.0以上系统状态栏透明
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val window = window
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = Color.TRANSPARENT
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+    protected fun setTranslucentStatus(translucent: Boolean) {
+        if (!statusBySet) {
+            statusBySet = true
+            if (translucent) {
+                // 5.0以上系统状态栏透明
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    val window = window
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+                    window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                    window.statusBarColor = Color.TRANSPARENT
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+                }
+            }
         }
     }
 
@@ -138,10 +143,10 @@ open class BaseActivity : FragmentActivity() {
             meizuFlags.isAccessible = true
             val bit = darkFlag.getInt(null)
             var value = meizuFlags.getInt(lp)
-            if (dark) {
-                value = value or bit
+            value = if (dark) {
+                value or bit
             } else {
-                value = value and bit.inv()
+                value and bit.inv()
             }
             meizuFlags.setInt(lp, value)
             window.attributes = lp
@@ -160,7 +165,8 @@ open class BaseActivity : FragmentActivity() {
     companion object {
         @JvmStatic
         var activities = ArrayList<BaseActivity>()
+        /**全局透明状态控制*/
         @JvmStatic
-        var translucentStatus = false
+        var translucentStatusTheme = false
     }
 }
