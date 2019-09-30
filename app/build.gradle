@@ -36,6 +36,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation project(':comment')
     implementation "android.arch.lifecycle:common-java8:1.1.1"
-    kapt "com.android.databinding:compiler:$binding_version"
+    annotationProcessor "com.android.databinding:compiler:$binding_version"
     //AS的BUG上条必须放到最后
 }

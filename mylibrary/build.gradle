@@ -4,8 +4,6 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 28
-    buildToolsVersion '26.0.2'
-
     defaultConfig {
         minSdkVersion 10
         targetSdkVersion 28
@@ -34,6 +32,6 @@ dependencies {
     api 'com.hjq:toast:5.6'
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     //AS的bug 这条注释放这里有用的
-    kapt "com.android.databinding:compiler:$binding_version"
+    annotationProcessor "com.android.databinding:compiler:$binding_version"
     //AS的BUG上条必须放到最后
 }

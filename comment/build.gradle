@@ -30,6 +30,6 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     api project(':mylibrary')
     implementation "android.arch.lifecycle:common-java8:1.1.1"
-    kapt "com.android.databinding:compiler:$binding_version"
+    annotationProcessor "com.android.databinding:compiler:$binding_version"
     //AS的BUG上条必须放到最后
 }
