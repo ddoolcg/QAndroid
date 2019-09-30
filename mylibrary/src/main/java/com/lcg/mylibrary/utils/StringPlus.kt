@@ -1,6 +1,5 @@
 package com.lcg.mylibrary.utils
 
-import android.text.TextUtils
 import java.util.regex.Pattern
 
 /**
@@ -11,13 +10,13 @@ import java.util.regex.Pattern
  * @since 2017/8/11 21:32
  */
 /**为null时转到string*/
-infix fun String?.emptyTo(string: String): String = if (TextUtils.isEmpty(this)) string else this!!
+infix fun String?.emptyTo(string: String): String = if (this.isNullOrEmpty()) string else this!!
 
 /**
  * 是否包含特殊字符
  */
 fun String?.findHardChar(): Boolean {
-    if (TextUtils.isEmpty(this))
+    if (this.isNullOrEmpty())
         return false
     val regEx = "[`~!@#$%^&*\"()+=|{}':;',\\[\\]" +
             ".<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]|[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00" +
@@ -29,7 +28,7 @@ fun String?.findHardChar(): Boolean {
 
 /**判别是否包含Emoji表情*/
 fun String?.containsEmoji(): Boolean {
-    if (TextUtils.isEmpty(this))
+    if (this.isNullOrEmpty())
         return false
     val len = this!!.length
     for (i in 0 until len) {

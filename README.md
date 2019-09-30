@@ -14,7 +14,7 @@ allprojects {
 ~~~
 ~~~gradle
 dependencies {
-    api 'com.github.ddoolcg:QAndroid:1.5.1'
+    api 'com.github.ddoolcg:QAndroid:1.5.2'
 }
 ~~~
 
@@ -24,6 +24,7 @@ dependencies {
 public void onCreate() {
      super.onCreate();
      if (UIUtils.init(this)) onInitMainProcesses();
+     BaseActivity.setTranslucentStatusTheme(true);//设置为状态栏透明风格=false
      Token.INSTANCE.init("token", new Function1<Boolean, Unit>() {
          @Override
          public Unit invoke(Boolean aBoolean) {

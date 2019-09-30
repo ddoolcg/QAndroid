@@ -29,14 +29,14 @@ public class UIUtils {
     private static Handler handler;
     private static DisplayMetrics sMetrics;
     private static PackageInfo pi;
-    private static long mThreadId;
+    private static Thread sMainThread;
     private static Application application;
 
     /**
      * 初始化
      */
     public static boolean init(Application app) {
-        mThreadId = Thread.currentThread().getId();
+        sMainThread = Thread.currentThread();
         application = app;
         ToastUtils.init(app, MyToastStyle.INSTANCE);
         //异常奔溃的信息处理器初始化
@@ -76,8 +76,22 @@ public class UIUtils {
         return application;
     }
 
+    /**
+     * 获取主线程
+     *
+     * @see #getMainThreadId()
+     * @deprecated 请勿对主线程做set相关操作。
+     */
+    @Deprecated
+    public static Thread getMainThread() {
+        return sMainThread;
+    }
+
+    /**
+     * 获取主线程ID
+     */
     public static long getMainThreadId() {
-        return mThreadId;
+        return sMainThread.getId();
     }
 
     /**
@@ -94,40 +108,40 @@ public class UIUtils {
      * 获取宽度的总DP
      */
     public static int getWidthDp() {
-        getDisplayMetrics();
-        return (int) (sMetrics.widthPixels / sMetrics.density);
+        DisplayMetrics metrics = getDisplayMetrics();
+        return (int) (metrics.widthPixels / metrics.density);
     }
 
     /**
      * 获取屏幕的宽度
      */
     public static int getWidth() {
-        getDisplayMetrics();
-        return sMetrics.widthPixels;
+        DisplayMetrics metrics = getDisplayMetrics();
+        return metrics.widthPixels;
     }
 
     /**
      * 获取屏幕的高度
      */
     public static int getHeight() {
-        getDisplayMetrics();
-        return sMetrics.heightPixels;
+        DisplayMetrics metrics = getDisplayMetrics();
+        return metrics.heightPixels;
     }
 
     /**
      * 获取屏幕高的总DP
      */
     public static int getHeightDp() {
-        getDisplayMetrics();
-        return (int) (sMetrics.heightPixels / sMetrics.density);
+        DisplayMetrics metrics = getDisplayMetrics();
+        return (int) (metrics.heightPixels / metrics.density);
     }
 
     /**
      * dip转换px
      */
     public static int dip2px(float dip) {
-        getDisplayMetrics();
-        final float scale = sMetrics.density;
+        DisplayMetrics metrics = getDisplayMetrics();
+        final float scale = metrics.density;
         return (int) (dip * scale + 0.5f);
     }
 
@@ -135,8 +149,8 @@ public class UIUtils {
      * px转换dip
      */
     public static float px2dip(int px) {
-        getDisplayMetrics();
-        final float scale = sMetrics.density;
+        DisplayMetrics metrics = getDisplayMetrics();
+        final float scale = metrics.density;
         return px / scale + 0.5f;
     }
 
@@ -144,8 +158,8 @@ public class UIUtils {
      * 根据手机的分辨率从 sp 的单位 转成为 px(像素)
      */
     public static int sp2px(float spValue) {
-        getDisplayMetrics();
-        final float scale = sMetrics.scaledDensity;
+        DisplayMetrics metrics = getDisplayMetrics();
+        final float scale = metrics.scaledDensity;
         return (int) (spValue * scale + 0.5f);
     }
 
@@ -234,7 +248,7 @@ public class UIUtils {
     }
 
     public static boolean isRunInMainThread() {
-        return Thread.currentThread().getId() == getMainThreadId();
+        return Thread.currentThread() == sMainThread;
     }
 
     public static void runInMainThread(Runnable runnable) {

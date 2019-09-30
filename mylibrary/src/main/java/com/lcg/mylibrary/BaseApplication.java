@@ -21,6 +21,7 @@ public abstract class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         if (UIUtils.init(this)) onInitMainProcesses();
+        BaseActivity.setTranslucentStatusTheme(false);//设置为状态栏透明风格=false
         Token.INSTANCE.init("token", new Function1<Boolean, Unit>() {
             @Override
             public Unit invoke(Boolean aBoolean) {
