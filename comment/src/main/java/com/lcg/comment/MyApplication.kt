@@ -18,6 +18,8 @@ import com.lcg.mylibrary.utils.saveToken
  */
 class MyApplication : BaseApplication() {
     override fun onInitMainProcesses() {
+        // 全局沉浸开关
+        // BaseActivity.translucentStatusTheme = true
         L.DEBUG = BuildConfig.DEBUG
         CrashHandler.APPLOGS = "https://ddoolcg.pythonanywhere.com/error"
     }
@@ -40,5 +42,4 @@ class MyApplication : BaseApplication() {
             context.startActivity(intent)
         }
     }
-
 }
