@@ -21,7 +21,7 @@ class MyApplication : BaseApplication() {
         // 全局沉浸开关
         // BaseActivity.translucentStatusTheme = true
         L.DEBUG = BuildConfig.DEBUG
-        CrashHandler.APPLOGS = "https://ddoolcg.pythonanywhere.com/error"
+        CrashHandler.URL_LOGS = "https://ddoolcg.pythonanywhere.com/error"
     }
 
     override fun gotoLoin(showToast: Boolean) {

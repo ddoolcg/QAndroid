@@ -40,8 +40,7 @@ public class UIUtils {
         application = app;
         ToastUtils.init(app, MyToastStyle.INSTANCE);
         //异常奔溃的信息处理器初始化
-        CrashHandler crashHandler = CrashHandler
-                .getInstance(app);
+        CrashHandler crashHandler = CrashHandler.getInstance(app);
         Thread.setDefaultUncaughtExceptionHandler(crashHandler);
         //
         return initMainProcesses(app);
@@ -62,8 +61,7 @@ public class UIUtils {
                     MobclickAgent.enableEncrypt(true);
                     MobclickAgent.setCatchUncaughtExceptions(false);
                     // 发送上一次没有发送的异常
-                    CrashHandler.getInstance(app.getApplicationContext())
-                            .sendPreviousReportsToServer();
+                    CrashHandler.getInstance(app).sendPreviousReportsToServer();
                     return true;
                 }
                 break;

@@ -1,5 +1,6 @@
 package com.lcg.mylibrary;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -40,19 +41,19 @@ public class CrashHandler implements UncaughtExceptionHandler {
     private static final boolean DEBUG = false;
     private static UncaughtExceptionHandler mDefaultHandler;
     private static CrashHandler INSTANCE;
-    private static Context mContext;
+    private static Application mContext;
     private Map<String, String> mDeviceCrashInfo = new HashMap<String, String>();
     private static final String VERSION_NAME = "versionName";
     private static final String VERSION_CODE = "versionCode";
     private static final String STACK_TRACE = "STACK_TRACE";
     private static final String CRASH_REPORTER_EXTENSION = ".log";
-    public static String APPLOGS;
+    public static String URL_LOGS;
 
     private CrashHandler() {
         mailInit();
     }
 
-    public static CrashHandler getInstance(Context ctx) {
+    public static CrashHandler getInstance(Application ctx) {
         if (INSTANCE == null) {
             INSTANCE = new CrashHandler();
         }
@@ -87,6 +88,10 @@ public class CrashHandler implements UncaughtExceptionHandler {
             L.w(TAG, "handleException --- ex==null");
             return true;
         }
+        if (TextUtils.isEmpty(URL_LOGS)) {
+            L.w(TAG, "handleException --- URL_LOGS==null");
+            return true;
+        }
         // 收集设备信息
         collectCrashDeviceInfo(mContext);
         // 保存错误报告文件
@@ -97,10 +102,16 @@ public class CrashHandler implements UncaughtExceptionHandler {
         return true;
     }
 
+    /**
+     * 发送之前的异常
+     */
     public void sendPreviousReportsToServer() {
         sendCrashReportsToServer(mContext);
     }
 
+    /**
+     * 发送异常
+     */
     private void sendCrashReportsToServer(final Context ctx) {
         ThreadPoolUntil.getInstance().run(new Runnable() {
             @Override
@@ -136,10 +147,10 @@ public class CrashHandler implements UncaughtExceptionHandler {
         try {
             fr = new FileReader(file);
             BufferedReader reader = new BufferedReader(fr);
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
-                sb.append(line.trim() + "<br/>");
+                sb.append(line.trim()).append("<br/>");
             }
             reader.close();
             sendMsg(file, sb.toString());
@@ -152,9 +163,9 @@ public class CrashHandler implements UncaughtExceptionHandler {
      * 发送消息实体
      */
     private void sendMsg(final File file, String msg) {
-        if (!TextUtils.isEmpty(APPLOGS)) {
+        if (!TextUtils.isEmpty(URL_LOGS)) {
             HashMap<String, String> params = new HashMap<>();
-            params.put("toemail", "475825657@qq.com");
+//            params.put("toemail", "475825657@qq.com");
             params.put("title", file.getName());
             int ver = 0;
             try {
@@ -164,7 +175,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
             params.put("app_name", UIUtils.getContext().getPackageName());
             params.put("ver", ver + "");
             params.put("content", msg);
-            HttpManager.getInstance().post(APPLOGS, params,
+            HttpManager.getInstance().post(URL_LOGS, params,
                     new DataHandler() {
                         @Override
                         public void start() {
@@ -199,8 +210,8 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 + mDeviceCrashInfo.get(VERSION_CODE));
         String fileName = fileNameString + CRASH_REPORTER_EXTENSION;
         String[] fileList = mContext.fileList();
-        for (int i = 0; i < fileList.length; i++) {
-            if (fileList[i].equals(fileName)) {
+        for (String s : fileList) {
+            if (s.equals(fileName)) {
                 return fileName;
             }
         }
@@ -230,15 +241,15 @@ public class CrashHandler implements UncaughtExceptionHandler {
         log.setVersion(mDeviceCrashInfo.get(VERSION_NAME));
 
         Set<String> keySet = mDeviceCrashInfo.keySet();
-        StringBuffer sb = new StringBuffer();
-        sb.append(STACK_TRACE + ":<br/>" + result + "<br/>");
+        StringBuilder sb = new StringBuilder();
+        sb.append(STACK_TRACE + ":<br/>").append(result).append("<br/>");
         for (String key : keySet) {
-            sb.append(key + ":" + mDeviceCrashInfo.get(key) + "<br/>");
+            sb.append(key).append(":").append(mDeviceCrashInfo.get(key)).append("<br/>");
         }
         log.setContent(sb.toString());
     }
 
-    public void collectCrashDeviceInfo(Context ctx) {
+    private void collectCrashDeviceInfo(Context ctx) {
         try {
             PackageManager pm = ctx.getPackageManager();
             PackageInfo pi = pm.getPackageInfo(ctx.getPackageName(),
