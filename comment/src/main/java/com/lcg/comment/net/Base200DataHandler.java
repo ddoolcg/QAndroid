@@ -25,33 +25,18 @@ import kotlin.jvm.functions.Function1;
 public abstract class Base200DataHandler<D> implements DataHandler {
     @Override
     public void start() {
-        UIUtils.runInMainThread(new Runnable() {
-            @Override
-            public void run() {
-                onStart();
-            }
-        });
+        UIUtils.runInMainThread(this::onStart);
     }
 
     @Override
     public void netFinish() {
-        UIUtils.runInMainThread(new Runnable() {
-            @Override
-            public void run() {
-                onNetFinish();
-            }
-        });
+        UIUtils.runInMainThread(this::onNetFinish);
     }
 
     @Override
     public void fail(final int code, String errorData) {
         L.w("code=" + code + " errorData=" + errorData + "");
-        UIUtils.runInMainThread(new Runnable() {
-            @Override
-            public void run() {
-                onFail(code + "", "服务器错误");
-            }
-        });
+        UIUtils.runInMainThread(() -> onFail(code + "", "服务器错误"));
     }
 
     @Override
@@ -61,12 +46,7 @@ public abstract class Base200DataHandler<D> implements DataHandler {
             final JSONObject jsonObject = JSON.parseObject(successData);
             final String code1 = jsonObject.getString("code");
             if (!"0".equals(code1)) {
-                UIUtils.runInMainThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        onFail(code1, jsonObject.getString("message"));
-                    }
-                });
+                UIUtils.runInMainThread(() -> onFail(code1, jsonObject.getString("message")));
             } else {
                 Type type2 = getType();
                 final Object data;
@@ -76,17 +56,14 @@ public abstract class Base200DataHandler<D> implements DataHandler {
                 } else {
                     data = jsonObject.getString("data");
                 }
-                if (data == null) onFail("0", successData);
-                else UIUtils.runInMainThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        onSuccess((D) data);
-                    }
-                });
+                if (data == null)
+                    UIUtils.runInMainThread(() -> onFail("0", successData));
+                else
+                    UIUtils.runInMainThread(() -> onSuccess((D) data));
             }
         } catch (Exception e) {
             e.printStackTrace();
-            onFail("0", "服务器数据异常");
+            UIUtils.runInMainThread(() -> onFail("0", "服务器数据异常"));
         }
     }
 
