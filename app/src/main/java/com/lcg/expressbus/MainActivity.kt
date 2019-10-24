@@ -41,6 +41,10 @@ class MainActivity : BaseActivity() {
         newAlert {
             title = "我是标题"
             message = "我是<font color=\"#FF8500\">内容</font>"
+            setPositive("关闭") { dialog ->
+                dialog.dismiss()
+                UIUtils.showToastSafe("关闭对话框")
+            }
         }.show(supportFragmentManager, "alert")
     }
 }
