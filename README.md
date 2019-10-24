@@ -14,25 +14,28 @@ allprojects {
 ~~~
 ~~~gradle
 dependencies {
-    api 'com.github.ddoolcg:QAndroid:1.5.4'
+    api 'com.github.ddoolcg:QAndroid:1.6.0'
 }
 ~~~
 
-# UIUtils工具类需要初始化、自定义http认证，参考BaseApplication实现
+# 核心类QAndroid
 ~~~java
-@Override
-public void onCreate() {
-     super.onCreate();
-     if (UIUtils.init(this)) onInitMainProcesses();
-     BaseActivity.setTranslucentStatusTheme(true);//设置为状态栏透明风格=false
-     Token.INSTANCE.init("token", new Function1<Boolean, Unit>() {
-         @Override
-         public Unit invoke(Boolean aBoolean) {
-              gotoLoin(aBoolean);
-              return null;
-          }
-      });
-  }
+       QAndroid.INSTANCE
+                .initToken("token", new Function1<Boolean, Unit>() {
+                    @Override
+                    public Unit invoke(Boolean showToast) {
+                        gotoLoin(showToast);
+                        return null;
+                    }
+                })
+                .setTranslucentStatusTheme(false)
+                .initUIUtils(this, new Function1<Boolean, Unit>() {
+                    @Override
+                    public Unit invoke(Boolean main) {
+                        if (main) onInitMainProcesses();
+                        return null;
+                    }
+                });
 ~~~
 
 # 联网调用

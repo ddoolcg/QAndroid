@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="android.text.TextUtils" />
+
+        <variable
+            name="dialog"
+            type="com.lcg.mylibrary.model.AlertDialogObservable" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="15dp"
+        android:background="@{dialog.background}"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/shape_line_content"
+            android:minHeight="128dp"
+            android:orientation="vertical"
+            android:showDividers="middle">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="15dp"
+                android:text="@{dialog.title}"
+                android:textColor="@{dialog.textColor}"
+                android:textSize="16dp"
+                android:visibility="@{TextUtils.isEmpty(dialog.title) ? View.GONE : View.VISIBLE}"
+                tools:text="标题" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="15dp"
+                android:textColor="@{dialog.textColor}"
+                app:html="@{dialog.message}"
+                tools:text="内容" />
+        </LinearLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="#007fC1"
+            android:onClick="@{dialog::single}"
+            android:text="@{dialog.singleString}"
+            android:textColor="#FFF"
+            android:visibility="@{TextUtils.isEmpty(dialog.negative) || TextUtils.isEmpty(dialog.positive) ? View.VISIBLE : View.GONE}"
+            tools:text="知道了" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{TextUtils.isEmpty(dialog.negative) || TextUtils.isEmpty(dialog.positive) ? View.GONE : View.VISIBLE}">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="#999"
+                android:onClick="@{dialog::negative}"
+                android:text="@{dialog.negative}"
+                android:textColor="#FFF"
+                tools:text="否" />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="#007fC1"
+                android:onClick="@{dialog::positive}"
+                android:text="@{dialog.positive}"
+                android:textColor="#FFF"
+                tools:text="是" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

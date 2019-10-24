@@ -2,9 +2,6 @@ package com.lcg.mylibrary;
 
 import android.app.Application;
 
-import com.lcg.mylibrary.utils.Token;
-import com.lcg.mylibrary.utils.UIUtils;
-
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
@@ -20,15 +17,22 @@ public abstract class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        BaseActivity.setTranslucentStatusTheme(false);//设置为状态栏透明风格=false
-        if (UIUtils.init(this)) onInitMainProcesses();
-        Token.INSTANCE.init("token", new Function1<Boolean, Unit>() {
-            @Override
-            public Unit invoke(Boolean aBoolean) {
-                gotoLoin(aBoolean);
-                return null;
-            }
-        });
+        QAndroid.INSTANCE
+                .initToken("token", new Function1<Boolean, Unit>() {
+                    @Override
+                    public Unit invoke(Boolean showToast) {
+                        gotoLoin(showToast);
+                        return null;
+                    }
+                })
+                .setTranslucentStatusTheme(false)
+                .initUIUtils(this, new Function1<Boolean, Unit>() {
+                    @Override
+                    public Unit invoke(Boolean main) {
+                        if (main) onInitMainProcesses();
+                        return null;
+                    }
+                });
     }
 
     /**

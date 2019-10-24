@@ -19,7 +19,7 @@ import com.lcg.mylibrary.utils.saveToken
 class MyApplication : BaseApplication() {
     override fun onInitMainProcesses() {
         // 全局沉浸开关
-        // BaseActivity.translucentStatusTheme = true
+//         BaseActivity.translucentStatusTheme = true
         L.DEBUG = BuildConfig.DEBUG
         CrashHandler.URL_LOGS = "https://ddoolcg.pythonanywhere.com/error"
     }
