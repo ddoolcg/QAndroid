@@ -7,6 +7,7 @@ import android.widget.ScrollView
 import com.lcg.comment.ListActivity
 import com.lcg.expressbus.model.ListViewModelDemo
 import com.lcg.mylibrary.BaseActivity
+import com.lcg.mylibrary.fragment.newAlert
 import com.lcg.mylibrary.utils.UIUtils
 import com.lcg.mylibrary.utils.doOnGlobalLayout
 import com.lcg.mylibrary.utils.plusAssign
@@ -36,5 +37,10 @@ class MainActivity : BaseActivity() {
                 false
             }
         }
+        //
+        newAlert {
+            title = "我是标题"
+            message = "我是<font color=\"#FF8500\">内容</font>"
+        }.show(supportFragmentManager, "alert")
     }
 }
