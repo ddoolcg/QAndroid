@@ -15,8 +15,8 @@ import com.lcg.mylibrary.fragment.DialogFragment
  * @since 2019/10/24 15:23
  */
 class AlertDialogObservable(activity: BaseActivity?, private val dialog: DialogFragment) : BaseObservableMe(activity) {
-    var background = 0XFFFFFFFF
-    var textColor = 0XFF000000
+    var background: Int = -0x1
+    var textColor: Int = -0x1000000
 
     @get:Bindable
     var title: String? = null
