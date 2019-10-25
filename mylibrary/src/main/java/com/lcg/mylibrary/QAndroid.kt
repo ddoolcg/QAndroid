@@ -2,7 +2,9 @@ package com.lcg.mylibrary
 
 import android.app.Application
 import android.support.annotation.LayoutRes
+import com.android.databinding.library.baseAdapters.BR
 import com.lcg.mylibrary.dialog.ProgressDialog
+import com.lcg.mylibrary.model.AlertDialogObservable
 import com.lcg.mylibrary.net.DataEntry
 import com.lcg.mylibrary.utils.L
 import com.lcg.mylibrary.utils.Token
@@ -17,6 +19,7 @@ import com.lcg.mylibrary.utils.UIUtils
  */
 object QAndroid {
     /**初始化http认证*/
+    @JvmOverloads
     fun initToken(headerKey: String = "token", login: (showToast: Boolean) -> Unit): QAndroid {
         Token.init(headerKey, login)
         return this
@@ -52,6 +55,17 @@ object QAndroid {
         return this
     }
 
+    /**设置newAlert的AlertDialog样式*/
+    @JvmOverloads
+    fun setAlert(background: Int = -0x1, textColor: Int = -0x1000000,
+                 @LayoutRes layoutId: Int = R.layout.dialog_alert, variableId: Int = BR.dialog): QAndroid {
+        AlertDialogObservable.background = background
+        AlertDialogObservable.textColor = textColor
+        AlertDialogObservable.layoutId = layoutId
+        AlertDialogObservable.variableId = variableId
+        return this
+    }
+
     /**设置奔溃信息收集服务器地址*/
     fun setCrashURL(url: String): QAndroid {
         CrashHandler.URL_LOGS = url
@@ -63,4 +77,5 @@ object QAndroid {
         DataEntry.failDefault = handler
         return this
     }
+
 }

@@ -1,10 +1,12 @@
 package com.lcg.mylibrary.model
 
 import android.databinding.Bindable
+import android.support.annotation.LayoutRes
 import android.view.View
 import com.android.databinding.library.baseAdapters.BR
 import com.lcg.mylibrary.BaseActivity
 import com.lcg.mylibrary.BaseObservableMe
+import com.lcg.mylibrary.R
 import com.lcg.mylibrary.fragment.DialogFragment
 
 /**
@@ -15,8 +17,8 @@ import com.lcg.mylibrary.fragment.DialogFragment
  * @since 2019/10/24 15:23
  */
 class AlertDialogObservable(activity: BaseActivity?, private val dialog: DialogFragment) : BaseObservableMe(activity) {
-    var background: Int = -0x1
-    var textColor: Int = -0x1000000
+    val background = AlertDialogObservable.background
+    val textColor = AlertDialogObservable.textColor
 
     @get:Bindable
     var title: String? = null
@@ -83,5 +85,13 @@ class AlertDialogObservable(activity: BaseActivity?, private val dialog: DialogF
             negative?.isNotEmpty() == true -> negative(v)
             else -> dialog.dismiss()
         }
+    }
+
+    companion object {
+        var background: Int = -0x1
+        var textColor: Int = -0x1000000
+        @LayoutRes
+        var layoutId: Int = R.layout.dialog_alert
+        var variableId: Int = BR.dialog
     }
 }
