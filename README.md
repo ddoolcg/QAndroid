@@ -14,7 +14,7 @@ allprojects {
 ~~~
 ~~~gradle
 dependencies {
-    api 'com.github.ddoolcg:QAndroid:1.6.1'
+    api 'com.github.ddoolcg:QAndroid:1.7.0'
 }
 ~~~
 
@@ -44,10 +44,11 @@ dependencies {
 DataEntry("url").joinProgressDialog(activity).formBody(map).post<T> {TODO()}
 //抽象方法实现的方式调用，支持泛型套泛型的解析方式
 DataEntry("url").joinProgressDialog(activity).formBody(map).post<T>(OnSuccessListener)
-//默认统一处理接口调用失败
-DataEntry.failDefault={code,data->
-    TODO()
-    false
+//自定义网络错误处理
+QAndroid.setNetFailDefault { code, data ->
+     TODO()
+     //是否break向下传递（框架的网络错误处理）
+     true
 }
 ~~~
 
