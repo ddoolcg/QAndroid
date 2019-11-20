@@ -56,7 +56,7 @@ inline fun View.doOnPreDraw(crossinline action: (view: View) -> Unit) {
  *
  * @see View.setPadding
  */
-inline fun View.updatePadding(
+fun View.updatePadding(
         @Px left: Int = paddingLeft,
         @Px top: Int = paddingTop,
         @Px right: Int = paddingRight,
@@ -70,7 +70,7 @@ inline fun View.updatePadding(
  *
  * @see View.setPadding
  */
-inline fun View.setPadding(@Px size: Int) {
+fun View.setPadding(@Px size: Int) {
     setPadding(size, size, size, size)
 }
 
@@ -171,22 +171,22 @@ operator fun ViewGroup.get(index: Int) =
         getChildAt(index) ?: throw IndexOutOfBoundsException("Index: $index, Size: $childCount")
 
 /** Returns `true` if [view] is found in this view group. */
-inline operator fun ViewGroup.contains(view: View) = indexOfChild(view) != -1
+operator fun ViewGroup.contains(view: View) = indexOfChild(view) != -1
 
 /** Adds [view] to this view group. */
-inline operator fun ViewGroup.plusAssign(view: View) = addView(view)
+operator fun ViewGroup.plusAssign(view: View) = addView(view)
 
 /** Removes [view] from this view group. */
-inline operator fun ViewGroup.minusAssign(view: View) = removeView(view)
+operator fun ViewGroup.minusAssign(view: View) = removeView(view)
 
 /** Returns the number of views in this view group. */
 inline val ViewGroup.size get() = childCount
 
 /** Returns true if this view group contains no views. */
-inline fun ViewGroup.isEmpty() = childCount == 0
+fun ViewGroup.isEmpty() = childCount == 0
 
 /** Returns true if this view group contains one or more views. */
-inline fun ViewGroup.isNotEmpty() = childCount != 0
+fun ViewGroup.isNotEmpty() = childCount != 0
 
 /** Performs the given action on each view in this view group. */
 inline fun ViewGroup.forEach(action: (view: View) -> Unit) {
@@ -222,7 +222,7 @@ val ViewGroup.children: Sequence<View>
  *
  * @see ViewGroup.MarginLayoutParams.setMargins
  */
-inline fun ViewGroup.MarginLayoutParams.setMargins(@Px size: Int) {
+fun ViewGroup.MarginLayoutParams.setMargins(@Px size: Int) {
     setMargins(size, size, size, size)
 }
 
@@ -232,7 +232,7 @@ inline fun ViewGroup.MarginLayoutParams.setMargins(@Px size: Int) {
  *
  * @see ViewGroup.MarginLayoutParams.setMargins
  */
-inline fun ViewGroup.MarginLayoutParams.updateMargins(
+fun ViewGroup.MarginLayoutParams.updateMargins(
         @Px left: Int = leftMargin,
         @Px top: Int = topMargin,
         @Px right: Int = rightMargin,
@@ -243,12 +243,17 @@ inline fun ViewGroup.MarginLayoutParams.updateMargins(
 
 /**通过DataBindingUtil去setContentView
  * @see[DataBindingUtil.setContentView]*/
-inline fun <T : ViewDataBinding> Activity.setContentViewBinding(layoutResID: Int): T {
+fun <T : ViewDataBinding> Activity.setContentViewBinding(layoutResID: Int): T {
     return DataBindingUtil.setContentView(this, layoutResID)
 }
 
 /**通过DataBindingUtil去inflate
  * @see[DataBindingUtil.inflate]*/
-inline fun <T : ViewDataBinding> LayoutInflater.inflateBinding(layoutResID: Int, parent: ViewGroup, attachToParent: Boolean = false): T {
+@JvmOverloads
+fun <T : ViewDataBinding> LayoutInflater.inflateBinding(
+        layoutResID: Int,
+        parent: ViewGroup? = null,
+        attachToParent: Boolean = false
+): T {
     return DataBindingUtil.inflate(this, layoutResID, parent, attachToParent)
 }
