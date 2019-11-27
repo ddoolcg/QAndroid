@@ -20,7 +20,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.hjq.toast.ToastUtils;
-import com.lcg.mylibrary.CrashHandler;
 import com.umeng.analytics.MobclickAgent;
 
 import java.util.List;
@@ -39,10 +38,6 @@ public class UIUtils {
         sMainThread = Thread.currentThread();
         application = app;
         ToastUtils.init(app, MyToastStyle.INSTANCE);
-        //异常奔溃的信息处理器初始化
-        CrashHandler crashHandler = CrashHandler.getInstance(app);
-        Thread.setDefaultUncaughtExceptionHandler(crashHandler);
-        //
         return initMainProcesses(app);
     }
 
@@ -60,8 +55,6 @@ public class UIUtils {
                     MobclickAgent.setScenarioType(app, MobclickAgent.EScenarioType.E_UM_NORMAL);
                     MobclickAgent.enableEncrypt(true);
                     MobclickAgent.setCatchUncaughtExceptions(false);
-                    // 发送上一次没有发送的异常
-                    CrashHandler.getInstance(app).sendPreviousReportsToServer();
                     return true;
                 }
                 break;

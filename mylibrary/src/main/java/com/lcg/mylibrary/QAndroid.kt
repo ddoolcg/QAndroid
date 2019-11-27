@@ -67,8 +67,11 @@ object QAndroid {
     }
 
     /**设置奔溃信息收集服务器地址*/
-    fun setCrashURL(url: String): QAndroid {
-        CrashHandler.URL_LOGS = url
+    @Synchronized
+    fun setCrashURL(app: Application, url: String): QAndroid {
+        val crashHandler = CrashHandler.getInstance(app, url)
+        Thread.setDefaultUncaughtExceptionHandler(crashHandler)
+        crashHandler.sendPreviousReportsToServer()
         return this
     }
 

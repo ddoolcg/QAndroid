@@ -4,8 +4,7 @@ import android.content.Intent
 import com.lcg.comment.activity.auth.LoginActivity
 import com.lcg.mylibrary.BaseActivity
 import com.lcg.mylibrary.BaseApplication
-import com.lcg.mylibrary.CrashHandler
-import com.lcg.mylibrary.utils.L
+import com.lcg.mylibrary.QAndroid
 import com.lcg.mylibrary.utils.UIUtils
 import com.lcg.mylibrary.utils.saveToken
 
@@ -18,10 +17,9 @@ import com.lcg.mylibrary.utils.saveToken
  */
 class MyApplication : BaseApplication() {
     override fun onInitMainProcesses() {
-        // 全局沉浸开关
-//         BaseActivity.translucentStatusTheme = true
-        L.DEBUG = BuildConfig.DEBUG
-        CrashHandler.URL_LOGS = "https://ddoolcg.pythonanywhere.com/error"
+        QAndroid.setTranslucentStatusTheme(true)
+                .setDebug(true)
+                .setCrashURL(this, "https://ddoolcg.pythonanywhere.com/error")
     }
 
     override fun gotoLoin(showToast: Boolean) {
