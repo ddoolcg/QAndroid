@@ -25,10 +25,8 @@
         <LinearLayout
             android:layout_width="280dp"
             android:layout_height="wrap_content"
-            android:divider="@drawable/shape_line_content"
             android:minHeight="128dp"
-            android:orientation="vertical"
-            android:showDividers="middle">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
@@ -40,6 +38,11 @@
                 android:textSize="16dp"
                 android:visibility="@{TextUtils.isEmpty(dialog.title) ? View.GONE : View.VISIBLE}"
                 tools:text="标题" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@{dialog.textColor}" />
 
             <TextView
                 android:layout_width="match_parent"
