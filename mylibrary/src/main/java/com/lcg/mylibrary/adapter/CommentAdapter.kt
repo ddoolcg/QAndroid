@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.lcg.mylibrary.BaseActivity
+import com.lcg.mylibrary.BaseObservableMe
 import com.lcg.mylibrary.utils.inflateBinding
 
 /**
@@ -15,19 +17,36 @@ import com.lcg.mylibrary.utils.inflateBinding
  * @version 1.0
  * @since 2019/01/16 13:57
  */
-class CommentAdapter @JvmOverloads constructor(
-    private val data: ArrayList<out BaseObservable>,
-    private val mLayoutId: Int,
-    private val mVariableId: Int,
+class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private val data: ArrayList<out BaseObservable>
+    private var mLayoutId: Int? = null
+    private var mVariableId: Int? = null
     private var mFooterViewHolder: FooterViewHolder? = null
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    @JvmOverloads
+    constructor(data: ArrayList<Item>, footerViewHolder: FooterViewHolder? = null) : super() {
+        this.data = data
+        this.mFooterViewHolder = footerViewHolder
+    }
+
+    @JvmOverloads
+    constructor(data: ArrayList<out BaseObservable>,
+                layoutId: Int,
+                variableId: Int,
+                footerViewHolder: FooterViewHolder? = null) : super() {
+        this.data = data
+        this.mLayoutId = layoutId
+        this.mVariableId = variableId
+        this.mFooterViewHolder = footerViewHolder
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == 0) {
+        return if (viewType == 1) {
             mFooterViewHolder!!
         } else {
+            val layoutId = if (viewType == 0) mLayoutId!! else viewType
             val binding = LayoutInflater.from(parent.context)
-                    .inflateBinding<ViewDataBinding>(mLayoutId, parent, false)
+                    .inflateBinding<ViewDataBinding>(layoutId, parent, false)
             ContentHolder(binding.root).apply {
                 this.binding = binding
             }
@@ -44,19 +63,38 @@ class CommentAdapter @JvmOverloads constructor(
 
     override fun getItemViewType(position: Int): Int {
         return if (position < data.size) {
-            1
+            val item = data[position]
+            if (item is Item) {
+                item.layoutId
+            } else {
+                0
+            }
         } else {
-            0
+            1 //LayoutRes生成的第一个字节为7F
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (getItemViewType(position) == 1) {
-            (holder as ContentHolder).binding.setVariable(mVariableId, data[position])
+        val type = getItemViewType(position)
+        if (type != 1) {
+            val item = data[position]
+            if (type == 0) {
+                (holder as ContentHolder).binding.setVariable(mVariableId!!, item)
+            } else {
+                (holder as ContentHolder).binding.setVariable((item as Item).variableId, item)
+            }
         }
     }
 
     class ContentHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
         lateinit var binding: ViewDataBinding
+    }
+
+    /**多变的item，适用list有多种layout的情况*/
+    abstract class Item(activity: BaseActivity) : BaseObservableMe(activity) {
+        /**LayoutRes*/
+        abstract val layoutId: Int
+        /**BR id*/
+        abstract val variableId: Int
     }
 }

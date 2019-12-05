@@ -3,6 +3,7 @@ package com.lcg.mylibrary.utils
 import android.app.Activity
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
+import android.support.annotation.LayoutRes
 import android.support.annotation.Px
 import android.view.LayoutInflater
 import android.view.View
@@ -251,7 +252,7 @@ fun <T : ViewDataBinding> Activity.setContentViewBinding(layoutResID: Int): T {
  * @see[DataBindingUtil.inflate]*/
 @JvmOverloads
 fun <T : ViewDataBinding> LayoutInflater.inflateBinding(
-        layoutResID: Int,
+        @LayoutRes layoutResID: Int,
         parent: ViewGroup? = null,
         attachToParent: Boolean = false
 ): T {

@@ -82,7 +82,7 @@ open class DataEntry(private val url: String) {
     }
 
     /**接入进度对话框*/
-    fun joinProgressDialog(baseActivity: BaseActivity, msg: String = "加载中...", finish2Close: Boolean = true): DataEntry {
+    fun joinProgressDialog(baseActivity: BaseActivity?, msg: String = "加载中...", finish2Close: Boolean = true): DataEntry {
         this.baseActivity = baseActivity
         this.msg = msg
         this.finish2Close = finish2Close
