@@ -54,7 +54,7 @@ open class BaseActivity : FragmentActivity() {
      * @param call 网络请求的call
      */
     @JvmOverloads
-    fun showProgressDialog(msg: String, call: Call?, cancelable: Boolean = true) {
+    fun showProgressDialog(msg: String = "加载中...", call: Call? = null, cancelable: Boolean = true) {
         if (mProgressDialog == null)
             mProgressDialog = ProgressDialog(this)
         mProgressDialog!!.setCancelable(cancelable)
@@ -67,7 +67,8 @@ open class BaseActivity : FragmentActivity() {
      *
      * @param msg 如果不为空，则只会关闭与之匹配的进度对话框。
      */
-    fun dismissProgressDialog(msg: String?) {
+    @JvmOverloads
+    fun dismissProgressDialog(msg: String? = null) {
         if (mProgressDialog != null) {
             try {
                 mProgressDialog!!.dismiss(msg)

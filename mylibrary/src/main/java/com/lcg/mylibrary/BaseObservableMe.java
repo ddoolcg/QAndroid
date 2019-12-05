@@ -54,6 +54,15 @@ public class BaseObservableMe extends BaseObservable implements Serializable {
     /**
      * 显示进度对话框
      *
+     * @param msg 你想要显示的消息
+     */
+    public void notifyProgressDialogShow(String msg) {
+        notifyProgressDialogShow(msg, null);
+    }
+
+    /**
+     * 显示进度对话框
+     *
      * @param msg  你想要显示的消息
      * @param call 网络请求的call
      */
@@ -66,15 +75,15 @@ public class BaseObservableMe extends BaseObservable implements Serializable {
      *
      * @param msg 如果不为空，则只会关闭与之匹配的进度对话框。
      */
-    public void notifyProgressDialogdismiss(String msg) {
+    public void notifyProgressDialogDismiss(String msg) {
         activity.dismissProgressDialog(msg);
     }
 
     /**
      * 关闭进度对话框
      */
-    public void notifyProgressDialogdismiss() {
-        notifyProgressDialogdismiss(null);
+    public void notifyProgressDialogDismiss() {
+        notifyProgressDialogDismiss(null);
     }
 
     /**
