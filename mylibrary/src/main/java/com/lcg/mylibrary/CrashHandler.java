@@ -72,17 +72,16 @@ public class CrashHandler implements UncaughtExceptionHandler {
             // 如果用户没有处理则让系统默认的异常处理器来处理
             mDefaultHandler.uncaughtException(thread, ex);
         } else {
-            //状态保存导致奔溃的activity无限重启
+            //下面代码解决：activity创建生命周期时奔溃导致无限重启，在创建中的时候奔溃会把上一个activity关闭
             ArrayList<Activity> activities = BaseActivity.getActivities();
-            if (!activities.isEmpty()) activities.get(activities.size() - 1).finish();
-            // Sleep一会后结束程序
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if (!activities.isEmpty()) {
+                Activity activity = activities.get(activities.size() - 1);
+                activity.finish();
             }
+            //
             android.os.Process.killProcess(android.os.Process.myPid());
-            System.exit(10);
+            //虚拟机退出这段代码没什么用
+//            System.exit(0);
         }
     }
 
@@ -100,8 +99,13 @@ public class CrashHandler implements UncaughtExceptionHandler {
         // 保存错误报告文件
         saveCrashInfoToFile(ex);
         // 发送错误报告到服务器
-        // 优化注释掉
         // sendCrashReportsToServer(mContext);
+        // 尝试等待发送报告结束
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         return true;
     }
 
