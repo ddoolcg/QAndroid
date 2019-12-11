@@ -165,7 +165,7 @@ open class BaseActivity : FragmentActivity() {
 
     companion object {
         @JvmStatic
-        var activities = ArrayList<BaseActivity>()
+        var activities = ArrayList<Activity>()
         /**全局透明状态控制*/
         @JvmStatic
         var translucentStatusTheme = false

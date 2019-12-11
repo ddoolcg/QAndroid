@@ -1,5 +1,6 @@
 package com.lcg.mylibrary;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -26,6 +27,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -70,6 +72,9 @@ public class CrashHandler implements UncaughtExceptionHandler {
             // 如果用户没有处理则让系统默认的异常处理器来处理
             mDefaultHandler.uncaughtException(thread, ex);
         } else {
+            //状态保存导致奔溃的activity无限重启
+            ArrayList<Activity> activities = BaseActivity.getActivities();
+            if (!activities.isEmpty()) activities.get(activities.size() - 1).finish();
             // Sleep一会后结束程序
             try {
                 Thread.sleep(1000);
