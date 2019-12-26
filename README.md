@@ -1,9 +1,13 @@
 
 # QAndroid
 简单小巧、快速的android app开发框架。
+
 更少的代码实现功能，并且便于维护。
+
 基于dataBinding的mvvm架构、使用kotlin开发更迅捷。
+
 框架已经集成okhttp、glide、fastjson和友盟统计。
+
 
 # 关于使用
 ~~~gradle
