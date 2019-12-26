@@ -24,6 +24,7 @@ import java.util.*
 import kotlin.collections.set
 import kotlin.math.sqrt
 
+
 /**
  * WebView的Fragment容器以及JS实现
  *
@@ -38,6 +39,7 @@ class WebViewFragment : BaseFragment() {
     private var mListener: OnCloseListener? = null
     private var isPad: Boolean = false
     private val jiMap = hashMapOf<String, Any>()
+    private var titleObserver: ((String) -> Unit)? = null
     /**
      * JS调用关闭页面监听
      */
@@ -60,6 +62,13 @@ class WebViewFragment : BaseFragment() {
         if (VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB && root != null && root.wv != null) {
             root.wv.removeJavascriptInterface(interfaceName)
         }
+    }
+
+    /**
+     * H5的title监听
+     */
+    fun setTitleObserver(observer: (String) -> Unit) {
+        titleObserver = observer
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -99,6 +108,15 @@ class WebViewFragment : BaseFragment() {
                 if (newProgress == 100) {
                     root.pb.visibility = View.GONE
                     root.tv.visibility = View.GONE
+                }
+            }
+
+            override fun onReceivedTitle(view: WebView?, title: String?) {
+                if (titleObserver != null) {
+                    val forwardList: WebBackForwardList = root.wv.copyBackForwardList()
+                    forwardList.currentItem?.title?.run {
+                        titleObserver!!.invoke(this)
+                    }
                 }
             }
         }
