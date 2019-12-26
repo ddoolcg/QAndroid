@@ -118,14 +118,14 @@ public class HttpManager {
     /**
      * 无参get请求
      */
-    public Call get(String url, DataHandler handler) {
+    public Call get(String url, ResponseHandler handler) {
         return get(url, null, handler);
     }
 
     /**
      * get请求
      */
-    public Call get(String url, HashMap<String, String> paramsMap, final DataHandler handler) {
+    public Call get(String url, HashMap<String, String> paramsMap, final ResponseHandler handler) {
         if (paramsMap != null) {
             //处理参数
             StringBuilder tempParams = new StringBuilder();
@@ -151,7 +151,7 @@ public class HttpManager {
     /**
      * post请求
      */
-    public Call post(String url, String content, final DataHandler handler) {
+    public Call post(String url, String content, final ResponseHandler handler) {
         L.d("net_put", content);
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), content);
         //
@@ -162,7 +162,7 @@ public class HttpManager {
     /**
      * post请求
      */
-    public Call post(String url, HashMap<String, String> paramsMap, final DataHandler handler) {
+    public Call post(String url, HashMap<String, String> paramsMap, final ResponseHandler handler) {
         RequestBody formBody = getRequestBody(paramsMap);
         //
         Request request = addHeaders().url(url).post(formBody).build();
@@ -172,7 +172,7 @@ public class HttpManager {
     /**
      * put请求
      */
-    public Call put(String url, HashMap<String, String> paramsMap, final DataHandler handler) {
+    public Call put(String url, HashMap<String, String> paramsMap, final ResponseHandler handler) {
         RequestBody formBody = getRequestBody(paramsMap);
         //
         Request request = addHeaders().url(url).put(formBody).build();
@@ -182,7 +182,7 @@ public class HttpManager {
     /**
      * put请求
      */
-    public Call put(String url, String content, final DataHandler handler) {
+    public Call put(String url, String content, final ResponseHandler handler) {
         L.d("net_put", content);
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), content);
         //
@@ -193,14 +193,14 @@ public class HttpManager {
     /**
      * 无参delete请求
      */
-    public Call delete(String url, DataHandler handler) {
+    public Call delete(String url, ResponseHandler handler) {
         return delete(url, (HashMap<String, String>) null, handler);
     }
 
     /**
      * delete请求
      */
-    public Call delete(String url, HashMap<String, String> paramsMap, final DataHandler handler) {
+    public Call delete(String url, HashMap<String, String> paramsMap, final ResponseHandler handler) {
         if (paramsMap != null) {
             //处理参数
             StringBuilder tempParams = new StringBuilder();
@@ -226,7 +226,7 @@ public class HttpManager {
     /**
      * delete请求
      */
-    public Call delete(String url, String content, final DataHandler handler) {
+    public Call delete(String url, String content, final ResponseHandler handler) {
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), content);
         Request request = addHeaders().url(url).delete(requestBody).build();
         return request(handler, request);
@@ -252,10 +252,10 @@ public class HttpManager {
     /**
      * 请求
      */
-    private Call request(final DataHandler handler, Request request) {
+    private Call request(final ResponseHandler handler, Request request) {
         L.d(request.toString());
         Call call = client.newCall(request);
-        handler.start();
+        handler.start(call);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -286,7 +286,7 @@ public class HttpManager {
     /**
      * 文件上传
      */
-    public Call upload(String url, @NonNull HashMap<String, Object> paramsMap, final DataHandler
+    public Call upload(String url, @NonNull HashMap<String, Object> paramsMap, final ResponseHandler
             handler) {
         MultipartBody.Builder builder = new MultipartBody.Builder();
         //设置类型

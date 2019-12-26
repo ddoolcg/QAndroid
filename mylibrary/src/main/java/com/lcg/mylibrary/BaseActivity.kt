@@ -20,7 +20,7 @@ import java.util.*
  * @version 1.0
  * @since 2016/10/13 11:03
  */
-open class BaseActivity : FragmentActivity() {
+open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
     private var mProgressDialog: ProgressDialog? = null
     /**手机状态栏是否被设置过*/
     private var statusBySet = false
@@ -54,7 +54,7 @@ open class BaseActivity : FragmentActivity() {
      * @param call 网络请求的call
      */
     @JvmOverloads
-    fun showProgressDialog(msg: String = "加载中...", call: Call? = null, cancelable: Boolean = true) {
+    override fun showProgressDialog(msg: String, call: Call?, cancelable: Boolean) {
         if (mProgressDialog == null)
             mProgressDialog = ProgressDialog(this)
         mProgressDialog!!.setCancelable(cancelable)
@@ -68,14 +68,13 @@ open class BaseActivity : FragmentActivity() {
      * @param msg 如果不为空，则只会关闭与之匹配的进度对话框。
      */
     @JvmOverloads
-    fun dismissProgressDialog(msg: String? = null) {
+    override fun dismissProgressDialog(msg: String?) {
         if (mProgressDialog != null) {
             try {
                 mProgressDialog!!.dismiss(msg)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-
         }
     }
 

@@ -1,6 +1,8 @@
 
 # QAndroid
-简单小巧、快速的android app开发框架。基于dataBinding的mvvm架构、使用kotlin开发跟迅捷。
+简单小巧、快速的android app开发框架。
+更少的代码实现功能，并且便于维护。
+基于dataBinding的mvvm架构、使用kotlin开发更迅捷。
 框架已经集成okhttp、glide、fastjson和友盟统计。
 
 # 关于使用
@@ -14,7 +16,7 @@ allprojects {
 ~~~
 ~~~gradle
 dependencies {
-    api 'com.github.ddoolcg:QAndroid:1.8.0'
+    api 'com.github.ddoolcg:QAndroid:1.9.0'
 }
 ~~~
 
@@ -41,9 +43,9 @@ dependencies {
 # 联网调用
 ~~~kotlin
 //lambda不支持泛型套泛型的解析方式
-DataEntry("url").joinProgressDialog(activity).formBody(map).post<T> {TODO()}
+HttpUrl("url").joinProgressDialog(activity).formBody(map).post<T> {TODO()}
 //抽象方法实现的方式调用，支持泛型套泛型的解析方式
-DataEntry("url").joinProgressDialog(activity).formBody(map).post<T>(OnSuccessListener)
+HttpUrl("url").joinProgressDialog(activity).formBody(map).post<T>(OnSuccessListener)
 //自定义网络错误处理
 QAndroid.setNetFailDefault { code, data ->
      TODO()
@@ -103,7 +105,10 @@ viewGroup -= view//removeView
 #### RecyclerView.Adapter
 基于dataBinding的实现的CommentAdapter
 ~~~kotlin
+//单一类型
 CommentAdapter(items, R.layout.item_demo, BR.item)
+//多样化的items
+CommentAdapter(items)
 ~~~
 构造函数说明：
 
@@ -155,5 +160,5 @@ ListActivity.start(this@MainActivity, ListViewModelDemo::class.java, bundle)
 ~~~
 
 # DataEntry无法满足你的需求可参考：
-https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/net/Base200DataHandler.java
-https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/net/MyDataEntry.kt
+https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/net/Base200Handler.java
+https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/net/MyUrl.kt

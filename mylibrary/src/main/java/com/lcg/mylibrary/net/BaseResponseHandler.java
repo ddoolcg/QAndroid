@@ -16,6 +16,7 @@ import java.lang.reflect.Type;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import okhttp3.Call;
 
 /**
  * 基本数据处理器，主线程执行on方法。S为成功的数据类型，E为错误的数据类型。
@@ -25,13 +26,13 @@ import kotlin.jvm.functions.Function1;
  * @since 2016/10/14 14:17
  */
 
-public abstract class BaseDataHandler<S, E> implements DataHandler {
+public abstract class BaseResponseHandler<S, E> implements ResponseHandler {
     @Override
-    public void start() {
+    public void start(final Call call) {
         UIUtils.runInMainThread(new Runnable() {
             @Override
             public void run() {
-                onStart();
+                onStart(call);
             }
         });
     }
@@ -122,7 +123,7 @@ public abstract class BaseDataHandler<S, E> implements DataHandler {
     /**
      * 网络连接之前调用
      */
-    public void onStart() {
+    public void onStart(Call call) {
     }
 
     /**
@@ -134,7 +135,7 @@ public abstract class BaseDataHandler<S, E> implements DataHandler {
      * 网络异常调用
      *
      * @param code > 0服务器返回异常，其他表示连接失败。
-     * @param data
+     * @param data bean对象
      */
     public void onFail(int code, E data) {
         if (code > 0) {

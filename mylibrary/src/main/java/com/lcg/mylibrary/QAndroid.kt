@@ -5,7 +5,7 @@ import android.support.annotation.LayoutRes
 import com.android.databinding.library.baseAdapters.BR
 import com.lcg.mylibrary.dialog.ProgressDialog
 import com.lcg.mylibrary.model.AlertDialogObservable
-import com.lcg.mylibrary.net.DataEntry
+import com.lcg.mylibrary.net.HttpUrl
 import com.lcg.mylibrary.utils.L
 import com.lcg.mylibrary.utils.Token
 import com.lcg.mylibrary.utils.UIUtils
@@ -77,7 +77,7 @@ object QAndroid {
 
     /**设置联网请求统一的失败处理器*/
     fun setNetFailDefault(handler: ((code: Int, data: String?) -> Boolean)): QAndroid {
-        DataEntry.failDefault = handler
+        HttpUrl.failDefault = handler
         return this
     }
 

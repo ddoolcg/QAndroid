@@ -91,7 +91,7 @@ class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     /**多变的item，适用list有多种layout的情况*/
-    abstract class Item(activity: BaseActivity) : BaseObservableMe(activity) {
+    abstract class Item(activity: BaseActivity? = null) : BaseObservableMe(activity) {
         /**LayoutRes*/
         abstract val layoutId: Int
         /**BR id*/

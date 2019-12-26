@@ -10,7 +10,6 @@ import com.lcg.comment.activity.auth.RegisterActivity
 import com.lcg.comment.bean.AuthUser
 import com.lcg.mylibrary.BaseActivity
 import com.lcg.mylibrary.BaseObservableMe
-import com.lcg.mylibrary.net.DataEntry
 import com.lcg.mylibrary.utils.*
 
 /**
@@ -38,12 +37,12 @@ open class Login(activity: BaseActivity) : BaseObservableMe(activity) {
         if (!check())
             return
         val map = hashMapOf("username" to username, "password" to MD5.GetMD5Code(password))
-        DataEntry(HttpUrl.login).joinProgressDialog(activity).formBody(map).post<AuthUser> {
+        com.lcg.mylibrary.net.HttpUrl(HttpUrl.login).join(activity).formBody(map).post<AuthUser> {
             saveToken(it.token)
             PreferenceKTX.setConfig(it)
             try {
                 val clazz: Class<Activity> = Class.forName("com.lcg.expressbus.MainActivity") as Class<Activity>
-                activity.startActivity(clazz)
+                activity!!.startActivity(clazz)
                 activity.finish()
             } catch (e: Exception) {
                 throw RuntimeException("com.lcg.expressbus.MainActivity is error!")
@@ -53,7 +52,7 @@ open class Login(activity: BaseActivity) : BaseObservableMe(activity) {
 
     /**去注册*/
     fun gotoRegister(view: View) {
-        RegisterActivity.start(activity)
+        RegisterActivity.start(activity!!)
     }
 
     /**去密码重置*/

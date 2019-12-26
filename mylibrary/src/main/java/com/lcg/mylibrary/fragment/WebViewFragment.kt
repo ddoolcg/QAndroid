@@ -159,7 +159,7 @@ class WebViewFragment : BaseFragment() {
             if (mListener != null) {
                 mListener!!.onClose()
             }
-            activity.finish()
+            activity?.finish()
         }
 
         /**
@@ -191,7 +191,7 @@ class WebViewFragment : BaseFragment() {
                 if (root.wv.canGoBack()) {
                     root.wv.goBack() // 返回前一个页面
                 } else {
-                    activity.finish()
+                    activity?.finish()
                 }
             }
         }
@@ -243,7 +243,7 @@ class WebViewFragment : BaseFragment() {
             }
             UIUtils.showToastSafe("复制成功")
             val clipboard = activity
-                    .getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    ?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             if (clipboard.hasText()) {
                 if (text == clipboard.text.toString()) {
                     return 1

@@ -9,7 +9,6 @@ import com.lcg.comment.HttpUrl
 import com.lcg.comment.activity.auth.LoginActivity
 import com.lcg.comment.bean.AuthUser
 import com.lcg.mylibrary.BaseActivity
-import com.lcg.mylibrary.net.DataEntry
 import com.lcg.mylibrary.utils.MD5
 import com.lcg.mylibrary.utils.PreferenceKTX
 import com.lcg.mylibrary.utils.UIUtils
@@ -35,18 +34,18 @@ class Register(activity: BaseActivity) : Login(activity) {
         if (!check())
             return
         val map = hashMapOf("username" to username, "password" to MD5.GetMD5Code(password))
-        DataEntry(HttpUrl.register).joinProgressDialog(activity).formBody(map).post<AuthUser> {
+        com.lcg.mylibrary.net.HttpUrl(HttpUrl.register).join(activity).formBody(map).post<AuthUser> {
             saveToken(it.token)
             PreferenceKTX.setConfig(it)
             try {
                 val clazz: Class<Activity> = Class.forName("com.lcg.expressbus.MainActivity") as Class<Activity>
-                activity.startActivity(clazz)
+                activity!!.startActivity(clazz)
                 activity.finish()
             } catch (e: Exception) {
                 throw RuntimeException("com.lcg.expressbus.MainActivity is error!")
             }
-            BaseActivity.activities.forEach {
-                (it as? LoginActivity)?.finish()
+            BaseActivity.activities.forEach { activity ->
+                (activity as? LoginActivity)?.finish()
             }
         }
     }

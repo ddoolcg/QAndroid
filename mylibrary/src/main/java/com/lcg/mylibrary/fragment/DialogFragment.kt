@@ -4,6 +4,7 @@ import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.os.Bundle
 import android.support.annotation.LayoutRes
+import android.support.v4.app.FragmentManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,20 +14,32 @@ import com.lcg.mylibrary.model.AlertDialogObservable
 
 /**弹窗*/
 class DialogFragment : android.support.v4.app.DialogFragment() {
+    var binding: ViewDataBinding? = null
     @LayoutRes
     var layoutId: Int = 0
     var variableId: Int = 0
     var variable: BaseObservableMe? = null
+        set(value) {
+            field = value
+            binding?.setVariable(variableId, variable)
+        }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        layoutId = arguments?.getInt("layoutId") ?: 0
+        variableId = arguments?.getInt("variableId") ?: 0
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        if (variable == null) {
-            dismiss()
-            return null
-        }
-        val binding = DataBindingUtil.inflate<ViewDataBinding>(inflater, layoutId, container, false)
-        binding.setVariable(variableId, variable)
-        return binding.root
+        binding = DataBindingUtil.inflate(inflater, layoutId, container, false)
+        binding!!.setVariable(variableId, variable)
+        return binding!!.root
+    }
+
+    fun show(manager: FragmentManager, variable: BaseObservableMe) {
+        this.variable = variable
+        super.show(manager, variable.titleText)
     }
 
     companion object {

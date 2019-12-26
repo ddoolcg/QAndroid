@@ -15,7 +15,7 @@ class LoginActivity : BaseActivity() {
                 .activity_login)
         val login = Login(this).apply {
             titleText = "登陆"
-            isShowBack = false
+            showBack = false
         }
         binding.login = login
     }

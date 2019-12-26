@@ -11,7 +11,7 @@ import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.lcg.mylibrary.bean.ExceptionLog;
-import com.lcg.mylibrary.net.DataHandler;
+import com.lcg.mylibrary.net.ResponseHandler;
 import com.lcg.mylibrary.net.HttpManager;
 import com.lcg.mylibrary.utils.L;
 import com.lcg.mylibrary.utils.MD5;
@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import okhttp3.Call;
 
 /**
  * 异常退出信息收集类
@@ -183,9 +185,10 @@ public class CrashHandler implements UncaughtExceptionHandler {
             params.put("ver", ver + "");
             params.put("content", msg);
             HttpManager.getInstance().post(mUrl, params,
-                    new DataHandler() {
+                    new ResponseHandler() {
+
                         @Override
-                        public void start() {
+                        public void start(Call call) {
                         }
 
                         @Override

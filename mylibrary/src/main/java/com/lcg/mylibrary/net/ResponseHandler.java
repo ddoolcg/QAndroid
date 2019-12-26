@@ -1,5 +1,7 @@
 package com.lcg.mylibrary.net;
 
+import okhttp3.Call;
+
 /**
  * 网络数据处理器，方法都是非主线程执行。
  *
@@ -8,11 +10,11 @@ package com.lcg.mylibrary.net;
  * @since 2016/10/14 14:04
  */
 
-public interface DataHandler {
+public interface ResponseHandler {
     /**
      * 请求真正开始，否则还在队列中。
      */
-    void start();
+    void start(Call call);
 
     /**
      * 网络请求完成

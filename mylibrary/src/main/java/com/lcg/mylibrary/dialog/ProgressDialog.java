@@ -11,7 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import com.lcg.mylibrary.ProgressDialogInterface;
 import com.lcg.mylibrary.R;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import okhttp3.Call;
 
@@ -22,7 +26,7 @@ import okhttp3.Call;
  * @version 1.0
  * @since 2016/10/21 11:45
  */
-public class ProgressDialog extends Dialog {
+public class ProgressDialog extends Dialog implements ProgressDialogInterface {
     private Call mCall;
     private TextView tvMsg;
     @LayoutRes
@@ -83,5 +87,21 @@ public class ProgressDialog extends Dialog {
 
     public void setCall(Call call) {
         mCall = call;
+    }
+
+    @Override
+    public void showProgressDialog(@NotNull String msg, @Nullable Call call, boolean cancelable) {
+        setCancelable(cancelable);
+        setCall(call);
+        show(msg);
+    }
+
+    @Override
+    public void dismissProgressDialog(@Nullable String msg) {
+        try {
+            dismiss(msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

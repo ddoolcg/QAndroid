@@ -1,6 +1,7 @@
 package com.lcg.mylibrary.net
 
-import com.lcg.mylibrary.BaseActivity
+import com.lcg.mylibrary.ProgressDialogInterface
+import okhttp3.Call
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.util.*
@@ -9,25 +10,24 @@ import java.util.*
  * 新联网框架
  *
  * @author lei.chuguang Email:475825657@qq.com
- * @version 1.0
- * @since 2017/8/23 14:43
+ * @version 2.0
+ * @since 2019/12/26 10:28
  */
-open class DataEntry(private val url: String) {
+open class HttpUrl(private val url: String) {
     private var formMap: HashMap<String, String>? = null
     private var body: String? = null
-    protected var baseActivity: BaseActivity? = null
+    protected var progress: ProgressDialogInterface? = null
     protected var msg: String? = null
-    protected var finish2Close = true
     protected var fail: ((code: Int, data: String?) -> Boolean)? = null
-    protected open fun <T> baseDataHandler(observable: ((data: T) -> Unit)? = null, listener: OnSuccessListener<T>? = null): DataHandler {
-        return object : BaseDataHandler<T, String>() {
-            override fun onStart() {
-                baseActivity?.showProgressDialog(msg!!, null)
+    /**响应处理器*/
+    protected open fun <T> responseHandler(observable: ((data: T) -> Unit)? = null, listener: OnSuccessListener<T>? = null): ResponseHandler {
+        return object : BaseResponseHandler<T, String>() {
+            override fun onStart(call: Call) {
+                progress?.showProgressDialog(msg!!, call)
             }
 
             override fun onNetFinish() {
-                if (finish2Close)
-                    baseActivity?.dismissProgressDialog(msg!!)
+                progress?.dismissProgressDialog(msg!!)
             }
 
             override fun onFail(code: Int, data: String?) {
@@ -68,24 +68,23 @@ open class DataEntry(private val url: String) {
     }
 
     /**html表单方式请求*/
-    fun formBody(formMap: HashMap<String, String>): DataEntry {
+    fun formBody(formMap: HashMap<String, String>): HttpUrl {
         this.body = null
         this.formMap = formMap
         return this
     }
 
     /**application/json 方式请求*/
-    fun jsonBody(json: String): DataEntry {
+    fun jsonBody(json: String): HttpUrl {
         this.body = json
         this.formMap = null
         return this
     }
 
-    /**接入进度对话框*/
-    fun joinProgressDialog(baseActivity: BaseActivity?, msg: String = "加载中...", finish2Close: Boolean = true): DataEntry {
-        this.baseActivity = baseActivity
+    /**接入进度对话框，用户关闭对话框会中断请求*/
+    fun join(progressDialog: ProgressDialogInterface?, msg: String = "加载中..."): HttpUrl {
+        this.progress = progressDialog
         this.msg = msg
-        this.finish2Close = finish2Close
         return this
     }
 
@@ -93,72 +92,72 @@ open class DataEntry(private val url: String) {
      * @param observable observable返回值表示是否中断。<br/>
      * 生命周期为failDefault->observable->框架默认实现
      */
-    fun catchFail(observable: ((code: Int, data: String?) -> Boolean)?): DataEntry {
+    fun catchFail(observable: ((code: Int, data: String?) -> Boolean)?): HttpUrl {
         fail = observable
         return this
     }
 
     /** 不支持泛型套泛型的解析方式*/
     fun <T> get(observable: ((data: T) -> Unit)? = null) {
-        HttpManager.getInstance().get(url, formMap, baseDataHandler(observable = observable))
+        HttpManager.getInstance().get(url, formMap, responseHandler(observable = observable))
     }
 
     /** 不支持泛型套泛型的解析方式*/
     fun <T> post(observable: ((data: T) -> Unit)? = null) {
         when {
-            formMap != null -> HttpManager.getInstance().post(url, formMap, baseDataHandler(observable = observable))
-            body != null -> HttpManager.getInstance().post(url, body, baseDataHandler(observable = observable))
-            else -> HttpManager.getInstance().post(url, hashMapOf(), baseDataHandler(observable = observable))
+            formMap != null -> HttpManager.getInstance().post(url, formMap, responseHandler(observable = observable))
+            body != null -> HttpManager.getInstance().post(url, body, responseHandler(observable = observable))
+            else -> HttpManager.getInstance().post(url, hashMapOf(), responseHandler(observable = observable))
         }
     }
 
     /** 不支持泛型套泛型的解析方式*/
     fun <T> delete(observable: ((data: T) -> Unit)? = null) {
         when {
-            formMap != null -> HttpManager.getInstance().delete(url, formMap, baseDataHandler(observable = observable))
-            body != null -> HttpManager.getInstance().delete(url, body, baseDataHandler(observable = observable))
-            else -> HttpManager.getInstance().delete(url, baseDataHandler(observable = observable))
+            formMap != null -> HttpManager.getInstance().delete(url, formMap, responseHandler(observable = observable))
+            body != null -> HttpManager.getInstance().delete(url, body, responseHandler(observable = observable))
+            else -> HttpManager.getInstance().delete(url, responseHandler(observable = observable))
         }
     }
 
     /** 不支持泛型套泛型的解析方式*/
     fun <T> put(observable: ((data: T) -> Unit)? = null) {
         when {
-            formMap != null -> HttpManager.getInstance().put(url, formMap, baseDataHandler(observable = observable))
-            body != null -> HttpManager.getInstance().put(url, body, baseDataHandler(observable = observable))
-            else -> HttpManager.getInstance().put(url, hashMapOf(), baseDataHandler(observable = observable))
+            formMap != null -> HttpManager.getInstance().put(url, formMap, responseHandler(observable = observable))
+            body != null -> HttpManager.getInstance().put(url, body, responseHandler(observable = observable))
+            else -> HttpManager.getInstance().put(url, hashMapOf(), responseHandler(observable = observable))
         }
     }
 
     /** 支持泛型套泛型的解析方式*/
     fun <T> get(listener: OnSuccessListener<T>? = null) {
-        HttpManager.getInstance().get(url, formMap, baseDataHandler(listener = listener))
+        HttpManager.getInstance().get(url, formMap, responseHandler(listener = listener))
     }
 
     /** 支持泛型套泛型的解析方式*/
     fun <T> post(listener: OnSuccessListener<T>? = null) {
         when {
-            formMap != null -> HttpManager.getInstance().post(url, formMap, baseDataHandler(listener = listener))
-            body != null -> HttpManager.getInstance().post(url, body, baseDataHandler(listener = listener))
-            else -> HttpManager.getInstance().post(url, hashMapOf(), baseDataHandler(listener = listener))
+            formMap != null -> HttpManager.getInstance().post(url, formMap, responseHandler(listener = listener))
+            body != null -> HttpManager.getInstance().post(url, body, responseHandler(listener = listener))
+            else -> HttpManager.getInstance().post(url, hashMapOf(), responseHandler(listener = listener))
         }
     }
 
     /** 支持泛型套泛型的解析方式*/
     fun <T> delete(listener: OnSuccessListener<T>? = null) {
         when {
-            formMap != null -> HttpManager.getInstance().delete(url, formMap, baseDataHandler(listener = listener))
-            body != null -> HttpManager.getInstance().delete(url, body, baseDataHandler(listener = listener))
-            else -> HttpManager.getInstance().delete(url, baseDataHandler(listener = listener))
+            formMap != null -> HttpManager.getInstance().delete(url, formMap, responseHandler(listener = listener))
+            body != null -> HttpManager.getInstance().delete(url, body, responseHandler(listener = listener))
+            else -> HttpManager.getInstance().delete(url, responseHandler(listener = listener))
         }
     }
 
     /** 支持泛型套泛型的解析方式*/
     fun <T> put(listener: OnSuccessListener<T>? = null) {
         when {
-            formMap != null -> HttpManager.getInstance().put(url, formMap, baseDataHandler(listener = listener))
-            body != null -> HttpManager.getInstance().put(url, body, baseDataHandler(listener = listener))
-            else -> HttpManager.getInstance().put(url, hashMapOf(), baseDataHandler(listener = listener))
+            formMap != null -> HttpManager.getInstance().put(url, formMap, responseHandler(listener = listener))
+            body != null -> HttpManager.getInstance().put(url, body, responseHandler(listener = listener))
+            else -> HttpManager.getInstance().put(url, hashMapOf(), responseHandler(listener = listener))
         }
     }
 

@@ -3,7 +3,7 @@ package com.lcg.comment.net;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
-import com.lcg.mylibrary.net.DataHandler;
+import com.lcg.mylibrary.net.ResponseHandler;
 import com.lcg.mylibrary.utils.L;
 import com.lcg.mylibrary.utils.Token;
 import com.lcg.mylibrary.utils.UIUtils;
@@ -13,6 +13,7 @@ import java.lang.reflect.Type;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import okhttp3.Call;
 
 /**
  * 正常数据和错误都通过200放回的数据处理器，主线程执行on方法。
@@ -22,10 +23,10 @@ import kotlin.jvm.functions.Function1;
  * @since 2016/10/14 14:17
  */
 
-public abstract class Base200DataHandler<D> implements DataHandler {
+public abstract class Base200Handler<D> implements ResponseHandler {
     @Override
-    public void start() {
-        UIUtils.runInMainThread(this::onStart);
+    public void start(Call call) {
+        UIUtils.runInMainThread(() -> onStart(call));
     }
 
     @Override
@@ -79,7 +80,7 @@ public abstract class Base200DataHandler<D> implements DataHandler {
     /**
      * 网络连接之前调用
      */
-    public void onStart() {
+    public void onStart(Call call) {
     }
 
     /**
