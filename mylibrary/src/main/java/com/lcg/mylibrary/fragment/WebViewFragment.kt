@@ -34,7 +34,7 @@ import kotlin.math.sqrt
  */
 @SuppressLint("JavascriptInterface", "AddJavascriptInterface", "SetJavaScriptEnabled")
 class WebViewFragment : BaseFragment() {
-    private lateinit var root: View
+    private var root: View? = null
     private var url: String? = null
     private var mListener: OnCloseListener? = null
     private var isPad: Boolean = false
@@ -52,15 +52,15 @@ class WebViewFragment : BaseFragment() {
      */
     fun addJavascriptInterface(interfaceName: String, any: Any) {
         jiMap[interfaceName] = any
-        if (root != null && root.wv != null)
-            root.wv.addJavascriptInterface(any, interfaceName)
+        if (root?.wv != null)
+            root!!.wv.addJavascriptInterface(any, interfaceName)
     }
 
     /**removeJavascriptInterface*/
     fun removeJavascriptInterface(interfaceName: String) {
         jiMap.remove(interfaceName)
-        if (VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB && root != null && root.wv != null) {
-            root.wv.removeJavascriptInterface(interfaceName)
+        if (VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB && root?.wv != null) {
+            root!!.wv.removeJavascriptInterface(interfaceName)
         }
     }
 
@@ -72,7 +72,8 @@ class WebViewFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        root = inflater.inflate(R.layout.fragment_webview, container, false)
+        val root = inflater.inflate(R.layout.fragment_webview, container, false)
+        this.root = root
         val bundle = arguments
         url = bundle!!.getString("url")
         isPad = bundle.getBoolean("isPad", false)
@@ -141,14 +142,14 @@ class WebViewFragment : BaseFragment() {
     }
 
     private fun loadUrl(url: String?) {
-        root.pb.visibility = View.VISIBLE
-        root.tv.visibility = View.VISIBLE
-        root.pb.progress = 0
+        root!!.pb.visibility = View.VISIBLE
+        root!!.tv.visibility = View.VISIBLE
+        root!!.pb.progress = 0
         val header = HashMap<String, String>()
         val token = getToken()
         header[Token.TOKEN] = token
         header["os"] = "android"
-        root.wv.loadUrl(url, header)
+        root!!.wv.loadUrl(url, header)
     }
 
     /**
@@ -187,7 +188,7 @@ class WebViewFragment : BaseFragment() {
          */
         @JavascriptInterface
         fun log(s: String) {
-            L.w("weblog hashCode=" + root.wv.hashCode() + "------------" + s)
+            L.w("weblog hashCode=" + root!!.wv.hashCode() + "------------" + s)
         }
 
         /**
@@ -206,8 +207,8 @@ class WebViewFragment : BaseFragment() {
         @JavascriptInterface
         fun back() {
             UIUtils.runInMainThread {
-                if (root.wv.canGoBack()) {
-                    root.wv.goBack() // 返回前一个页面
+                if (root!!.wv.canGoBack()) {
+                    root!!.wv.goBack() // 返回前一个页面
                 } else {
                     activity?.finish()
                 }
@@ -276,17 +277,17 @@ class WebViewFragment : BaseFragment() {
          */
         @JavascriptInterface
         fun reload() {
-            UIUtils.runInMainThread { root.wv.reload() }
+            UIUtils.runInMainThread { root!!.wv.reload() }
         }
     }
 
     fun onBackPressed(): Boolean {
-        return if (root.wv != null && root.wv.canGoBack()) {
-            val url = root.wv.url
+        return if (root?.wv != null && root!!.wv.canGoBack()) {
+            val url = root!!.wv.url
             if (TextUtils.isEmpty(url) || url.contains("noback=1")) {
                 false
             } else {
-                root.wv.goBack() // 返回前一个页面
+                root!!.wv.goBack() // 返回前一个页面
                 true
             }
         } else {
