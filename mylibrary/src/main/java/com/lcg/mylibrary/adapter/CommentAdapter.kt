@@ -24,7 +24,7 @@ class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private var mFooterViewHolder: FooterViewHolder? = null
 
     @JvmOverloads
-    constructor(data: ArrayList<Item>, footerViewHolder: FooterViewHolder? = null) : super() {
+    constructor(data: ArrayList<out Item>, footerViewHolder: FooterViewHolder? = null) : super() {
         this.data = data
         this.mFooterViewHolder = footerViewHolder
     }

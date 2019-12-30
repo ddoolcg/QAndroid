@@ -91,5 +91,9 @@ class ListFragment : BaseFragment() {
                 }
             }
         }
+
+        fun newInstance(): ListFragment {
+            return ListFragment()
+        }
     }
 }
