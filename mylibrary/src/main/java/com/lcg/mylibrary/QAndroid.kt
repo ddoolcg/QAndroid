@@ -39,6 +39,7 @@ object QAndroid {
     }
 
     /**沉浸式*/
+    @JvmOverloads
     fun setTranslucentStatusTheme(translucent: Boolean, fontDark: Boolean = false): QAndroid {
         BaseActivity.translucentStatusTheme = translucent
         BaseActivity.statusFontDark = fontDark
