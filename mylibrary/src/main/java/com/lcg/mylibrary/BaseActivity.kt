@@ -29,6 +29,7 @@ open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
         setTranslucentStatus(translucentStatusTheme)
         super.onCreate(savedInstanceState)
         activities.add(this)
+        setStatusBarFontDark(statusFontDark)
     }
 
     public override fun onResume() {
@@ -168,5 +169,8 @@ open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
         /**全局透明状态控制*/
         @JvmStatic
         var translucentStatusTheme = false
+        /**标题栏黑色字体*/
+        @JvmStatic
+        var statusFontDark = false
     }
 }
