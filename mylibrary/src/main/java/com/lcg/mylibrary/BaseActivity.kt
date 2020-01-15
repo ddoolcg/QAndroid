@@ -131,7 +131,6 @@ open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
                 extraFlagField.invoke(window, 0, darkModeFlag)
             }
         } catch (e: Exception) {
-            e.printStackTrace()
         }
 
         // 魅族FlymeUI
@@ -152,13 +151,14 @@ open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
             meizuFlags.setInt(lp, value)
             window.attributes = lp
         } catch (e: Exception) {
-            e.printStackTrace()
         }
 
         // android6.0+系统
         if (Build.VERSION.SDK_INT >= 23) {
             if (dark) {
-                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or 8192
+                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            } else {
+                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or 0x00000010 //View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
             }
         }
     }

@@ -3,6 +3,8 @@ package com.lcg.mylibrary.net;
 import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONType;
 import com.alibaba.fastjson.parser.Feature;
 import com.lcg.mylibrary.bean.SimpleData;
@@ -87,7 +89,14 @@ public abstract class BaseResponseHandler<S, E> implements ResponseHandler {
         Type type2 = getType(position);
         if (!type2.equals(String.class)) {
             try {
-                Object obj = JSON.parseObject(successData, type2, new Feature[0]);
+                Object obj;
+                if (type2.equals(JSONObject.class)) {
+                    obj = JSON.parseObject(successData);
+                } else if (type2.equals(JSONArray.class)) {
+                    obj = JSON.parseArray(successData);
+                } else {
+                    obj = JSON.parseObject(successData, type2, new Feature[0]);
+                }
                 Class<?> class2 = obj.getClass();
                 JSONType annotation = class2.getAnnotation(JSONType.class);
                 if (annotation != null) {
