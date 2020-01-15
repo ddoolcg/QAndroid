@@ -24,12 +24,12 @@ open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
     private var mProgressDialog: ProgressDialog? = null
     /**手机状态栏是否被设置过*/
     private var statusBySet = false
-
+    var initStatusBarFontDark = statusFontDark
     override fun onCreate(savedInstanceState: Bundle?) {
         setTranslucentStatus(translucentStatusTheme)
         super.onCreate(savedInstanceState)
         activities.add(this)
-        setStatusBarFontDark(statusFontDark)
+        setStatusBarFontDark(initStatusBarFontDark)
     }
 
     public override fun onResume() {
