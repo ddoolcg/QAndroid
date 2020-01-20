@@ -231,6 +231,11 @@ object PreferenceKTX {
     fun containsConfig(clazz: Class<*>): Boolean {
         return getSharedPreferences().contains(clazz.name.replace(".", "_"))
     }
+
+    @JvmStatic
+    fun removeConfig(clazz: Class<*>) {
+        getEdit().remove(clazz.name.replace(".", "_")).commit()
+    }
 }
 
 /**
