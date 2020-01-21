@@ -46,11 +46,11 @@ open class BaseObservableMe(val activity: BaseActivity? = null) : BaseObservable
             notifyPropertyChanged(BR.showBack)
         }
 
-    fun clickLeft(v: View?) {
+    open fun clickLeft(v: View?) {
         activity?.finish()
     }
 
-    fun clickRight(v: View?) {
+    open fun clickRight(v: View?) {
         L.i("右键被点击")
     }
 
