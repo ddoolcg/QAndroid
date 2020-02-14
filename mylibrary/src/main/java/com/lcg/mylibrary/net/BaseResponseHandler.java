@@ -157,7 +157,7 @@ public abstract class BaseResponseHandler<S, E> implements ResponseHandler {
                 if (simpleData == null) {
                     UIUtils.showToastSafe("服务器繁忙（" + code + "）！");
                 } else if (!TextUtils.isEmpty(simpleData.getMessage())) {
-                    UIUtils.showToastSafe(simpleData.getMsg());
+                    UIUtils.showToastSafe(simpleData.getMessage());
                 } else if (!TextUtils.isEmpty(simpleData.getDetail())) {
                     UIUtils.showToastSafe(simpleData.getDetail());
                 } else {
