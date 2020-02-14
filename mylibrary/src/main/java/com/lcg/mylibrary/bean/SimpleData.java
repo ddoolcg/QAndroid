@@ -15,7 +15,7 @@ public class SimpleData {
 	private String message;
 	public String getDetail() {
 		if (TextUtils.isEmpty(detail)) {
-			return msg;
+			return getMessage();
 		} else {
 			return detail;
 		}
@@ -34,7 +34,7 @@ public class SimpleData {
 	}
 
 	public String getMsg() {
-		return msg;
+		return getMessage();
 	}
 
 	public void setMsg(String msg) {
@@ -42,7 +42,11 @@ public class SimpleData {
 	}
 
 	public String getMessage() {
-		return message;
+		if (TextUtils.isEmpty(message)) {
+			return msg;
+		} else {
+			return message;
+		}
 	}
 
 	public void setMessage(String message) {
