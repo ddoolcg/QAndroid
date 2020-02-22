@@ -14,7 +14,7 @@ import java.util.*
  * @since 2019/12/26 10:28
  */
 open class HttpUrl(private val url: String) {
-    private var formMap: HashMap<String, String>? = null
+    private var formMap: HashMap<String, String?>? = null
     private var body: String? = null
     protected var progress: ProgressDialogInterface? = null
     protected var msg: String? = null
@@ -68,7 +68,7 @@ open class HttpUrl(private val url: String) {
     }
 
     /**html表单方式请求*/
-    fun formBody(formMap: HashMap<String, String>): HttpUrl {
+    fun formBody(formMap: HashMap<String, String?>): HttpUrl {
         this.body = null
         this.formMap = formMap
         return this

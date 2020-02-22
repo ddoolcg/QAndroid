@@ -12,9 +12,9 @@ import com.lcg.mylibrary.utils.Token.token
  */
 object Token {
     internal var token: String? = null
-    var TOKEN = "token"
+    var TOKEN = "Authorization"
     var loginSubscriber: ((showToast: Boolean) -> Unit)? = null
-    fun init(name: String = "token", login: (showToast: Boolean) -> Unit) {
+    fun init(name: String = "Authorization", login: (showToast: Boolean) -> Unit) {
         TOKEN = name
         loginSubscriber = login
     }

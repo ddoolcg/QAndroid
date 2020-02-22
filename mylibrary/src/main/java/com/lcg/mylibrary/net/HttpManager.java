@@ -131,15 +131,14 @@ public class HttpManager {
             StringBuilder tempParams = new StringBuilder();
             for (String key : paramsMap.keySet()) {
                 String s = paramsMap.get(key);
-                if (s == null)
-                    s = "";
-                try {
-                    tempParams.append(String.format("%s=%s", key, URLEncoder.encode(s,
-                            "utf-8")));
-                    tempParams.append("&");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                if (s != null)
+                    try {
+                        tempParams.append(String.format("%s=%s", key, URLEncoder.encode(s,
+                                "utf-8")));
+                        tempParams.append("&");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
             }
             String start = url.contains("?") ? "&" : "?";
             url = url + start + tempParams.substring(0, tempParams.length() - 1);

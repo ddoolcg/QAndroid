@@ -20,14 +20,14 @@ allprojects {
 ~~~
 ~~~gradle
 dependencies {
-    api 'com.github.ddoolcg:QAndroid:1.9.10'
+    api 'com.github.ddoolcg:QAndroid:1.9.11'
 }
 ~~~
 
 # 核心类QAndroid
 ~~~java
        QAndroid.INSTANCE
-                .initToken("token", new Function1<Boolean, Unit>() {
+                .initToken("Authorization", new Function1<Boolean, Unit>() {
                     @Override
                     public Unit invoke(Boolean showToast) {
                         gotoLoin(showToast);

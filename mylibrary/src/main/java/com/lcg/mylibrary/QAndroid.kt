@@ -20,7 +20,7 @@ import com.lcg.mylibrary.utils.UIUtils
 object QAndroid {
     /**初始化http认证*/
     @JvmOverloads
-    fun initToken(headerKey: String = "token", login: (showToast: Boolean) -> Unit): QAndroid {
+    fun initToken(headerKey: String = "Authorization", login: (showToast: Boolean) -> Unit): QAndroid {
         Token.init(headerKey, login)
         return this
     }

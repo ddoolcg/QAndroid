@@ -10,7 +10,7 @@ import java.util.regex.Pattern
  * @since 2017/8/11 21:32
  */
 /**为null时转到string*/
-infix fun String?.emptyTo(string: String): String = if (this.isNullOrEmpty()) string else this!!
+infix fun String?.emptyTo(string: String): String = if (this.isNullOrEmpty()) string else this
 
 /**
  * 是否包含特殊字符
@@ -30,7 +30,7 @@ fun String?.findHardChar(): Boolean {
 fun String?.containsEmoji(): Boolean {
     if (this.isNullOrEmpty())
         return false
-    val len = this!!.length
+    val len = this.length
     for (i in 0 until len) {
         if (isEmojiCharacter(this[i])) {
             return true
