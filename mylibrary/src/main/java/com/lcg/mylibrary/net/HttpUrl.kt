@@ -68,14 +68,14 @@ open class HttpUrl(private val url: String) {
     }
 
     /**html表单方式请求*/
-    fun formBody(formMap: HashMap<String, String?>): HttpUrl {
+    fun formBody(formMap: HashMap<String, String?>?): HttpUrl {
         this.body = null
         this.formMap = formMap
         return this
     }
 
     /**application/json 方式请求*/
-    fun jsonBody(json: String): HttpUrl {
+    fun jsonBody(json: String?): HttpUrl {
         this.body = json
         this.formMap = null
         return this
