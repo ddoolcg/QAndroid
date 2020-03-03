@@ -151,7 +151,7 @@ public class HttpManager {
      * post请求
      */
     public Call post(String url, String content, final ResponseHandler handler) {
-        L.d("net_put", content);
+        L.d("json{" + content + "}");
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), content);
         //
         Request request = addHeaders().url(url).post(requestBody).build();
@@ -182,7 +182,7 @@ public class HttpManager {
      * put请求
      */
     public Call put(String url, String content, final ResponseHandler handler) {
-        L.d("net_put", content);
+        L.d("json{" + content + "}");
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), content);
         //
         Request request = addHeaders().url(url).put(requestBody).build();
@@ -226,6 +226,7 @@ public class HttpManager {
      * delete请求
      */
     public Call delete(String url, String content, final ResponseHandler handler) {
+        L.d("json{" + content + "}");
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), content);
         Request request = addHeaders().url(url).delete(requestBody).build();
         return request(handler, request);
@@ -235,6 +236,7 @@ public class HttpManager {
      * 创建一个FormBody.Builder
      */
     private RequestBody getRequestBody(HashMap<String, String> paramsMap) {
+        L.d("Form{" + paramsMap.toString() + "}");
         //创建一个FormBody.Builder
         FormBody.Builder builder = new FormBody.Builder();
         if (paramsMap != null)
@@ -252,7 +254,13 @@ public class HttpManager {
      * 请求
      */
     private Call request(final ResponseHandler handler, Request request) {
-        L.d(request.toString());
+        L.d("Request{method="
+                + request.method()
+                + ", url="
+                + request.url()
+                + ", head="
+                + "{" + request.headers().toString() + "}"
+                + '}');
         Call call = client.newCall(request);
         handler.start(call);
         call.enqueue(new Callback() {
