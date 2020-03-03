@@ -226,7 +226,7 @@ public class HttpManager {
      * delete请求
      */
     public Call delete(String url, String content, final ResponseHandler handler) {
-        L.d("json{" + content + "}");
+        L.d("请求 json{" + content + "}");
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), content);
         Request request = addHeaders().url(url).delete(requestBody).build();
         return request(handler, request);
@@ -236,16 +236,17 @@ public class HttpManager {
      * 创建一个FormBody.Builder
      */
     private RequestBody getRequestBody(HashMap<String, String> paramsMap) {
-        L.d("Form{" + paramsMap.toString() + "}");
         //创建一个FormBody.Builder
         FormBody.Builder builder = new FormBody.Builder();
-        if (paramsMap != null)
+        if (paramsMap != null) {
+            L.d("请求 Form{" + paramsMap.toString() + "}");
             for (String key : paramsMap.keySet()) {
                 //追加表单信息
                 String s = paramsMap.get(key);
                 if (s != null)
                     builder.add(key, s);
             }
+        }
         //生成表单实体对象
         return builder.build();
     }
@@ -258,9 +259,9 @@ public class HttpManager {
                 + request.method()
                 + ", url="
                 + request.url()
-                + ", head="
-                + "{" + request.headers().toString() + "}"
-                + '}');
+                + ", header=("
+                + request.headers().toString().replace("\n", ",")
+                + ")}");
         Call call = client.newCall(request);
         handler.start(call);
         call.enqueue(new Callback() {
