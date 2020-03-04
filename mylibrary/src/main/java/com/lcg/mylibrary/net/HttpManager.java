@@ -267,12 +267,14 @@ public class HttpManager {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                StringWriter info = new StringWriter();
-                PrintWriter printWriter = new PrintWriter(info);
-                e.printStackTrace(printWriter);
-                printWriter.close();
-                handler.netFinish();
-                handler.fail(-1, info.toString());
+                if (!call.isCanceled()) {
+                    StringWriter info = new StringWriter();
+                    PrintWriter printWriter = new PrintWriter(info);
+                    e.printStackTrace(printWriter);
+                    printWriter.close();
+                    handler.netFinish();
+                    handler.fail(-1, info.toString());
+                }
             }
 
             @Override
