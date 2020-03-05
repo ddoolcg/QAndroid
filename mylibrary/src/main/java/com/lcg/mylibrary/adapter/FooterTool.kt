@@ -1,35 +1,33 @@
 package com.lcg.mylibrary.adapter
 
+import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import com.lcg.mylibrary.R
 
 /**
- * 底部加载更多的ViewHolder
+ * 底部加载更多栏
  *
  * @author lei.chuguang Email:475825657@qq.com
- * @version 1.0
- * @since 2019/01/16 13:57
  */
-class FooterViewHolder(inflater: LayoutInflater, listener: LoadListener)
-    : RecyclerView.ViewHolder(inflater.inflate(R.layout.listview_footer, null)) {
+open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_footer, private val load: FooterTool.() -> Unit) {
+    private var rootView: View? = null
     private var pb: View? = null
     private var tv: TextView? = null
-
-    init {
-        assignViews()
-        setFooterStatus(FooterStatus.ENABLE)
-        itemView.setOnClickListener {
-            setFooterStatus(FooterStatus.LOADING)
-            listener.loadMore()
+    /**初始化*/
+    internal open fun init(group: ViewGroup): RecyclerView.ViewHolder {
+        rootView = LayoutInflater.from(group.context).inflate(layout, group, false)
+        pb = rootView!!.findViewById(R.id.v_list_load)
+        tv = rootView!!.findViewById(R.id.tv_list) as TextView
+        setStatus(Status.ENABLE)
+        rootView!!.setOnClickListener {
+            setStatus(Status.LOADING)
+            load(this)
         }
-    }
-
-    private fun assignViews() {
-        pb = itemView.findViewById(R.id.v_list_load)
-        tv = itemView.findViewById(R.id.tv_list) as TextView
+        return object : RecyclerView.ViewHolder(rootView!!) {}
     }
 
     /**
@@ -37,46 +35,46 @@ class FooterViewHolder(inflater: LayoutInflater, listener: LoadListener)
 
      * @param status 状态
      */
-    fun setFooterStatus(status: FooterStatus) {
+    open fun setStatus(status: Status) {
         when (status) {
-            FooterStatus.ENABLE -> {
+            Status.ENABLE -> {
                 tv?.apply {
                     paint.isUnderlineText = true // 下划线
                     paint.isAntiAlias = true // 抗锯齿
                     text = "点击加载更多"
                     pb?.visibility = View.GONE
-                    itemView.isEnabled = true
-                    itemView.visibility = View.VISIBLE
+                    rootView.isEnabled = true
+                    rootView.visibility = View.VISIBLE
                 }
             }
-            FooterStatus.DISABLE -> {
+            Status.DISABLE -> {
                 tv?.apply {
                     paint.isUnderlineText = false
                     paint.isAntiAlias = true // 抗锯齿
                     text = "已经到底了~"
                     pb?.visibility = View.GONE
-                    itemView.isEnabled = false
-                    itemView.visibility = View.VISIBLE
+                    rootView.isEnabled = false
+                    rootView.visibility = View.VISIBLE
                 }
             }
-            FooterStatus.LOADING -> {
+            Status.LOADING -> {
                 tv?.apply {
                     paint.isUnderlineText = false
                     paint.isAntiAlias = true // 抗锯齿
                     text = "正在加载中···"
                     pb?.visibility = View.VISIBLE
-                    itemView.isEnabled = false
-                    itemView.visibility = View.VISIBLE
+                    rootView.isEnabled = false
+                    rootView.visibility = View.VISIBLE
                 }
             }
-            else -> itemView.visibility = View.GONE
+            else -> rootView?.visibility = View.GONE
         }
     }
 
     /**
      * FooterView状态枚举
      */
-    enum class FooterStatus {
+    enum class Status {
         /**隐藏底部*/
         NO,
         /**点击加载更多*/
@@ -85,10 +83,5 @@ class FooterViewHolder(inflater: LayoutInflater, listener: LoadListener)
         DISABLE,
         /**正在加载中···*/
         LOADING
-    }
-
-    /**点击加载监听*/
-    interface LoadListener {
-        fun loadMore()
     }
 }

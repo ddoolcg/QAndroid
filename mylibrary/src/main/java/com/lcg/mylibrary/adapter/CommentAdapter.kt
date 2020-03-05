@@ -21,28 +21,28 @@ class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private val data: ArrayList<out BaseObservable>
     private var mLayoutId: Int? = null
     private var mVariableId: Int? = null
-    private var mFooterViewHolder: FooterViewHolder? = null
+    private var footer: FooterTool? = null
 
     @JvmOverloads
-    constructor(data: ArrayList<out Item>, footerViewHolder: FooterViewHolder? = null) : super() {
+    constructor(data: ArrayList<out Item>, footer: FooterTool? = null) : super() {
         this.data = data
-        this.mFooterViewHolder = footerViewHolder
+        this.footer = footer
     }
 
     @JvmOverloads
     constructor(data: ArrayList<out BaseObservable>,
                 layoutId: Int,
                 variableId: Int,
-                footerViewHolder: FooterViewHolder? = null) : super() {
+                footer: FooterTool? = null) : super() {
         this.data = data
         this.mLayoutId = layoutId
         this.mVariableId = variableId
-        this.mFooterViewHolder = footerViewHolder
+        this.footer = footer
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == 1) {
-            mFooterViewHolder!!
+            footer!!.init(parent)
         } else {
             val layoutId = if (viewType == 0) mLayoutId!! else viewType
             val binding = LayoutInflater.from(parent.context)
@@ -55,7 +55,7 @@ class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     override fun getItemCount(): Int {
         var count = data.size
-        if (mFooterViewHolder != null) {
+        if (footer != null) {
             count += 1
         }
         return count
