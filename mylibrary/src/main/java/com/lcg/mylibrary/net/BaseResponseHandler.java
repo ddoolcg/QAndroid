@@ -52,13 +52,6 @@ public abstract class BaseResponseHandler<S, E> implements ResponseHandler {
     @Override
     public void fail(final int code, String errorData) {
         L.w("NET", "code=" + code + " errorData=" + errorData + "");
-        if (code == 401) {
-            Function1<Boolean, Unit> subscriber = Token.INSTANCE.getLoginSubscriber();
-            if (subscriber != null) {
-                subscriber.invoke(false);
-                return;
-            }
-        }
         final Object data = parseData(errorData, 1);
         UIUtils.runInMainThread(new Runnable() {
             @Override
@@ -147,7 +140,12 @@ public abstract class BaseResponseHandler<S, E> implements ResponseHandler {
      * @param data bean对象
      */
     public void onFail(int code, E data) {
-        if (code > 0) {
+        if (code == 401) {
+            Function1<Boolean, Unit> subscriber = Token.INSTANCE.getLoginSubscriber();
+            if (subscriber != null) {
+                subscriber.invoke(false);
+            }
+        } else if (code > 0) {
             if (data instanceof String) {
                 SimpleData simpleData = null;
                 try {
