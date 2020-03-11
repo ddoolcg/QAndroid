@@ -48,6 +48,16 @@ open class HttpUrl(private val url: String) {
             override fun getType(position: Int): Type {
                 if (position == 0) {
                     if (observable != null) {
+                        //lambda 接口方式实现
+                        observable.javaClass.genericInterfaces.forEach {
+                            if (it is ParameterizedType) {
+                                val arguments = it.actualTypeArguments
+                                if (arguments.size == 2) {
+                                    return arguments[0]
+                                }
+                            }
+                        }
+                        //lambda直接使用Function1实现
                         observable.javaClass.declaredMethods.filter {
                             it.returnType.isAssignableFrom(Void.TYPE)
                                     || it.returnType == Unit::class.java
