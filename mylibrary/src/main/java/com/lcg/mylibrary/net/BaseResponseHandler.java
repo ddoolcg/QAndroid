@@ -144,8 +144,10 @@ public abstract class BaseResponseHandler<S, E> implements ResponseHandler {
             Function1<Boolean, Unit> subscriber = Token.INSTANCE.getLoginSubscriber();
             if (subscriber != null) {
                 subscriber.invoke(false);
+                return;
             }
-        } else if (code > 0) {
+        }
+        if (code > 0) {
             if (data instanceof String) {
                 SimpleData simpleData = null;
                 try {
