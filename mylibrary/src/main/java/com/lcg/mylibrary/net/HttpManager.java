@@ -169,7 +169,7 @@ public class HttpManager {
      * post请求
      */
     public Call post(String url, HashMap<String, String> paramsMap, final ResponseHandler handler) {
-        RequestBody formBody = getRequestBody(url, paramsMap);
+        RequestBody formBody = getRequestBody(paramsMap);
         Request request = addHeaders().url(url).post(formBody).build();
         return request(handler, request);
     }
@@ -178,7 +178,7 @@ public class HttpManager {
      * put请求
      */
     public Call put(String url, HashMap<String, String> paramsMap, final ResponseHandler handler) {
-        RequestBody formBody = getRequestBody(url, paramsMap);
+        RequestBody formBody = getRequestBody(paramsMap);
         Request request = addHeaders().url(url).put(formBody).build();
         return request(handler, request);
     }
@@ -239,16 +239,14 @@ public class HttpManager {
      */
     private RequestBody getRequestBody(String url, String content) {
         if (logcat)
-            L.d("id=" + url.hashCode() + " json=" + content + "");
+            L.d("NET[" + url.hashCode() + "]", "json=" + content);
         return RequestBody.create(MediaType.parse("application/json"), content);
     }
 
     /**
      * 创建一个FormBody
      */
-    private RequestBody getRequestBody(String url, HashMap<String, String> paramsMap) {
-        if (logcat)
-            L.d("id=" + url.hashCode() + " form=" + paramsMap.toString());
+    private RequestBody getRequestBody(HashMap<String, String> paramsMap) {
         //创建一个FormBody.Builder
         FormBody.Builder builder = new FormBody.Builder();
         if (paramsMap != null) {
@@ -270,10 +268,23 @@ public class HttpManager {
         HttpUrl url = request.url();
         final int id = url.hashCode();
         if (logcat) {
-            L.d("id=" + id + " Request{"
-                    + "," + request.method() + "=" + url
-                    + "," + Token.INSTANCE.getTOKEN() + "=" + TokenUtilKt.getToken()
-                    + "}");
+            RequestBody body = request.body();
+            String params = "";
+            if (body instanceof FormBody) {
+                StringBuilder sb = new StringBuilder();
+                FormBody form = (FormBody) body;
+                int size = form.size();
+                for (int i = 0; i < size; i++) {
+                    sb.append(form.name(i)).append("=").append(form.value(i)).append(",");
+                }
+                if (sb.length() > 0) {
+                    sb.deleteCharAt(sb.length() - 1);
+                    params = "Form{" + sb.toString() + "}";
+                }
+            }
+            L.d("NET[" + id + "]", request.method() + "->" + url
+                    + " " + Token.INSTANCE.getTOKEN() + "=" + TokenUtilKt.getToken()
+                    + " " + params);
         }
         //
         Call call = client.newCall(request);
@@ -291,7 +302,7 @@ public class HttpManager {
                     handler.fail(-1, errorData);
                     //
                     if (logcat) {
-                        L.w("id=" + id + " IOException->");
+                        L.w("NET[" + id + "]", "IOException->");
                         e.printStackTrace();
                     }
                 }
@@ -313,14 +324,14 @@ public class HttpManager {
                     handler.success(data);
                     //日志输出
                     if (logcat) {
-                        L.d("id=" + id + " Response=" + data);
+                        L.i("NET[" + id + "]", data);
                     }
                 } else {
                     int code = response.code();
                     handler.fail(code, data);
                     //日志输出
                     if (logcat) {
-                        L.w("id=" + id + " code=" + code + " Response=" + data);
+                        L.w("NET[" + id + "]", code + "->" + data);
                     }
                 }
             }
