@@ -17,6 +17,7 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
     private var rootView: View? = null
     private var pb: View? = null
     private var tv: TextView? = null
+
     /**初始化*/
     internal open fun init(group: ViewGroup): RecyclerView.ViewHolder {
         rootView = LayoutInflater.from(group.context).inflate(layout, group, false)
@@ -44,6 +45,7 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
                     text = "点击加载更多"
                     pb?.visibility = View.GONE
                     rootView.isEnabled = true
+                    rootView.isClickable = true
                     rootView.visibility = View.VISIBLE
                 }
             }
@@ -54,6 +56,7 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
                     text = "已经到底了~"
                     pb?.visibility = View.GONE
                     rootView.isEnabled = false
+                    rootView.isClickable = false
                     rootView.visibility = View.VISIBLE
                 }
             }
@@ -64,6 +67,7 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
                     text = "正在加载中···"
                     pb?.visibility = View.VISIBLE
                     rootView.isEnabled = false
+                    rootView.isClickable = false
                     rootView.visibility = View.VISIBLE
                 }
             }
@@ -77,10 +81,13 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
     enum class Status {
         /**隐藏底部*/
         NO,
+
         /**点击加载更多*/
         ENABLE,
+
         /**已经到底了~*/
         DISABLE,
+
         /**正在加载中···*/
         LOADING
     }
