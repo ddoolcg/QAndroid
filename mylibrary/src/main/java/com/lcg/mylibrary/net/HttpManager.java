@@ -291,7 +291,7 @@ public class HttpManager {
                     handler.fail(-1, errorData);
                     //
                     if (logcat) {
-                        L.d("id=" + id + " IOException->");
+                        L.w("id=" + id + " IOException->");
                         e.printStackTrace();
                     }
                 }
@@ -304,19 +304,24 @@ public class HttpManager {
                 long serverTime = new Date(date).getTime();
                 long l = serverTime - SystemClock.elapsedRealtime();
                 if (l > timeDifference) timeDifference = l;
-                //
+                //数据
                 String data = response.body().string();
                 if (call.isCanceled())
                     return;
                 handler.netFinish();
                 if (response.isSuccessful()) {
                     handler.success(data);
+                    //日志输出
+                    if (logcat) {
+                        L.d("id=" + id + " Response=" + data);
+                    }
                 } else {
-                    handler.fail(response.code(), data);
-                }
-                //日志输出
-                if (logcat) {
-                    L.d("id=" + id + " Response=" + data);
+                    int code = response.code();
+                    handler.fail(code, data);
+                    //日志输出
+                    if (logcat) {
+                        L.w("id=" + id + " code=" + code + " Response=" + data);
+                    }
                 }
             }
         });
