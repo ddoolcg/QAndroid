@@ -14,8 +14,8 @@ import java.util.*
  * @since 2019/12/26 10:28
  */
 open class HttpUrl(private val url: String) {
-    private var formMap: HashMap<String, String?>? = null
-    private var body: String? = null
+    protected var formMap: HashMap<String, String?>? = null
+    protected var body: String? = null
     protected var progress: ProgressDialogInterface? = null
     protected var msg: String? = null
     protected var fail: ((code: Int, data: String?) -> Boolean)? = null
