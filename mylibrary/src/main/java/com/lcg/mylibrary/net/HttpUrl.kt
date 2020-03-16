@@ -19,6 +19,7 @@ open class HttpUrl(private val url: String) {
     protected var progress: ProgressDialogInterface? = null
     protected var msg: String? = null
     protected var fail: ((code: Int, data: String?) -> Boolean)? = null
+
     /**响应处理器*/
     protected open fun <T> responseHandler(observable: ((data: T) -> Unit)? = null, listener: OnSuccessListener<T>? = null): ResponseHandler {
         return object : BaseResponseHandler<T, String>() {
@@ -185,3 +186,7 @@ open class HttpUrl(private val url: String) {
 abstract class OnSuccessListener<T> {
     abstract fun onSuccess(data: T)
 }
+
+/**服务器时间*/
+val serverDate: Date
+    get() = HttpManager.getInstance().serverDate

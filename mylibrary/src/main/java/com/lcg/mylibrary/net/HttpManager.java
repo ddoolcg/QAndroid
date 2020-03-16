@@ -2,6 +2,7 @@ package com.lcg.mylibrary.net;
 
 import android.content.pm.PackageInfo;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -21,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +31,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.ConnectionPool;
 import okhttp3.FormBody;
+import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -48,10 +51,18 @@ import static okhttp3.Request.Builder;
  * @since 2016/10/13 17:48
  */
 public class HttpManager {
+    /**
+     * 输出日志
+     */
+    public static boolean logcat = false;
     private static HttpManager ourInstance = new HttpManager();
     private OkHttpClient client;
     private final HashMap<String, String> header = new HashMap<>();
     private Interceptor mInterceptor;
+    /**
+     * 服务器时间和boot时间差
+     */
+    private long timeDifference = 0;
 
     public static HttpManager getInstance() {
         return ourInstance;
@@ -86,8 +97,6 @@ public class HttpManager {
 
     /**
      * 统一为请求添加头信息
-     *
-     * @return
      */
     private Builder addHeaders() {
         Builder builder = new Builder()
@@ -151,9 +160,7 @@ public class HttpManager {
      * post请求
      */
     public Call post(String url, String content, final ResponseHandler handler) {
-        L.d("json{" + content + "}");
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), content);
-        //
+        RequestBody requestBody = getRequestBody(url, content);
         Request request = addHeaders().url(url).post(requestBody).build();
         return request(handler, request);
     }
@@ -162,8 +169,7 @@ public class HttpManager {
      * post请求
      */
     public Call post(String url, HashMap<String, String> paramsMap, final ResponseHandler handler) {
-        RequestBody formBody = getRequestBody(paramsMap);
-        //
+        RequestBody formBody = getRequestBody(url, paramsMap);
         Request request = addHeaders().url(url).post(formBody).build();
         return request(handler, request);
     }
@@ -172,8 +178,7 @@ public class HttpManager {
      * put请求
      */
     public Call put(String url, HashMap<String, String> paramsMap, final ResponseHandler handler) {
-        RequestBody formBody = getRequestBody(paramsMap);
-        //
+        RequestBody formBody = getRequestBody(url, paramsMap);
         Request request = addHeaders().url(url).put(formBody).build();
         return request(handler, request);
     }
@@ -182,9 +187,7 @@ public class HttpManager {
      * put请求
      */
     public Call put(String url, String content, final ResponseHandler handler) {
-        L.d("json{" + content + "}");
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), content);
-        //
+        RequestBody requestBody = getRequestBody(url, content);
         Request request = addHeaders().url(url).put(requestBody).build();
         return request(handler, request);
     }
@@ -226,20 +229,29 @@ public class HttpManager {
      * delete请求
      */
     public Call delete(String url, String content, final ResponseHandler handler) {
-        L.d("请求 json{" + content + "}");
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), content);
+        RequestBody requestBody = getRequestBody(url, content);
         Request request = addHeaders().url(url).delete(requestBody).build();
         return request(handler, request);
     }
 
     /**
-     * 创建一个FormBody.Builder
+     * 创建一个json RequestBody
      */
-    private RequestBody getRequestBody(HashMap<String, String> paramsMap) {
+    private RequestBody getRequestBody(String url, String content) {
+        if (logcat)
+            L.d("id=" + url.hashCode() + " json=" + content + "");
+        return RequestBody.create(MediaType.parse("application/json"), content);
+    }
+
+    /**
+     * 创建一个FormBody
+     */
+    private RequestBody getRequestBody(String url, HashMap<String, String> paramsMap) {
+        if (logcat)
+            L.d("id=" + url.hashCode() + " form=" + paramsMap.toString());
         //创建一个FormBody.Builder
         FormBody.Builder builder = new FormBody.Builder();
         if (paramsMap != null) {
-            L.d("请求 Form{" + paramsMap.toString() + "}");
             for (String key : paramsMap.keySet()) {
                 //追加表单信息
                 String s = paramsMap.get(key);
@@ -255,13 +267,15 @@ public class HttpManager {
      * 请求
      */
     private Call request(final ResponseHandler handler, Request request) {
-        L.d("Request{method="
-                + request.method()
-                + ", url="
-                + request.url()
-                + ", header=("
-                + request.headers().toString().replace("\n", ",")
-                + ")}");
+        HttpUrl url = request.url();
+        final int id = url.hashCode();
+        if (logcat) {
+            L.d("id=" + id + " Request{"
+                    + "," + request.method() + "=" + url
+                    + "," + Token.INSTANCE.getTOKEN() + "=" + TokenUtilKt.getToken()
+                    + "}");
+        }
+        //
         Call call = client.newCall(request);
         handler.start(call);
         call.enqueue(new Callback() {
@@ -272,13 +286,25 @@ public class HttpManager {
                     PrintWriter printWriter = new PrintWriter(info);
                     e.printStackTrace(printWriter);
                     printWriter.close();
+                    String errorData = info.toString();
                     handler.netFinish();
-                    handler.fail(-1, info.toString());
+                    handler.fail(-1, errorData);
+                    //
+                    if (logcat) {
+                        L.d("id=" + id + " IOException->");
+                        e.printStackTrace();
+                    }
                 }
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                //获取服务器时间
+                String date = response.header("date");
+                long serverTime = new Date(date).getTime();
+                long l = serverTime - SystemClock.elapsedRealtime();
+                if (l > timeDifference) timeDifference = l;
+                //
                 String data = response.body().string();
                 if (call.isCanceled())
                     return;
@@ -287,6 +313,10 @@ public class HttpManager {
                     handler.success(data);
                 } else {
                     handler.fail(response.code(), data);
+                }
+                //日志输出
+                if (logcat) {
+                    L.d("id=" + id + " Response=" + data);
                 }
             }
         });
@@ -432,5 +462,15 @@ public class HttpManager {
      */
     public void setInterceptor(Interceptor mInterceptor) {
         this.mInterceptor = mInterceptor;
+    }
+
+    /**
+     * 获取服务器时间
+     */
+    public Date getServerDate() {
+        if (timeDifference == 0)
+            return new Date();
+        else
+            return new Date(timeDifference + SystemClock.elapsedRealtime());
     }
 }

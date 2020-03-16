@@ -5,6 +5,7 @@ import android.support.annotation.LayoutRes
 import com.android.databinding.library.baseAdapters.BR
 import com.lcg.mylibrary.dialog.ProgressDialog
 import com.lcg.mylibrary.model.AlertDialogObservable
+import com.lcg.mylibrary.net.HttpManager
 import com.lcg.mylibrary.net.HttpUrl
 import com.lcg.mylibrary.utils.L
 import com.lcg.mylibrary.utils.Token
@@ -35,6 +36,7 @@ object QAndroid {
     /**日志输出控制，通常使用BuildConfig.DEBUG*/
     fun setDebug(debug: Boolean): QAndroid {
         L.DEBUG = debug
+        HttpManager.logcat = debug
         return this
     }
 
@@ -82,5 +84,4 @@ object QAndroid {
         HttpUrl.failDefault = handler
         return this
     }
-
 }

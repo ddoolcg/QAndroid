@@ -8,7 +8,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONType;
 import com.alibaba.fastjson.parser.Feature;
 import com.lcg.mylibrary.bean.SimpleData;
-import com.lcg.mylibrary.utils.L;
 import com.lcg.mylibrary.utils.Token;
 import com.lcg.mylibrary.utils.UIUtils;
 
@@ -51,7 +50,6 @@ public abstract class BaseResponseHandler<S, E> implements ResponseHandler {
 
     @Override
     public void fail(final int code, String errorData) {
-        L.w("NET", "code=" + code + " errorData=" + errorData + "");
         final Object data = parseData(errorData, 1);
         UIUtils.runInMainThread(new Runnable() {
             @Override
@@ -63,8 +61,6 @@ public abstract class BaseResponseHandler<S, E> implements ResponseHandler {
 
     @Override
     public void success(String successData) {
-        L.d("NET", successData);
-//        L.file("-------------\n" + successData);
         final Object data = parseData(successData, 0);
         if (data == null) fail(200, successData);
         else UIUtils.runInMainThread(new Runnable() {

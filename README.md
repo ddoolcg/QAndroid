@@ -20,7 +20,7 @@ allprojects {
 ~~~
 ~~~gradle
 dependencies {
-    api 'com.github.ddoolcg:QAndroid:1.9.18'
+    api 'com.github.ddoolcg:QAndroid:1.9.19'
 }
 ~~~
 
@@ -121,7 +121,7 @@ CommentAdapter(items)
 | data              | 数据列表 |
 | mLayoutId         | layout布局 |
 | mVariableId       | BR ID，也就是xml的data |
-| mFooterViewHolder | 底部的加载更多，为null表示无该功能 |
+| footer            | 底部的加载更多，为null表示无该功能 |
 
 # 页面实现demo
 activity:
