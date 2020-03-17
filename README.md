@@ -20,7 +20,7 @@ allprojects {
 ~~~
 ~~~gradle
 dependencies {
-    api 'com.github.ddoolcg:QAndroid:1.9.23'
+    api 'com.github.ddoolcg:QAndroid:1.9.24'
 }
 ~~~
 
@@ -166,3 +166,24 @@ ListActivity.start(this@MainActivity, ListViewModelDemo::class.java, bundle)
 # DataEntry无法满足你的需求可参考：
 https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/net/Base200Handler.java
 https://github.com/ddoolcg/QAndroid/blob/master/comment/src/main/java/com/lcg/comment/net/MyUrl.kt
+
+# 权限请求
+只需要继承com.lcg.mylibrary.PermissionsActivity
+这时候你可以在任何地方很方便的使用权限请求了
+~~~kotlin
+(activity as? PermissionsActivity)?.requestPermissions(Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_FINE_LOCATION) { success ->
+            if (success) {
+                TODO()
+                //app获得全部权限
+            } else {
+                //某项权限申请被拒。
+      }
+}
+(activity as? PermissionsActivity)?.requestPermissions(Manifest.permission.ACCESS_FINE_LOCATION) { success ->
+    if (success) {
+        TODO()
+    } else {
+        //没有定位权限
+    }
+}
+~~~kotlin

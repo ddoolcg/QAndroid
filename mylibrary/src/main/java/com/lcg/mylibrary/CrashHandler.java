@@ -182,7 +182,8 @@ public class CrashHandler implements UncaughtExceptionHandler {
             } catch (Exception e) {
             }
             params.put("app_name", UIUtils.getContext().getPackageName());
-            params.put("ver", ver + "");
+            params.put("version_code", ver + "");
+            params.put("version_name", mDeviceCrashInfo.get(VERSION_NAME));
             params.put("content", msg);
             HttpManager.getInstance().post(mUrl, params,
                     new ResponseHandler() {
