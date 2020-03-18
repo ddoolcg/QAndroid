@@ -4,17 +4,18 @@ import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.os.Bundle
 import android.support.annotation.LayoutRes
-import android.support.v4.app.FragmentManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import com.lcg.mylibrary.BaseActivity
 import com.lcg.mylibrary.BaseObservableMe
 import com.lcg.mylibrary.model.AlertDialogObservable
 
 /**弹窗*/
 class DialogFragment : android.support.v4.app.DialogFragment() {
     var binding: ViewDataBinding? = null
+
     @LayoutRes
     var layoutId: Int = 0
     var variableId: Int = 0
@@ -37,9 +38,9 @@ class DialogFragment : android.support.v4.app.DialogFragment() {
         return binding!!.root
     }
 
-    fun show(manager: FragmentManager, variable: BaseObservableMe) {
-        this.variable = variable
-        super.show(manager, variable.titleText)
+    /**显示对话框，显示之前需要给variable赋值*/
+    fun show(activity: BaseActivity) {
+        super.show(activity.supportFragmentManager, variable?.titleText ?: "")
     }
 
     companion object {
