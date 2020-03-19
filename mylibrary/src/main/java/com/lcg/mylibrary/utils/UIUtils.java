@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.hjq.toast.IToastStyle;
 import com.hjq.toast.ToastUtils;
 import com.umeng.analytics.MobclickAgent;
 
@@ -35,9 +36,16 @@ public class UIUtils {
      * 初始化
      */
     public static boolean init(Application app) {
+        return init(app, MyToastStyle.INSTANCE);
+    }
+
+    /**
+     * 初始化
+     */
+    public static boolean init(Application app, IToastStyle toastStyle) {
         sMainThread = Thread.currentThread();
         application = app;
-        ToastUtils.init(app, MyToastStyle.INSTANCE);
+        ToastUtils.init(app, toastStyle);
         return initMainProcesses(app);
     }
 
