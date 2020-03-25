@@ -31,7 +31,7 @@ object DataBindingAdapter {
     @BindingAdapter("img")
     @JvmStatic
     fun loadIcon(iv: ImageView, icon: String?) {
-        Glide.with(iv.context).load(icon).error(android.R.drawable.ic_menu_gallery).into(iv)
+        Glide.with(iv.context).load(icon).error(android.R.drawable.ic_menu_report_image).into(iv)
     }
 
     /**为RecyclerView绑定适配器*/
@@ -49,8 +49,12 @@ object DataBindingAdapter {
     fun <T : CommentAdapter.Item> recyclerViewItems(rv: RecyclerView, items: ArrayList<T>) {
         if (rv.layoutManager == null)
             rv.layoutManager = LinearLayoutManager(rv.context)
-        val adapter = CommentAdapter(items)
-        rv.adapter = adapter
+        val adapter = rv.adapter
+        if (adapter != null && adapter is CommentAdapter) {
+            adapter.update(items)
+        } else {
+            rv.adapter = CommentAdapter(items)
+        }
     }
 
     /**为LinearLayout以及子类绑定数据，如果BR设置不正确会导致items为空异常*/

@@ -11,8 +11,8 @@ import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.lcg.mylibrary.bean.ExceptionLog;
-import com.lcg.mylibrary.net.ResponseHandler;
 import com.lcg.mylibrary.net.HttpManager;
+import com.lcg.mylibrary.net.ResponseHandler;
 import com.lcg.mylibrary.utils.L;
 import com.lcg.mylibrary.utils.MD5;
 import com.lcg.mylibrary.utils.ThreadPoolUntil;
@@ -46,7 +46,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
     private static final boolean DEBUG = false;
     private UncaughtExceptionHandler mDefaultHandler;
     private Application mContext;
-    private Map<String, String> mDeviceCrashInfo = new HashMap<String, String>();
+    private Map<String, String> mDeviceCrashInfo = new HashMap<>();
 
     private static String mUrl;
     private static final String VERSION_NAME = "versionName";
@@ -176,14 +176,19 @@ public class CrashHandler implements UncaughtExceptionHandler {
             HashMap<String, String> params = new HashMap<>();
 //            params.put("toemail", "475825657@qq.com");
             params.put("title", file.getName());
-            int ver = 0;
             try {
-                ver = Integer.valueOf(mDeviceCrashInfo.get(VERSION_CODE));
-            } catch (Exception e) {
+                Context context = UIUtils.getContext();
+                String packageName = context.getPackageName();
+                params.put("app_name", packageName);
+                //
+                PackageManager pm = context.getPackageManager();
+                PackageInfo pi = pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
+                if (pi != null) {
+                    params.put("version_code", pi.versionCode + "");
+                    params.put("version_name", pi.versionName);
+                }
+            } catch (Exception ignored) {
             }
-            params.put("app_name", UIUtils.getContext().getPackageName());
-            params.put("version_code", ver + "");
-            params.put("version_name", mDeviceCrashInfo.get(VERSION_NAME));
             params.put("content", msg);
             HttpManager.getInstance().post(mUrl, params,
                     new ResponseHandler() {
@@ -202,14 +207,13 @@ public class CrashHandler implements UncaughtExceptionHandler {
 
                         @Override
                         public void success(String successData) {
-                            L.i("日志发送回持：" + successData);
                             file.delete();
                         }
                     });
         }
     }
 
-    private String saveCrashInfoToFile(Throwable ex) {
+    private void saveCrashInfoToFile(Throwable ex) {
         StringWriter info = new StringWriter();
         PrintWriter printWriter = new PrintWriter(info);
         ex.printStackTrace(printWriter);
@@ -224,7 +228,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         String[] fileList = mContext.fileList();
         for (String s : fileList) {
             if (s.equals(fileName)) {
-                return fileName;
+                return;
             }
         }
         ExceptionLog log = new ExceptionLog();
@@ -235,11 +239,9 @@ public class CrashHandler implements UncaughtExceptionHandler {
             trace.write(JSON.toJSONBytes(log));
             trace.flush();
             trace.close();
-            return fileName;
         } catch (Exception e) {
             L.e(TAG, "an error occured while writing report file..." + e);
         }
-        return null;
     }
 
     /**

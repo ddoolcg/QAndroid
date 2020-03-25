@@ -18,7 +18,7 @@ import com.lcg.mylibrary.utils.inflateBinding
  * @since 2019/01/16 13:57
  */
 class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private val data: ArrayList<out BaseObservable>
+    private var data: ArrayList<out BaseObservable>
     private var mLayoutId: Int? = null
     private var mVariableId: Int? = null
     private var footer: FooterTool? = null
@@ -38,6 +38,12 @@ class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.mLayoutId = layoutId
         this.mVariableId = variableId
         this.footer = footer
+    }
+
+    /**更新列表*/
+    fun update(data: ArrayList<out BaseObservable>) {
+        this.data = data
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -94,6 +100,7 @@ class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
     abstract class Item(activity: BaseActivity? = null) : BaseObservableMe(activity) {
         /**LayoutRes*/
         abstract val layoutId: Int
+
         /**BR id*/
         abstract val variableId: Int
     }
