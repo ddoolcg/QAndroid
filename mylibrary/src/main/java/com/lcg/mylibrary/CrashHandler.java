@@ -16,7 +16,6 @@ import com.lcg.mylibrary.net.ResponseHandler;
 import com.lcg.mylibrary.utils.L;
 import com.lcg.mylibrary.utils.MD5;
 import com.lcg.mylibrary.utils.ThreadPoolUntil;
-import com.lcg.mylibrary.utils.UIUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -51,6 +50,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
     private static String mUrl;
     private static final String VERSION_NAME = "versionName";
     private static final String VERSION_CODE = "versionCode";
+    private static final String APP_NAME = "appName";
     private static final String STACK_TRACE = "STACK_TRACE";
     private static final String CRASH_REPORTER_EXTENSION = ".log";
 
@@ -122,6 +122,19 @@ public class CrashHandler implements UncaughtExceptionHandler {
      * 发送异常
      */
     private void sendCrashReportsToServer(final Context ctx) {
+        try {
+            PackageManager pm = ctx.getPackageManager();
+            String packageName = ctx.getPackageName();
+            mDeviceCrashInfo.put(APP_NAME, packageName);
+            PackageInfo pi = pm.getPackageInfo(packageName,
+                    PackageManager.GET_ACTIVITIES);
+            if (pi != null) {
+                mDeviceCrashInfo.put(VERSION_NAME,
+                        pi.versionName == null ? "not set" : pi.versionName);
+                mDeviceCrashInfo.put(VERSION_CODE, "" + pi.versionCode);
+            }
+        } catch (Exception ignored) {
+        }
         ThreadPoolUntil.getInstance().run(new Runnable() {
             @Override
             public void run() {
@@ -176,19 +189,9 @@ public class CrashHandler implements UncaughtExceptionHandler {
             HashMap<String, String> params = new HashMap<>();
 //            params.put("toemail", "475825657@qq.com");
             params.put("title", file.getName());
-            try {
-                Context context = UIUtils.getContext();
-                String packageName = context.getPackageName();
-                params.put("app_name", packageName);
-                //
-                PackageManager pm = context.getPackageManager();
-                PackageInfo pi = pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
-                if (pi != null) {
-                    params.put("version_code", pi.versionCode + "");
-                    params.put("version_name", pi.versionName);
-                }
-            } catch (Exception ignored) {
-            }
+            params.put("app_name", mDeviceCrashInfo.get(APP_NAME));
+            params.put("version_code", mDeviceCrashInfo.get(VERSION_CODE));
+            params.put("version_name", mDeviceCrashInfo.get(VERSION_NAME));
             params.put("content", msg);
             HttpManager.getInstance().post(mUrl, params,
                     new ResponseHandler() {
