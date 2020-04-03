@@ -89,6 +89,8 @@ class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
             } else {
                 (holder as ContentHolder).binding.setVariable((item as Item).variableId, item)
             }
+        } else if (footer?.autoLoading == true) { //自动刷新
+            footer!!.load()
         }
     }
 

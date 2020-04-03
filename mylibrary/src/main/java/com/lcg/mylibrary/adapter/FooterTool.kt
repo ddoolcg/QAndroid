@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.lcg.mylibrary.R
+import com.lcg.mylibrary.utils.isVisible
 
 /**
  * 底部加载更多栏
@@ -18,6 +19,9 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
     private var pb: View? = null
     private var tv: TextView? = null
 
+    /**可见时自动加载*/
+    var autoLoading = true
+
     /**初始化*/
     internal open fun init(group: ViewGroup): RecyclerView.ViewHolder {
         rootView = LayoutInflater.from(group.context).inflate(layout, group, false)
@@ -25,15 +29,21 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
         tv = rootView!!.findViewById(R.id.tv_list) as TextView
         setStatus(Status.ENABLE)
         rootView!!.setOnClickListener {
-            setStatus(Status.LOADING)
-            load(this)
+            load()
         }
         return object : RecyclerView.ViewHolder(rootView!!) {}
     }
 
+    /**加载数据*/
+    fun load() {
+        if (rootView != null && rootView!!.isVisible && rootView!!.isEnabled) {
+            setStatus(Status.LOADING)
+            load(this)
+        }
+    }
+
     /**
      * 设置底部状态
-
      * @param status 状态
      */
     open fun setStatus(status: Status) {
