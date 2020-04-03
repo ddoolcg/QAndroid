@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.lcg.mylibrary.R
-import com.lcg.mylibrary.utils.isVisible
 
 /**
  * 底部加载更多栏
@@ -18,6 +17,7 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
     private var rootView: View? = null
     private var pb: View? = null
     private var tv: TextView? = null
+    private var mStatus: Status? = null
 
     /**可见时自动加载*/
     var autoLoading = true
@@ -36,7 +36,7 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
 
     /**加载数据*/
     fun load() {
-        if (rootView != null && rootView!!.isVisible && rootView!!.isEnabled) {
+        if (mStatus == Status.ENABLE) {
             setStatus(Status.LOADING)
             load(this)
         }
@@ -47,6 +47,7 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
      * @param status 状态
      */
     open fun setStatus(status: Status) {
+        mStatus = status
         when (status) {
             Status.ENABLE -> {
                 tv?.apply {
@@ -54,7 +55,6 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
                     paint.isAntiAlias = true // 抗锯齿
                     text = "点击加载更多"
                     pb?.visibility = View.GONE
-                    rootView.isEnabled = true
                     rootView.isClickable = true
                     rootView.visibility = View.VISIBLE
                 }
@@ -65,7 +65,6 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
                     paint.isAntiAlias = true // 抗锯齿
                     text = "已经到底了~"
                     pb?.visibility = View.GONE
-                    rootView.isEnabled = false
                     rootView.isClickable = false
                     rootView.visibility = View.VISIBLE
                 }
@@ -76,7 +75,6 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
                     paint.isAntiAlias = true // 抗锯齿
                     text = "正在加载中···"
                     pb?.visibility = View.VISIBLE
-                    rootView.isEnabled = false
                     rootView.isClickable = false
                     rootView.visibility = View.VISIBLE
                 }
@@ -84,6 +82,9 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
             else -> rootView?.visibility = View.GONE
         }
     }
+
+    /**当前状态*/
+    fun getStatus() = mStatus
 
     /**
      * FooterView状态枚举
