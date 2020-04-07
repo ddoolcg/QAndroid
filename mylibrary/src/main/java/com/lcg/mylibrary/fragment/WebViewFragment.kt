@@ -40,6 +40,7 @@ class WebViewFragment : BaseFragment() {
     private var isPad: Boolean = false
     private val jiMap = hashMapOf<String, Any>()
     private var titleObserver: ((String) -> Unit)? = null
+
     /**
      * JS调用关闭页面监听
      */
@@ -88,6 +89,7 @@ class WebViewFragment : BaseFragment() {
             // 跨域
             settings.allowUniversalAccessFromFileURLs = true
         }
+        settings.domStorageEnabled = true
         settings.cacheMode = WebSettings.LOAD_DEFAULT
         settings.javaScriptEnabled = true
         root.wv.webViewClient = object : WebViewClient() {
