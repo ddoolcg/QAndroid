@@ -18,6 +18,7 @@ open class HttpUrl(private val url: String) {
     protected var body: String? = null
     protected var progress: ProgressDialogInterface? = null
     protected var msg: String? = null
+    protected var progressDialogClose = true
     protected var fail: ((code: Int, data: String?) -> Boolean)? = null
 
     /**响应处理器*/
@@ -28,7 +29,8 @@ open class HttpUrl(private val url: String) {
             }
 
             override fun onNetFinish() {
-                progress?.dismissProgressDialog(msg!!)
+                if (progressDialogClose)
+                    progress?.dismissProgressDialog(msg!!)
             }
 
             override fun onFail(code: Int, data: String?) {
@@ -93,9 +95,10 @@ open class HttpUrl(private val url: String) {
     }
 
     /**接入进度对话框，用户关闭对话框会中断请求*/
-    fun join(progressDialog: ProgressDialogInterface?, msg: String = "加载中..."): HttpUrl {
+    fun join(progressDialog: ProgressDialogInterface?, msg: String = "加载中...", autoClose: Boolean = true): HttpUrl {
         this.progress = progressDialog
         this.msg = msg
+        this.progressDialogClose = autoClose
         return this
     }
 
