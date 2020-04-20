@@ -25,11 +25,9 @@ import java.nio.channels.FileChannel;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.ConnectionPool;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -55,7 +53,7 @@ public class HttpManager {
      * 输出日志
      */
     public static boolean logcat = false;
-    private static HttpManager ourInstance = new HttpManager();
+    private volatile static HttpManager instance;
     private OkHttpClient client;
     private final HashMap<String, String> header = new HashMap<>();
     private Interceptor mInterceptor;
@@ -65,12 +63,26 @@ public class HttpManager {
     private long timeDifference = 0;
 
     public static HttpManager getInstance() {
-        return ourInstance;
+        if (instance == null) {
+            synchronized (HttpManager.class) {
+                if (instance == null) {
+                    instance = new HttpManager();
+                }
+            }
+        }
+        return instance;
     }
 
     private HttpManager() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.connectionPool(new ConnectionPool(3, 5, TimeUnit.MINUTES));
+        addDefaultInterceptor(builder);
+        client = builder.build();
+    }
+
+    /**
+     * 添加默认Interceptor
+     */
+    private void addDefaultInterceptor(OkHttpClient.Builder builder) {
         builder.addInterceptor(new Interceptor() {
             @Override
             public Response intercept(@NonNull Chain chain) throws IOException {
@@ -83,7 +95,6 @@ public class HttpManager {
                 }
             }
         });
-        client = builder.build();
     }
 
     /**
@@ -471,6 +482,12 @@ public class HttpManager {
 
     public OkHttpClient getClient() {
         return client;
+    }
+
+    public void setClient(OkHttpClient client) {
+        OkHttpClient.Builder builder = client.newBuilder();
+        addDefaultInterceptor(builder);
+        this.client = builder.build();
     }
 
     /**
