@@ -64,10 +64,9 @@ public class HttpManager {
 
     public static HttpManager getInstance() {
         if (instance == null) {
-            synchronized (HttpManager.class) {
-                if (instance == null) {
-                    instance = new HttpManager();
-                }
+            HttpManager manager = new HttpManager();
+            if (instance == null) {
+                instance = manager;
             }
         }
         return instance;
