@@ -9,8 +9,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.text.TextUtils;
 
-import com.alibaba.fastjson.JSON;
-import com.lcg.mylibrary.bean.ExceptionLog;
 import com.lcg.mylibrary.net.HttpManager;
 import com.lcg.mylibrary.net.ResponseHandler;
 import com.lcg.mylibrary.utils.L;
@@ -22,8 +20,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -51,7 +47,6 @@ public class CrashHandler implements UncaughtExceptionHandler {
     private static final String VERSION_NAME = "versionName";
     private static final String VERSION_CODE = "versionCode";
     private static final String APP_NAME = "appName";
-    private static final String STACK_TRACE = "STACK_TRACE";
     private static final String CRASH_REPORTER_EXTENSION = ".log";
 
     private CrashHandler(Application ctx) {
@@ -217,16 +212,21 @@ public class CrashHandler implements UncaughtExceptionHandler {
     }
 
     private void saveCrashInfoToFile(Throwable ex) {
-        StringWriter info = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(info);
-        ex.printStackTrace(printWriter);
-        String result = info.toString().replace("\n\t", "<br/>");
-        printWriter.close();
-        String localizedMessage = ex.getLocalizedMessage();
-        localizedMessage = (localizedMessage == null) ? "null"
-                : localizedMessage;
-        String fileNameString = MD5.GetMD5Code(result
-                + mDeviceCrashInfo.get(VERSION_CODE));
+        StackTraceElement[] stackTrace = ex.getStackTrace();
+        StringBuilder sb = new StringBuilder();
+        StringBuilder sbTag = new StringBuilder();
+        sb.append(ex.toString()).append("<br/>");
+        sbTag.append(ex.toString());
+        if (stackTrace != null)
+            for (StackTraceElement element : stackTrace) {
+                String s = element.toString();
+                sb.append("at ").append(s).append("<br/>");
+                if (!s.startsWith("android.") && !s.startsWith("com.android.") && !s.startsWith("java")) {
+                    sbTag.append(s);
+                }
+            }
+        //缓存到文件规则
+        String fileNameString = MD5.GetMD5Code(sbTag.toString() + mDeviceCrashInfo.get(VERSION_CODE));
         String fileName = fileNameString + CRASH_REPORTER_EXTENSION;
         String[] fileList = mContext.fileList();
         for (String s : fileList) {
@@ -234,36 +234,19 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 return;
             }
         }
-        ExceptionLog log = new ExceptionLog();
-        initLog(result, localizedMessage, fileNameString, log);
+        //
+        Set<String> keySet = mDeviceCrashInfo.keySet();
+        for (String key : keySet) {
+            sb.append(key).append(":").append(mDeviceCrashInfo.get(key)).append("<br/>");
+        }
         try {
-            FileOutputStream trace = mContext.openFileOutput(fileName,
-                    Context.MODE_PRIVATE);
-            trace.write(JSON.toJSONBytes(log));
+            FileOutputStream trace = mContext.openFileOutput(fileName, Context.MODE_PRIVATE);
+            trace.write(sb.toString().getBytes());
             trace.flush();
             trace.close();
         } catch (Exception e) {
             L.e(TAG, "an error occured while writing report file..." + e);
         }
-    }
-
-    /**
-     * 初始化log对象的数据
-     */
-    private void initLog(String result, String localizedMessage,
-                         String fileNameString, ExceptionLog log) {
-        log.setExceptionname(fileNameString);
-        log.setException(localizedMessage);
-        log.setDevicename(mDeviceCrashInfo.get("MODEL"));
-        log.setVersion(mDeviceCrashInfo.get(VERSION_NAME));
-
-        Set<String> keySet = mDeviceCrashInfo.keySet();
-        StringBuilder sb = new StringBuilder();
-        sb.append(STACK_TRACE + ":<br/>").append(result).append("<br/>");
-        for (String key : keySet) {
-            sb.append(key).append(":").append(mDeviceCrashInfo.get(key)).append("<br/>");
-        }
-        log.setContent(sb.toString());
     }
 
     private void collectCrashDeviceInfo(Context ctx) {
