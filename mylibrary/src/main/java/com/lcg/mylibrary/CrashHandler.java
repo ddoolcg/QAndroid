@@ -21,7 +21,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +37,6 @@ public class CrashHandler implements UncaughtExceptionHandler {
      * Debug LogUntil tag
      */
     private static final String TAG = "CrashHandler";
-    private static final boolean DEBUG = false;
     private UncaughtExceptionHandler mDefaultHandler;
     private Application mContext;
     private Map<String, String> mDeviceCrashInfo = new HashMap<>();
@@ -262,20 +260,11 @@ public class CrashHandler implements UncaughtExceptionHandler {
         } catch (NameNotFoundException e) {
             L.e(TAG, "Error while collect package info" + e);
         }
-        // 使用反射来收集设备信息.在Build类中包含各种设备信息,
-        // 例如: 系统版本号,设备生产商 等帮助调试程序的有用信息
-        Field[] fields = Build.class.getDeclaredFields();
-        for (Field field : fields) {
-            try {
-                field.setAccessible(true);
-                mDeviceCrashInfo.put(field.getName(), "" + field.get(null));
-                if (DEBUG) {
-                    L.d(TAG, field.getName() + " : " + field.get(null));
-                }
-            } catch (Exception e) {
-                L.e(TAG, "Error while collect crash info" + e);
-            }
-        }
+        //保留有效设备信息
+        mDeviceCrashInfo.put("TIME", Build.TIME + "");
+        mDeviceCrashInfo.put("FINGERPRINT", Build.FINGERPRINT + "");
+        mDeviceCrashInfo.put("DEVICE", Build.MANUFACTURER + "/" + Build.MODEL + "/" + Build.DEVICE + " os=" + Build.VERSION.SDK_INT);
+        mDeviceCrashInfo.put("CPU_ABI", Build.CPU_ABI + " " + Build.CPU_ABI2);
     }
 
 }
