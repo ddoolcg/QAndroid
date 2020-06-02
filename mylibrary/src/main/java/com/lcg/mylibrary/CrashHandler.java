@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -211,14 +213,11 @@ public class CrashHandler implements UncaughtExceptionHandler {
 
     private void saveCrashInfoToFile(Throwable ex) {
         StackTraceElement[] stackTrace = ex.getStackTrace();
-        StringBuilder sb = new StringBuilder();
         StringBuilder sbTag = new StringBuilder();
-        sb.append(ex.toString()).append("<br/>");
         sbTag.append(ex.toString());
         if (stackTrace != null)
             for (StackTraceElement element : stackTrace) {
                 String s = element.toString();
-                sb.append("at ").append(s).append("<br/>");
                 if (!s.startsWith("android.") && !s.startsWith("com.android.") && !s.startsWith("java")) {
                     sbTag.append(s);
                 }
@@ -232,14 +231,19 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 return;
             }
         }
-        //
+        //保存文件
+        StringWriter info = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(info);
+        ex.printStackTrace(printWriter);
+        StringBuffer sb = info.getBuffer();
+        printWriter.close();
         Set<String> keySet = mDeviceCrashInfo.keySet();
         for (String key : keySet) {
             sb.append(key).append(":").append(mDeviceCrashInfo.get(key)).append("<br/>");
         }
         try {
             FileOutputStream trace = mContext.openFileOutput(fileName, Context.MODE_PRIVATE);
-            trace.write(sb.toString().getBytes());
+            trace.write(sb.toString().replace("\t", "<br/>").getBytes());
             trace.flush();
             trace.close();
         } catch (Exception e) {
