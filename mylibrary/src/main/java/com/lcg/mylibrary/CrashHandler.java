@@ -7,6 +7,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.lcg.mylibrary.net.HttpManager;
@@ -212,16 +213,32 @@ public class CrashHandler implements UncaughtExceptionHandler {
     }
 
     private void saveCrashInfoToFile(Throwable ex) {
-        StackTraceElement[] stackTrace = ex.getStackTrace();
-        StringBuilder sbTag = new StringBuilder();
-        sbTag.append(ex.toString());
-        if (stackTrace != null)
-            for (StackTraceElement element : stackTrace) {
-                String s = element.toString();
-                if (!s.startsWith("android.") && !s.startsWith("com.android.") && !s.startsWith("java")) {
+        final StringBuilder sbTag = new StringBuilder();
+        StringWriter info = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(info) {
+            @Override
+            public void println(@Nullable String x) {
+                super.println(x);
+                if (x != null)
+                    add(x);
+            }
+
+            @Override
+            public void println(@Nullable Object x) {
+                super.println(x);
+                if (x != null)
+                    add(x.toString());
+            }
+
+            private void add(String s) {
+                if (!s.startsWith("\tat android") && !s.startsWith("\tat com.android.") && !s.startsWith("\tat java")) {
                     sbTag.append(s);
                 }
             }
+        };
+        ex.printStackTrace(printWriter);
+        StringBuffer sb = info.getBuffer();
+        printWriter.close();
         //缓存到文件规则
         String fileNameString = MD5.GetMD5Code(sbTag.toString() + mDeviceCrashInfo.get(VERSION_CODE));
         String fileName = fileNameString + CRASH_REPORTER_EXTENSION;
@@ -232,11 +249,6 @@ public class CrashHandler implements UncaughtExceptionHandler {
             }
         }
         //保存文件
-        StringWriter info = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(info);
-        ex.printStackTrace(printWriter);
-        StringBuffer sb = info.getBuffer();
-        printWriter.close();
         Set<String> keySet = mDeviceCrashInfo.keySet();
         for (String key : keySet) {
             sb.append(key).append(":").append(mDeviceCrashInfo.get(key)).append("<br/>");
