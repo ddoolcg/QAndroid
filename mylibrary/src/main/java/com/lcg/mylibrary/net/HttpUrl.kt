@@ -112,13 +112,13 @@ open class HttpUrl(private val url: String) {
     }
 
     /** 不支持泛型套泛型的解析方式*/
-    fun <T> get(observable: ((data: T) -> Unit)? = null) {
-        HttpManager.getInstance().get(url, formMap, responseHandler(observable = observable))
+    fun <T> get(observable: ((data: T) -> Unit)? = null): Call {
+        return HttpManager.getInstance().get(url, formMap, responseHandler(observable = observable))
     }
 
     /** 不支持泛型套泛型的解析方式*/
-    fun <T> post(observable: ((data: T) -> Unit)? = null) {
-        when {
+    fun <T> post(observable: ((data: T) -> Unit)? = null): Call {
+        return when {
             formMap != null -> HttpManager.getInstance().post(url, formMap, responseHandler(observable = observable))
             body != null -> HttpManager.getInstance().post(url, body, responseHandler(observable = observable))
             else -> HttpManager.getInstance().post(url, hashMapOf(), responseHandler(observable = observable))
@@ -126,8 +126,8 @@ open class HttpUrl(private val url: String) {
     }
 
     /** 不支持泛型套泛型的解析方式*/
-    fun <T> delete(observable: ((data: T) -> Unit)? = null) {
-        when {
+    fun <T> delete(observable: ((data: T) -> Unit)? = null): Call {
+        return when {
             formMap != null -> HttpManager.getInstance().delete(url, formMap, responseHandler(observable = observable))
             body != null -> HttpManager.getInstance().delete(url, body, responseHandler(observable = observable))
             else -> HttpManager.getInstance().delete(url, responseHandler(observable = observable))
@@ -135,8 +135,8 @@ open class HttpUrl(private val url: String) {
     }
 
     /** 不支持泛型套泛型的解析方式*/
-    fun <T> put(observable: ((data: T) -> Unit)? = null) {
-        when {
+    fun <T> put(observable: ((data: T) -> Unit)? = null): Call {
+        return when {
             formMap != null -> HttpManager.getInstance().put(url, formMap, responseHandler(observable = observable))
             body != null -> HttpManager.getInstance().put(url, body, responseHandler(observable = observable))
             else -> HttpManager.getInstance().put(url, hashMapOf(), responseHandler(observable = observable))
@@ -144,13 +144,13 @@ open class HttpUrl(private val url: String) {
     }
 
     /** 支持泛型套泛型的解析方式*/
-    fun <T> get(listener: OnSuccessListener<T>? = null) {
-        HttpManager.getInstance().get(url, formMap, responseHandler(listener = listener))
+    fun <T> get(listener: OnSuccessListener<T>? = null): Call {
+        return HttpManager.getInstance().get(url, formMap, responseHandler(listener = listener))
     }
 
     /** 支持泛型套泛型的解析方式*/
-    fun <T> post(listener: OnSuccessListener<T>? = null) {
-        when {
+    fun <T> post(listener: OnSuccessListener<T>? = null): Call {
+        return when {
             formMap != null -> HttpManager.getInstance().post(url, formMap, responseHandler(listener = listener))
             body != null -> HttpManager.getInstance().post(url, body, responseHandler(listener = listener))
             else -> HttpManager.getInstance().post(url, hashMapOf(), responseHandler(listener = listener))
@@ -158,8 +158,8 @@ open class HttpUrl(private val url: String) {
     }
 
     /** 支持泛型套泛型的解析方式*/
-    fun <T> delete(listener: OnSuccessListener<T>? = null) {
-        when {
+    fun <T> delete(listener: OnSuccessListener<T>? = null): Call {
+        return when {
             formMap != null -> HttpManager.getInstance().delete(url, formMap, responseHandler(listener = listener))
             body != null -> HttpManager.getInstance().delete(url, body, responseHandler(listener = listener))
             else -> HttpManager.getInstance().delete(url, responseHandler(listener = listener))
@@ -167,8 +167,8 @@ open class HttpUrl(private val url: String) {
     }
 
     /** 支持泛型套泛型的解析方式*/
-    fun <T> put(listener: OnSuccessListener<T>? = null) {
-        when {
+    fun <T> put(listener: OnSuccessListener<T>? = null): Call {
+        return when {
             formMap != null -> HttpManager.getInstance().put(url, formMap, responseHandler(listener = listener))
             body != null -> HttpManager.getInstance().put(url, body, responseHandler(listener = listener))
             else -> HttpManager.getInstance().put(url, hashMapOf(), responseHandler(listener = listener))
