@@ -37,7 +37,7 @@ object DataBindingAdapter {
     /**为RecyclerView绑定适配器*/
     @BindingAdapter("adapter")
     @JvmStatic
-    fun recyclerViewAdapter(rv: RecyclerView, adapter: RecyclerView.Adapter<*>) {
+    fun recyclerViewAdapter(rv: RecyclerView, adapter: RecyclerView.Adapter<*>?) {
         if (rv.layoutManager == null)
             rv.layoutManager = LinearLayoutManager(rv.context)
         rv.adapter = adapter
@@ -46,25 +46,26 @@ object DataBindingAdapter {
     /**为RecyclerView绑定数据，如果BR设置不正确会导致items为空异常*/
     @BindingAdapter("items")
     @JvmStatic
-    fun <T : CommentAdapter.Item> recyclerViewItems(rv: RecyclerView, items: ArrayList<T>) {
+    fun <T : CommentAdapter.Item> recyclerViewItems(rv: RecyclerView, items: ArrayList<T>?) {
         if (rv.layoutManager == null)
             rv.layoutManager = LinearLayoutManager(rv.context)
         val adapter = rv.adapter
+        val data = items ?: arrayListOf()
         if (adapter != null && adapter is CommentAdapter) {
-            adapter.update(items)
+            adapter.update(data)
         } else {
-            rv.adapter = CommentAdapter(items)
+            rv.adapter = CommentAdapter(data)
         }
     }
 
     /**为LinearLayout以及子类绑定数据，如果BR设置不正确会导致items为空异常*/
     @BindingAdapter("items")
     @JvmStatic
-    fun <T : CommentAdapter.Item> linearLayoutItems(ll: LinearLayout, items: ArrayList<T>) {
+    fun <T : CommentAdapter.Item> linearLayoutItems(ll: LinearLayout, items: ArrayList<T>?) {
         ll.removeAllViews()
         val inflater = LayoutInflater.from(ll.context)
         try {
-            items.forEach {
+            items?.forEach {
                 val binding = inflater.inflateBinding<ViewDataBinding>(it.layoutId, ll, true)
                 binding.setVariable(it.variableId, it)
             }
