@@ -159,8 +159,10 @@ public class HttpManager {
                         e.printStackTrace();
                     }
             }
-            String start = url.contains("?") ? "&" : "?";
-            url = url + start + tempParams.substring(0, tempParams.length() - 1);
+            if (tempParams.length() > 0) {
+                String start = url.contains("?") ? "&" : "?";
+                url = url + start + tempParams.substring(0, tempParams.length() - 1);
+            }
         }
         Request request = addHeaders().url(url).build();
         return request(handler, request);
