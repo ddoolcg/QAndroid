@@ -323,9 +323,14 @@ public class HttpManager {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 //获取服务器时间
-                String date = response.header("date");
-                long serverTime = new Date(date).getTime();
-                long l = serverTime - SystemClock.elapsedRealtime();
+                long l;
+                try {
+                    String date = response.header("date");
+                    long serverTime = new Date(date).getTime();
+                    l = serverTime - SystemClock.elapsedRealtime();
+                } catch (Exception e) {
+                    l = timeDifference;
+                }
                 if (l > timeDifference) timeDifference = l;
                 //数据
                 String data = response.body().string();

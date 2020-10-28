@@ -96,6 +96,14 @@ class WebViewFragment : BaseFragment() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean { //
                 // 重写此方法表明点击网页里面的链接还是在当前的webview里跳转，不跳到浏览器那边
                 L.i(url)
+                if (!(url.startsWith("http") || url.startsWith("https"))) {
+                    try {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                    } catch (e: Exception) {
+                        UIUtils.showToastSafe("未找到匹配的应用！")
+                    }
+                    return true
+                }
                 loadUrl(url)
                 return true
             }
@@ -295,6 +303,11 @@ class WebViewFragment : BaseFragment() {
         } else {
             false
         }
+    }
+
+    override fun onDestroy() {
+        root?.wv?.destroy()
+        super.onDestroy()
     }
 
     companion object {
