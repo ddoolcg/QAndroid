@@ -1,7 +1,9 @@
 package com.lcg.mylibrary.fragment
 
+import android.R
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.annotation.LayoutRes
 import android.view.LayoutInflater
@@ -36,6 +38,11 @@ class DialogFragment : android.support.v4.app.DialogFragment() {
         binding = DataBindingUtil.inflate(inflater, layoutId, container, false)
         binding!!.setVariable(variableId, variable)
         return binding!!.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(0))
     }
 
     /**显示对话框，显示之前需要给variable赋值*/
