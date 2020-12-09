@@ -46,8 +46,8 @@ class DialogFragment : android.support.v4.app.DialogFragment() {
 
     /**显示对话框，显示之前需要给variable赋值*/
     fun show(activity: BaseActivity) {
-        val mDismissed = this::class.java.getField("mDismissed")
-        val mShownByMe = this::class.java.getField("mShownByMe")
+        val mDismissed = this::class.java.getDeclaredField("mDismissed")
+        val mShownByMe = this::class.java.getDeclaredField("mShownByMe")
         mDismissed.isAccessible = true
         mShownByMe.isAccessible = true
         mDismissed.setBoolean(this, false)
