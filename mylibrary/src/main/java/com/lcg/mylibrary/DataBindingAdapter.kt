@@ -24,8 +24,12 @@ object DataBindingAdapter {
 
     @BindingAdapter("html")
     @JvmStatic
-    fun parseHtml(tv: TextView, content: String) {
-        tv.text = Html.fromHtml(content)
+    fun parseHtml(tv: TextView, content: String?) {
+        tv.text = if (content.isNullOrEmpty()) {
+            ""
+        } else {
+            Html.fromHtml(content)
+        }
     }
 
     @BindingAdapter("img")

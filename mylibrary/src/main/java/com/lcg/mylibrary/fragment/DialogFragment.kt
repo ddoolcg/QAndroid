@@ -1,6 +1,5 @@
 package com.lcg.mylibrary.fragment
 
-import android.R
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.graphics.drawable.ColorDrawable
@@ -47,7 +46,16 @@ class DialogFragment : android.support.v4.app.DialogFragment() {
 
     /**显示对话框，显示之前需要给variable赋值*/
     fun show(activity: BaseActivity) {
-        super.show(activity.supportFragmentManager, variable?.titleText ?: "")
+        val mDismissed = this::class.java.getField("mDismissed")
+        val mShownByMe = this::class.java.getField("mShownByMe")
+        mDismissed.isAccessible = true
+        mShownByMe.isAccessible = true
+        mDismissed.setBoolean(this, false)
+        mShownByMe.setBoolean(this, true)
+        //
+        val ft = activity.supportFragmentManager.beginTransaction()
+        ft.add(this, variable?.titleText ?: "")
+        ft.commitAllowingStateLoss()
     }
 
     companion object {
