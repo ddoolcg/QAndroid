@@ -46,16 +46,10 @@ class DialogFragment : android.support.v4.app.DialogFragment() {
 
     /**显示对话框，显示之前需要给variable赋值*/
     fun show(activity: BaseActivity) {
-        val mDismissed = this::class.java.getDeclaredField("mDismissed")
-        val mShownByMe = this::class.java.getDeclaredField("mShownByMe")
-        mDismissed.isAccessible = true
-        mShownByMe.isAccessible = true
-        mDismissed.setBoolean(this, false)
-        mShownByMe.setBoolean(this, true)
-        //
-        val ft = activity.supportFragmentManager.beginTransaction()
-        ft.add(this, variable?.titleText ?: "")
-        ft.commitAllowingStateLoss()
+        try {
+            super.show(activity.supportFragmentManager, variable?.titleText ?: "")
+        } catch (e: Exception) {
+        }
     }
 
     companion object {
