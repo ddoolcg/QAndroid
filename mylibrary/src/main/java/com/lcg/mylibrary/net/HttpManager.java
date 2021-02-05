@@ -87,7 +87,6 @@ public class HttpManager {
             public Response intercept(@NonNull Chain chain) throws IOException {
                 if (mInterceptor != null) {
                     Response intercept = mInterceptor.intercept(chain);
-                    mInterceptor = null;
                     return intercept;
                 } else {
                     return chain.proceed(chain.request());

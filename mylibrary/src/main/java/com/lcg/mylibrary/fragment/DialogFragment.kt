@@ -1,5 +1,7 @@
 package com.lcg.mylibrary.fragment
 
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.LifecycleObserver
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.graphics.drawable.ColorDrawable
@@ -23,13 +25,21 @@ class DialogFragment : android.support.v4.app.DialogFragment() {
     var variable: BaseObservableMe? = null
         set(value) {
             field = value
-            binding?.setVariable(variableId, variable)
+            if (value is LifecycleObserver) {
+                lifecycle.addObserver(value)
+            }
+            binding?.setVariable(variableId, value)
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         layoutId = arguments?.getInt("layoutId") ?: 0
         variableId = arguments?.getInt("variableId") ?: 0
+        variable?.also {
+            if (it is LifecycleObserver) {
+                lifecycle.addObserver(it)
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
