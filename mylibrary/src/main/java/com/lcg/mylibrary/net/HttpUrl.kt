@@ -22,7 +22,7 @@ open class HttpUrl(private val url: String) {
     protected var fail: ((code: Int, data: String?) -> Boolean)? = null
 
     /**响应处理器*/
-    protected open fun <T> responseHandler(observable: ((data: T) -> Unit)? = null, listener: OnSuccessListener<T>? = null): ResponseHandler {
+    protected open fun <T> responseHandler(listener: OnSuccessListener<T>? = null): ResponseHandler {
         return object : BaseResponseHandler<T, String>() {
             override fun onStart(call: Call) {
                 progress?.showProgressDialog(msg!!, call)
@@ -45,36 +45,21 @@ open class HttpUrl(private val url: String) {
 
             override fun onSuccess(data: T) {
                 listener?.onSuccess(data)
-                observable?.invoke(data)
             }
 
             override fun getType(position: Int): Type {
-                if (position == 0) {
-                    if (observable != null) {
-                        //lambda 接口方式实现
-                        observable.javaClass.genericInterfaces.forEach {
-                            if (it is ParameterizedType) {
-                                val arguments = it.actualTypeArguments
-                                if (arguments.size == 2) {
-                                    return arguments[0]
-                                }
-                            }
-                        }
-                        //lambda直接使用Function1实现
-                        observable.javaClass.declaredMethods.filter {
-                            it.returnType.isAssignableFrom(Void.TYPE)
-                                    || it.returnType == Unit::class.java
-                        }.forEach { return it.parameterTypes[0] }
-                        return String::class.java
+                return if (position == 0) {
+                    if (listener == null) {
+                        String::class.java
                     } else {
-                        val clazz = listener?.javaClass
-                        val genericSuperclass = clazz?.genericSuperclass
+                        val clazz = listener.javaClass
+                        val genericSuperclass = clazz.genericSuperclass
                         val type = genericSuperclass as? ParameterizedType
                         val arguments = type?.actualTypeArguments
-                        return arguments?.get(0) ?: String::class.java
+                        arguments?.get(0) ?: String::class.java
                     }
                 } else {
-                    return super.getType(position)
+                    super.getType(position)
                 }
             }
         }
@@ -111,44 +96,46 @@ open class HttpUrl(private val url: String) {
         return this
     }
 
-    /** 不支持泛型套泛型的解析方式*/
-    fun <T> get(observable: ((data: T) -> Unit)? = null): Call {
-        return HttpManager.getInstance().get(url, formMap, responseHandler(observable = observable))
+    inline fun <reified T> get(crossinline observable: (data: T) -> Unit): Call {
+        return get(object : OnSuccessListener<T>() {
+            override fun onSuccess(data: T) {
+                observable(data)
+            }
+        })
     }
 
-    /** 不支持泛型套泛型的解析方式*/
-    fun <T> post(observable: ((data: T) -> Unit)? = null): Call {
-        return when {
-            formMap != null -> HttpManager.getInstance().post(url, formMap, responseHandler(observable = observable))
-            body != null -> HttpManager.getInstance().post(url, body, responseHandler(observable = observable))
-            else -> HttpManager.getInstance().post(url, hashMapOf(), responseHandler(observable = observable))
-        }
+    inline fun <reified T> post(crossinline observable: (data: T) -> Unit): Call {
+        return post(object : OnSuccessListener<T>() {
+            override fun onSuccess(data: T) {
+                observable(data)
+            }
+        })
     }
 
-    /** 不支持泛型套泛型的解析方式*/
-    fun <T> delete(observable: ((data: T) -> Unit)? = null): Call {
-        return when {
-            formMap != null -> HttpManager.getInstance().delete(url, formMap, responseHandler(observable = observable))
-            body != null -> HttpManager.getInstance().delete(url, body, responseHandler(observable = observable))
-            else -> HttpManager.getInstance().delete(url, responseHandler(observable = observable))
-        }
+    inline fun <reified T> delete(crossinline observable: (data: T) -> Unit): Call {
+        return delete(object : OnSuccessListener<T>() {
+            override fun onSuccess(data: T) {
+                observable(data)
+            }
+        })
     }
 
-    /** 不支持泛型套泛型的解析方式*/
-    fun <T> put(observable: ((data: T) -> Unit)? = null): Call {
-        return when {
-            formMap != null -> HttpManager.getInstance().put(url, formMap, responseHandler(observable = observable))
-            body != null -> HttpManager.getInstance().put(url, body, responseHandler(observable = observable))
-            else -> HttpManager.getInstance().put(url, hashMapOf(), responseHandler(observable = observable))
-        }
+    inline fun <reified T> put(crossinline observable: (data: T) -> Unit): Call {
+        return put(object : OnSuccessListener<T>() {
+            override fun onSuccess(data: T) {
+                observable(data)
+            }
+        })
     }
 
-    /** 支持泛型套泛型的解析方式*/
+    /**建议使用lambda[get]替代*/
+    @Deprecated("不建议使用")
     fun <T> get(listener: OnSuccessListener<T>? = null): Call {
         return HttpManager.getInstance().get(url, formMap, responseHandler(listener = listener))
     }
 
-    /** 支持泛型套泛型的解析方式*/
+    /**建议使用lambda[post]替代*/
+    @Deprecated("不建议使用")
     fun <T> post(listener: OnSuccessListener<T>? = null): Call {
         return when {
             formMap != null -> HttpManager.getInstance().post(url, formMap, responseHandler(listener = listener))
@@ -157,7 +144,8 @@ open class HttpUrl(private val url: String) {
         }
     }
 
-    /** 支持泛型套泛型的解析方式*/
+    /**建议使用lambda[delete]替代*/
+    @Deprecated("不建议使用")
     fun <T> delete(listener: OnSuccessListener<T>? = null): Call {
         return when {
             formMap != null -> HttpManager.getInstance().delete(url, formMap, responseHandler(listener = listener))
@@ -166,7 +154,8 @@ open class HttpUrl(private val url: String) {
         }
     }
 
-    /** 支持泛型套泛型的解析方式*/
+    /**建议使用lambda[put]替代*/
+    @Deprecated("不建议使用")
     fun <T> put(listener: OnSuccessListener<T>? = null): Call {
         return when {
             formMap != null -> HttpManager.getInstance().put(url, formMap, responseHandler(listener = listener))

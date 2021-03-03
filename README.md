@@ -20,7 +20,7 @@ allprojects {
 ~~~
 ~~~gradle
 dependencies {
-    api 'com.github.ddoolcg:QAndroid:1.9.51'
+    api 'com.github.ddoolcg:QAndroid:1.9.52'
 }
 ~~~
 
@@ -46,10 +46,7 @@ dependencies {
 
 # 联网调用
 ~~~kotlin
-//lambda不支持泛型套泛型的解析方式
 HttpUrl("url").joinProgressDialog(activity).formBody(map).post<T> {TODO()}
-//抽象方法实现的方式调用，支持泛型套泛型的解析方式
-HttpUrl("url").joinProgressDialog(activity).formBody(map).post<T>(OnSuccessListener)
 //自定义网络错误处理
 QAndroid.setNetFailDefault { code, data ->
      TODO()
