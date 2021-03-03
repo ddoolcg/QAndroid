@@ -45,6 +45,6 @@ class MainActivity : BaseActivity() {
                 dialog.dismiss()
                 UIUtils.showToastSafe("关闭对话框")
             }
-        }.show(supportFragmentManager, "alert")
+        }.show(this)
     }
 }

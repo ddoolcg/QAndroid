@@ -16,7 +16,7 @@ import com.lcg.mylibrary.fragment.DialogFragment
  * @version 1.0
  * @since 2019/10/24 15:23
  */
-class AlertDialogObservable(activity: BaseActivity?, private val dialog: DialogFragment) : BaseObservableMe(activity) {
+class AlertDialogObservable(activity: BaseActivity?, private val dialog: DialogFragment) : BaseObservableMe(activity){
     val background = AlertDialogObservable.background
     val textColor = AlertDialogObservable.textColor
 
@@ -26,43 +26,48 @@ class AlertDialogObservable(activity: BaseActivity?, private val dialog: DialogF
             field = value
             notifyPropertyChanged(BR.title)
         }
+
     @get:Bindable
     var message = ""
         set(value) {
             field = value
             notifyPropertyChanged(BR.message)
         }
-    private var negative: String? = null
-    private var positive: String? = null
+
+    @get:Bindable
+    var negative: String? = null
+        private set(value) {
+            field = value
+            notifyPropertyChanged(BR.negative)
+            notifyPropertyChanged(BR.singleString)
+        }
+
+    @get:Bindable
+    var positive: String? = null
+        private set(value) {
+            field = value
+            notifyPropertyChanged(BR.positive)
+            notifyPropertyChanged(BR.singleString)
+        }
     private var negativeListener: ((dialog: DialogFragment) -> Unit)? = null
     private var positiveListener: ((dialog: DialogFragment) -> Unit)? = null
 
-    val singleString = when {
-        positive?.isNotEmpty() == true -> positive!!
-        negative?.isNotEmpty() == true -> negative!!
-        else -> "知道了"
-    }
+    @get:Bindable
+    val singleString: String
+        get() = when {
+            positive?.isNotEmpty() == true -> positive!!
+            negative?.isNotEmpty() == true -> negative!!
+            else -> "知道了"
+        }
 
     fun setNegative(negative: String? = "取消", clickListener: ((dialog: DialogFragment) -> Unit)? = null) {
         this.negative = negative
         this.negativeListener = clickListener
-        notifyPropertyChanged(BR.negative)
     }
 
     fun setPositive(positive: String? = "确定", clickListener: ((dialog: DialogFragment) -> Unit)? = null) {
         this.positive = positive
         this.positiveListener = clickListener
-        notifyPropertyChanged(BR.positive)
-    }
-
-    @Bindable
-    fun getNegative(): String? {
-        return negative
-    }
-
-    @Bindable
-    fun getPositive(): String? {
-        return positive
     }
 
     fun negative(v: View) {
@@ -86,10 +91,13 @@ class AlertDialogObservable(activity: BaseActivity?, private val dialog: DialogF
             else -> dialog.dismiss()
         }
     }
+    fun onDismiss(listener: ((dialog: DialogFragment) -> Unit)? = null){
 
+    }
     companion object {
         var background: Int = -0x1
         var textColor: Int = -0x1000000
+
         @LayoutRes
         var layoutId: Int = R.layout.dialog_alert
         var variableId: Int = BR.dialog

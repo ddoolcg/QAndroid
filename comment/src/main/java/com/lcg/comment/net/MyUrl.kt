@@ -20,7 +20,7 @@ var host = "https://ddoolcg.pythonanywhere.com"
  * @since 2019/1/30 10:53
  */
 class MyUrl(path: String) : HttpUrl(host + path) {
-    override fun <T> responseHandler(observable: ((data: T) -> Unit)?, listener: OnSuccessListener<T>?): ResponseHandler {
+    override fun <T> responseHandler(listener: OnSuccessListener<T>?): ResponseHandler {
         return object : Base200Handler<T>() {
             override fun onStart(call: Call) {
                 L.i(Token.TOKEN + "-->" + getToken())
@@ -41,22 +41,17 @@ class MyUrl(path: String) : HttpUrl(host + path) {
 
             override fun onSuccess(data: T) {
                 listener?.onSuccess(data)
-                observable?.invoke(data)
             }
 
             override fun getType(): Type {
-                if (observable != null) {
-                    observable.javaClass.declaredMethods.filter {
-                        it.returnType.isAssignableFrom(Void.TYPE)
-                                || it.returnType == Unit::class.java
-                    }.forEach { return it.parameterTypes[0] }
-                    return String::class.java
+                return if (listener == null) {
+                    String::class.java
                 } else {
-                    val clazz = listener?.javaClass
-                    val genericSuperclass = clazz?.genericSuperclass
+                    val clazz = listener.javaClass
+                    val genericSuperclass = clazz.genericSuperclass
                     val type = genericSuperclass as? ParameterizedType
                     val arguments = type?.actualTypeArguments
-                    return arguments?.get(0) ?: String::class.java
+                    arguments?.get(0) ?: String::class.java
                 }
             }
         }

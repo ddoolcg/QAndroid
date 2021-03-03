@@ -1,6 +1,5 @@
 package com.lcg.mylibrary.fragment
 
-import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
@@ -30,9 +29,16 @@ class DialogFragment : android.support.v4.app.DialogFragment() {
             }
             binding?.setVariable(variableId, value)
         }
+    var isCanceledOnTouchOutside: Boolean = true
+        set(value) {
+            field = value
+            dialog?.setCanceledOnTouchOutside(value)
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState != null)
+            isCanceledOnTouchOutside = savedInstanceState.getBoolean("android:isCanceledOnTouchOutside", isCanceledOnTouchOutside)
         layoutId = arguments?.getInt("layoutId") ?: 0
         variableId = arguments?.getInt("variableId") ?: 0
         variable?.also {
@@ -40,6 +46,11 @@ class DialogFragment : android.support.v4.app.DialogFragment() {
                 lifecycle.addObserver(it)
             }
         }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        if (showsDialog) dialog?.setCanceledOnTouchOutside(isCanceledOnTouchOutside)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -52,6 +63,13 @@ class DialogFragment : android.support.v4.app.DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.setBackgroundDrawable(ColorDrawable(0))
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (!isCanceledOnTouchOutside) {
+            outState.putBoolean("android:isCanceledOnTouchOutside", isCanceledOnTouchOutside)
+        }
     }
 
     /**显示对话框，显示之前需要给variable赋值*/
