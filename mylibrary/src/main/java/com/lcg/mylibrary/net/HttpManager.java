@@ -394,72 +394,78 @@ public class HttpManager {
         final long startsPoint = file.length();
         final Request request = new Builder()
                 .addHeader("RANGE", "bytes=" + startsPoint + "-")
+                .addHeader("Connection", "keep-alive")
                 .url(url).build();
         Call call = client.newCall(request);
-        handler.start();
         call.enqueue(new Callback() {
+            private void fail(Call call, int code, IOException e) {
+                if (!call.isCanceled()) {
+                    handler.netFinish();
+                    handler.fail(code, e);
+                }
+            }
+
+            private void success(Call call) {
+                if (!call.isCanceled()) {
+                    handler.netFinish();
+                    handler.success(file);
+                }
+            }
+
             @Override
             public void onFailure(Call call, IOException e) {
-                handler.netFinish();
-                handler.fail(-1, e);
+                fail(call, -1, e);
             }
 
             @Override
             public void onResponse(Call call, Response response) {
-                if (response.isSuccessful()) {
-                    if (call.isCanceled())
-                        return;
-                    ResponseBody body = response.body();
-                    InputStream in = body.byteStream();
-                    FileChannel channelOut = null;
-                    // 随机访问文件，可以指定断点续传的起始位置
-                    RandomAccessFile randomAccessFile = null;
-                    try {
-                        randomAccessFile = new RandomAccessFile(file, "rwd");
-                        //Chanel NIO中的用法，由于RandomAccessFile没有使用缓存策略，直接使用会使得下载速度变慢，亲测缓存下载3.3
-                        // 秒的文件，用普通的RandomAccessFile需要20多秒。
-                        channelOut = randomAccessFile.getChannel();
-                        // 内存映射，直接使用RandomAccessFile，是用其seek方法指定下载的起始位置，使用缓存下载，在这里指定下载位置。
-                        long totalLength = body.contentLength();
-                        MappedByteBuffer mappedBuffer = channelOut.map(FileChannel.MapMode
-                                .READ_WRITE, startsPoint, totalLength);
-                        byte[] buffer = new byte[1024];
-                        int len;
-                        long bytesWritten = startsPoint;
-                        while ((len = in.read(buffer)) != -1 && !call.isCanceled()) {
-                            mappedBuffer.put(buffer, 0, len);
-                            bytesWritten += len;
-                            handler.progress(bytesWritten, totalLength);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        handler.netFinish();
-                        handler.fail(0, e);
-                        call.cancel();
-                    } finally {
+                if (call.isCanceled()) return;
+                //处理Response
+                int code = response.code();
+                ResponseBody body = response.body();
+                if (code >= 200 && code < 300 && body != null) {
+                    long contentLength = body.contentLength();
+                    if (code != 200 || startsPoint != contentLength) {//还有未下载的数据
+                        InputStream in = body.byteStream();
+                        FileChannel channelOut = null;
+                        RandomAccessFile randomAccessFile = null;
                         try {
-                            in.close();
-                            if (channelOut != null) {
-                                channelOut.close();
-                            }
-                            if (randomAccessFile != null) {
-                                randomAccessFile.close();
+                            randomAccessFile = new RandomAccessFile(file, "rwd");
+                            channelOut = randomAccessFile.getChannel();
+                            int len;
+                            long bytesWritten = code == 200 ? 0 : startsPoint;
+                            long totalLength = code == 200 ? contentLength : startsPoint + contentLength;
+                            MappedByteBuffer mappedBuffer = channelOut.map(FileChannel.MapMode
+                                    .READ_WRITE, bytesWritten, totalLength);
+                            byte[] buffer = new byte[5120];
+                            while ((len = in.read(buffer)) != -1 && !call.isCanceled()) {
+                                mappedBuffer.put(buffer, 0, len);
+                                bytesWritten += len;
+                                handler.progress(bytesWritten, totalLength);
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
+                            fail(call, -1, e);
+                            call.cancel();
+                        } finally {
+                            try {
+                                in.close();
+                                if (channelOut != null) {
+                                    channelOut.close();
+                                }
+                                if (randomAccessFile != null) {
+                                    randomAccessFile.close();
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
-                    if (call.isCanceled())
-                        return;
-                    handler.netFinish();
-                    handler.success(file);
+                    success(call);
+                } else if (code == 416) {//已经下载完了
+                    success(call);
                 } else {
-                    handler.netFinish();
-                    int code = response.code();
-                    if (code == 416)
-                        handler.success(file);
-                    else
-                        handler.fail(code, null);
+                    fail(call, code, null);
                 }
             }
         });
