@@ -18,7 +18,10 @@ interface Footer {
     var autoLoading: Boolean
 
     /**初始化*/
-    fun init(group: ViewGroup): RecyclerView.ViewHolder
+    fun create(group: ViewGroup): RecyclerView.ViewHolder
+
+    /**onBindViewHolder*/
+    fun bind()
 
     /**加载数据*/
     fun load()
@@ -35,7 +38,7 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
     override var autoLoading = true
 
     /**初始化*/
-    override fun init(group: ViewGroup): RecyclerView.ViewHolder {
+    override fun create(group: ViewGroup): RecyclerView.ViewHolder {
         rootView = LayoutInflater.from(group.context).inflate(layout, group, false).also {
             pb = it.findViewById(R.id.v_list_load)
             tv = it.findViewById(R.id.tv_list) as TextView
@@ -43,8 +46,11 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
                 load()
             }
         }
-        setStatus(status)
         return object : RecyclerView.ViewHolder(rootView!!) {}
+    }
+
+    override fun bind() {
+        setStatus(status)
     }
 
     /**加载数据*/

@@ -48,7 +48,7 @@ class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == 1) {
-            footer!!.init(parent)
+            footer!!.create(parent)
         } else {
             val layoutId = if (viewType == 0) mLayoutId!! else viewType
             val binding = LayoutInflater.from(parent.context)
@@ -82,15 +82,18 @@ class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val type = getItemViewType(position)
-        if (type != 1) {
+        if (type == 1) {
+            footer!!.bind()
+            if (footer?.autoLoading == true && itemCount > 1) { //自动刷新
+                footer!!.load()
+            }
+        } else {
             val item = data[position]
             if (type == 0) {
                 (holder as ContentHolder).binding.setVariable(mVariableId!!, item)
             } else {
                 (holder as ContentHolder).binding.setVariable((item as Item).variableId, item)
             }
-        } else if (footer?.autoLoading == true && itemCount > 1) { //自动刷新
-            footer!!.load()
         }
     }
 
