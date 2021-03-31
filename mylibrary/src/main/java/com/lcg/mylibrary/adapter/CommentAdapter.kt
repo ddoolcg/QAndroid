@@ -83,7 +83,6 @@ class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val type = getItemViewType(position)
         if (type == 1) {
-            footer!!.bind()
             if (footer?.autoLoading == true && itemCount > 1) { //自动刷新
                 footer!!.load()
             }
