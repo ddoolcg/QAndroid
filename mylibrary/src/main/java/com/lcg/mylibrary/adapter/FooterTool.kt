@@ -25,10 +25,9 @@ interface Footer {
 }
 
 open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_footer, private val load: FooterTool.() -> Unit) : Footer {
-    protected lateinit var rootView: View
+    protected var rootView: View? = null
     protected lateinit var pb: View
     protected lateinit var tv: TextView
-    private var viewHolder: RecyclerView.ViewHolder? = null
     var status: Status = Status.ENABLE
         private set
 
@@ -37,17 +36,15 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
 
     /**初始化*/
     override fun init(group: ViewGroup): RecyclerView.ViewHolder {
-        if (viewHolder == null) {
-            rootView = LayoutInflater.from(group.context).inflate(layout, group, false)
-            pb = rootView.findViewById(R.id.v_list_load)
-            tv = rootView.findViewById(R.id.tv_list) as TextView
-            rootView.setOnClickListener {
+        rootView = LayoutInflater.from(group.context).inflate(layout, group, false).also {
+            pb = it.findViewById(R.id.v_list_load)
+            tv = it.findViewById(R.id.tv_list) as TextView
+            it.setOnClickListener {
                 load()
             }
-            viewHolder = object : RecyclerView.ViewHolder(rootView) {}
         }
-        setStatus(Status.ENABLE)
-        return viewHolder!!
+        setStatus(status)
+        return object : RecyclerView.ViewHolder(rootView!!) {}
     }
 
     /**加载数据*/
@@ -63,7 +60,7 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
      * @param status 状态
      */
     open fun setStatus(status: Status) {
-        if (viewHolder == null) return
+        if (rootView == null) return
         this.status = status
         when (status) {
             Status.ENABLE -> {
@@ -71,26 +68,26 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
                 tv.paint.isAntiAlias = true // 抗锯齿
                 tv.text = "点击加载更多"
                 pb.visibility = View.GONE
-                rootView.isClickable = true
-                rootView.visibility = View.VISIBLE
+                rootView!!.isClickable = true
+                rootView!!.visibility = View.VISIBLE
             }
             Status.DISABLE -> {
                 tv.paint.isUnderlineText = false
                 tv.paint.isAntiAlias = true // 抗锯齿
                 tv.text = "已经到底了~"
                 pb.visibility = View.GONE
-                rootView.isClickable = false
-                rootView.visibility = View.VISIBLE
+                rootView!!.isClickable = false
+                rootView!!.visibility = View.VISIBLE
             }
             Status.LOADING -> {
                 tv.paint.isUnderlineText = false
                 tv.paint.isAntiAlias = true // 抗锯齿
                 tv.text = "正在加载中···"
                 pb.visibility = View.VISIBLE
-                rootView.isClickable = false
-                rootView.visibility = View.VISIBLE
+                rootView!!.isClickable = false
+                rootView!!.visibility = View.VISIBLE
             }
-            else -> rootView.visibility = View.GONE
+            else -> rootView!!.visibility = View.GONE
         }
     }
 
