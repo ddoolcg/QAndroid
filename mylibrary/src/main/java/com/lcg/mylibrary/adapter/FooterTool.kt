@@ -13,30 +13,46 @@ import com.lcg.mylibrary.R
  *
  * @author lei.chuguang Email:475825657@qq.com
  */
-open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_footer, private val load: FooterTool.() -> Unit) {
-    private var rootView: View? = null
-    private var pb: View? = null
-    private var tv: TextView? = null
-    private var mStatus: Status? = null
-
+interface Footer {
     /**可见时自动加载*/
-    var autoLoading = true
+    var autoLoading: Boolean
 
     /**初始化*/
-    internal open fun init(group: ViewGroup): RecyclerView.ViewHolder {
-        rootView = LayoutInflater.from(group.context).inflate(layout, group, false)
-        pb = rootView!!.findViewById(R.id.v_list_load)
-        tv = rootView!!.findViewById(R.id.tv_list) as TextView
-        setStatus(Status.ENABLE)
-        rootView!!.setOnClickListener {
-            load()
+    fun init(group: ViewGroup): RecyclerView.ViewHolder
+
+    /**加载数据*/
+    fun load()
+}
+
+open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_footer, private val load: FooterTool.() -> Unit) : Footer {
+    protected lateinit var rootView: View
+    protected lateinit var pb: View
+    protected lateinit var tv: TextView
+    private var viewHolder: RecyclerView.ViewHolder? = null
+    var status: Status = Status.ENABLE
+        private set
+
+    /**可见时自动加载*/
+    override var autoLoading = true
+
+    /**初始化*/
+    override fun init(group: ViewGroup): RecyclerView.ViewHolder {
+        if (viewHolder == null) {
+            rootView = LayoutInflater.from(group.context).inflate(layout, group, false)
+            pb = rootView.findViewById(R.id.v_list_load)
+            tv = rootView.findViewById(R.id.tv_list) as TextView
+            rootView.setOnClickListener {
+                load()
+            }
+            viewHolder = object : RecyclerView.ViewHolder(rootView) {}
         }
-        return object : RecyclerView.ViewHolder(rootView!!) {}
+        setStatus(Status.ENABLE)
+        return viewHolder!!
     }
 
     /**加载数据*/
-    fun load() {
-        if (mStatus == Status.ENABLE) {
+    override fun load() {
+        if (status == Status.ENABLE) {
             setStatus(Status.LOADING)
             load(this)
         }
@@ -47,44 +63,36 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
      * @param status 状态
      */
     open fun setStatus(status: Status) {
-        mStatus = status
+        if (viewHolder == null) return
+        this.status = status
         when (status) {
             Status.ENABLE -> {
-                tv?.apply {
-                    paint.isUnderlineText = true // 下划线
-                    paint.isAntiAlias = true // 抗锯齿
-                    text = "点击加载更多"
-                    pb?.visibility = View.GONE
-                    rootView.isClickable = true
-                    rootView.visibility = View.VISIBLE
-                }
+                tv.paint.isUnderlineText = true // 下划线
+                tv.paint.isAntiAlias = true // 抗锯齿
+                tv.text = "点击加载更多"
+                pb.visibility = View.GONE
+                rootView.isClickable = true
+                rootView.visibility = View.VISIBLE
             }
             Status.DISABLE -> {
-                tv?.apply {
-                    paint.isUnderlineText = false
-                    paint.isAntiAlias = true // 抗锯齿
-                    text = "已经到底了~"
-                    pb?.visibility = View.GONE
-                    rootView.isClickable = false
-                    rootView.visibility = View.VISIBLE
-                }
+                tv.paint.isUnderlineText = false
+                tv.paint.isAntiAlias = true // 抗锯齿
+                tv.text = "已经到底了~"
+                pb.visibility = View.GONE
+                rootView.isClickable = false
+                rootView.visibility = View.VISIBLE
             }
             Status.LOADING -> {
-                tv?.apply {
-                    paint.isUnderlineText = false
-                    paint.isAntiAlias = true // 抗锯齿
-                    text = "正在加载中···"
-                    pb?.visibility = View.VISIBLE
-                    rootView.isClickable = false
-                    rootView.visibility = View.VISIBLE
-                }
+                tv.paint.isUnderlineText = false
+                tv.paint.isAntiAlias = true // 抗锯齿
+                tv.text = "正在加载中···"
+                pb.visibility = View.VISIBLE
+                rootView.isClickable = false
+                rootView.visibility = View.VISIBLE
             }
-            else -> rootView?.visibility = View.GONE
+            else -> rootView.visibility = View.GONE
         }
     }
-
-    /**当前状态*/
-    fun getStatus() = mStatus
 
     /**
      * FooterView状态枚举
