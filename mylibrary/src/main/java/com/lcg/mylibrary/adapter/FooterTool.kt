@@ -1,5 +1,6 @@
 package com.lcg.mylibrary.adapter
 
+import android.os.SystemClock
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -63,11 +64,18 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
     open fun setStatus(status: Status) {
         this.status = status
         UIUtils.removeCallbacks(runnable)
-        UIUtils.postDelayed(200L, runnable)
+        val time = 200 + lastRunnableTime - SystemClock.elapsedRealtime()
+        if (time > 0) {
+            UIUtils.postDelayed(time, runnable)
+        } else {
+            UIUtils.post(runnable)
+        }
     }
 
+    private var lastRunnableTime = 0L
     private val runnable by lazy {
         Runnable {
+            lastRunnableTime = SystemClock.elapsedRealtime()
             if (rootView != null)
                 when (status) {
                     Status.ENABLE -> {
