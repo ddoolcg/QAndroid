@@ -84,6 +84,7 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
                         tv.text = "点击加载更多"
                         pb.visibility = View.GONE
                         rootView!!.isClickable = true
+                        rootView!!.visibility = View.VISIBLE
                     }
                     Status.DISABLE -> {
                         tv.paint.isUnderlineText = false
@@ -91,6 +92,7 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
                         tv.text = "已经到底了~"
                         pb.visibility = View.GONE
                         rootView!!.isClickable = false
+                        rootView!!.visibility = View.VISIBLE
                     }
                     Status.LOADING -> {
                         tv.paint.isUnderlineText = false
@@ -98,12 +100,9 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
                         tv.text = "正在加载中···"
                         pb.visibility = View.VISIBLE
                         rootView!!.isClickable = false
+                        rootView!!.visibility = View.VISIBLE
                     }
-                    else -> {
-                        tv.text = ""
-                        pb.visibility = View.GONE
-                        rootView!!.isClickable = false
-                    }
+                    else -> rootView!!.visibility = View.GONE
                 }
         }
     }
