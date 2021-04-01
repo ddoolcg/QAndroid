@@ -21,10 +21,10 @@ class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private var data: ArrayList<out BaseObservable>
     private var mLayoutId: Int? = null
     private var mVariableId: Int? = null
-    private var footer: Footer? = null
+    private var footer: FooterToolInterface? = null
 
     @JvmOverloads
-    constructor(data: ArrayList<out Item>, footer: Footer? = null) : super() {
+    constructor(data: ArrayList<out Item>, footer: FooterToolInterface? = null) : super() {
         this.data = data
         this.footer = footer
     }
@@ -33,7 +33,7 @@ class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
     constructor(data: ArrayList<out BaseObservable>,
                 layoutId: Int,
                 variableId: Int,
-                footer: Footer? = null) : super() {
+                footer: FooterToolInterface? = null) : super() {
         this.data = data
         this.mLayoutId = layoutId
         this.mVariableId = variableId

@@ -13,7 +13,7 @@ import com.lcg.mylibrary.R
  *
  * @author lei.chuguang Email:475825657@qq.com
  */
-interface Footer {
+interface FooterToolInterface {
     /**可见时自动加载*/
     var autoLoading: Boolean
 
@@ -24,7 +24,7 @@ interface Footer {
     fun load()
 }
 
-open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_footer, private val load: FooterTool.() -> Unit) : Footer {
+open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_footer, private val load: FooterTool.() -> Unit) : FooterToolInterface {
     protected var rootView: View? = null
     protected lateinit var pb: View
     protected lateinit var tv: TextView
