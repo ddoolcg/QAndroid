@@ -1,6 +1,5 @@
 package com.lcg.mylibrary.adapter
 
-import android.os.SystemClock
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -8,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.lcg.mylibrary.R
-import com.lcg.mylibrary.utils.UIUtils
 
 /**
  * 底部加载更多栏
@@ -63,48 +61,34 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
      */
     open fun setStatus(status: Status) {
         this.status = status
-        UIUtils.removeCallbacks(runnable)
-        val time = 200 + lastRunnableTime - SystemClock.elapsedRealtime()
-        if (time > 0) {
-            UIUtils.postDelayed(time, runnable)
-        } else {
-            UIUtils.post(runnable)
-        }
-    }
-
-    private var lastRunnableTime = 0L
-    private val runnable by lazy {
-        Runnable {
-            lastRunnableTime = SystemClock.elapsedRealtime()
-            if (rootView != null)
-                when (status) {
-                    Status.ENABLE -> {
-                        tv.paint.isUnderlineText = true // 下划线
-                        tv.paint.isAntiAlias = true // 抗锯齿
-                        tv.text = "点击加载更多"
-                        pb.visibility = View.GONE
-                        rootView!!.isClickable = true
-                        rootView!!.visibility = View.VISIBLE
-                    }
-                    Status.DISABLE -> {
-                        tv.paint.isUnderlineText = false
-                        tv.paint.isAntiAlias = true // 抗锯齿
-                        tv.text = "已经到底了~"
-                        pb.visibility = View.GONE
-                        rootView!!.isClickable = false
-                        rootView!!.visibility = View.VISIBLE
-                    }
-                    Status.LOADING -> {
-                        tv.paint.isUnderlineText = false
-                        tv.paint.isAntiAlias = true // 抗锯齿
-                        tv.text = "正在加载中···"
-                        pb.visibility = View.VISIBLE
-                        rootView!!.isClickable = false
-                        rootView!!.visibility = View.VISIBLE
-                    }
-                    else -> rootView!!.visibility = View.GONE
+        if (rootView != null)
+            when (status) {
+                Status.ENABLE -> {
+                    tv.paint.isUnderlineText = true // 下划线
+                    tv.paint.isAntiAlias = true // 抗锯齿
+                    tv.text = "点击加载更多"
+                    pb.visibility = View.GONE
+                    rootView!!.isClickable = true
+                    rootView!!.visibility = View.VISIBLE
                 }
-        }
+                Status.DISABLE -> {
+                    tv.paint.isUnderlineText = false
+                    tv.paint.isAntiAlias = true // 抗锯齿
+                    tv.text = "已经到底了~"
+                    pb.visibility = View.GONE
+                    rootView!!.isClickable = false
+                    rootView!!.visibility = View.VISIBLE
+                }
+                Status.LOADING -> {
+                    tv.paint.isUnderlineText = false
+                    tv.paint.isAntiAlias = true // 抗锯齿
+                    tv.text = "正在加载中···"
+                    pb.visibility = View.VISIBLE
+                    rootView!!.isClickable = false
+                    rootView!!.visibility = View.VISIBLE
+                }
+                else -> rootView!!.visibility = View.GONE
+            }
     }
 
     /**
