@@ -17,11 +17,14 @@ interface FooterToolInterface {
     /**可见时自动加载*/
     var autoLoading: Boolean
 
-    /**初始化*/
+    /**创建*/
     fun create(group: ViewGroup): RecyclerView.ViewHolder
 
-    /**加载数据*/
-    fun load()
+    /**
+     * 加载数据
+     * @param count adapter的itemCount
+     */
+    fun bind(count: Int)
 }
 
 open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_footer, private val load: FooterTool.() -> Unit) : FooterToolInterface {
@@ -43,15 +46,15 @@ open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_foo
                 load()
             }
         }
-        setStatus(status)
         return object : RecyclerView.ViewHolder(rootView!!) {}
     }
 
-    /**加载数据*/
-    override fun load() {
-        if (status == Status.ENABLE) {
+    override fun bind(count: Int) {
+        if (autoLoading && status == Status.ENABLE && count > 1) {
             setStatus(Status.LOADING)
             load(this)
+        } else {
+            setStatus(status)
         }
     }
 
