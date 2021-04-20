@@ -1,1 +1,1 @@
-include ':mylibrary'//, ':comment', ':app'
+include ':mylibrary',':toast'//, ':comment', ':app'
