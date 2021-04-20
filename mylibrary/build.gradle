@@ -38,5 +38,5 @@ dependencies {
     api 'com.github.bumptech.glide:glide:3.8.0'
     api 'com.github.getActivity:ToastUtils:9.0'
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    annotationProcessor "com.android.databinding:compiler:$gradle_version"
+    annotationProcessor "com.android.databinding:compiler:3.1.4"
 }
