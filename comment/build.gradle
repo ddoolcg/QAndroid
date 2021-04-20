@@ -17,12 +17,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    dataBinding {
-        enabled true
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        dataBinding true
     }
 }
 
@@ -30,6 +33,5 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     api project(':mylibrary')
     implementation "android.arch.lifecycle:common-java8:1.1.1"
-    annotationProcessor "com.android.databinding:compiler:$binding_version"
-    //AS的BUG上条必须放到最后
+    annotationProcessor "com.android.databinding:compiler:$gradle_version"
 }

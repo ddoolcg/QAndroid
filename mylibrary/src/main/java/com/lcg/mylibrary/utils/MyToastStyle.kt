@@ -1,7 +1,10 @@
 package com.lcg.mylibrary.utils
 
-import android.view.Gravity
-import com.hjq.toast.IToastStyle
+import android.content.Context
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.util.TypedValue
+import com.hjq.toast.style.BlackToastStyle
 
 /**
  * MyToastStyle
@@ -10,18 +13,27 @@ import com.hjq.toast.IToastStyle
  * @version 1.0
  * @since 2019/3/6 20:30
  */
-object MyToastStyle : IToastStyle {
-    override fun getZ(): Int = 0
-    override fun getTextColor(): Int = -0x1
-    override fun getBackgroundColor(): Int = -0x585859
-    override fun getCornerRadius(): Int = 0
-    override fun getMaxLines(): Int = 3
-    override fun getPaddingLeft(): Int = 10
-    override fun getPaddingRight(): Int = 10
-    override fun getPaddingBottom(): Int = 5
-    override fun getPaddingTop(): Int = 5
-    override fun getGravity(): Int = Gravity.CENTER
-    override fun getTextSize(): Float = 14f
-    override fun getYOffset(): Int = 100
-    override fun getXOffset(): Int = 0
+object MyToastStyle : BlackToastStyle() {
+    override fun getTextColor(context: Context?): Int {
+        return -0x1
+    }
+
+    override fun getTextSize(context: Context?): Float {
+        return 14f
+    }
+
+    override fun getHorizontalPadding(context: Context?): Int {
+        return 10
+    }
+
+    override fun getVerticalPadding(context: Context?): Int {
+        return 5
+    }
+
+    override fun getBackgroundDrawable(context: Context?): Drawable {
+        val drawable = GradientDrawable()
+        drawable.setColor(-0x585859)
+        drawable.cornerRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5f, context!!.resources.displayMetrics)
+        return drawable
+    }
 }

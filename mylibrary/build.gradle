@@ -16,8 +16,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    dataBinding {
-        enabled true
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        dataBinding true
     }
 }
 
@@ -29,9 +36,7 @@ dependencies {
     api 'com.android.support:support-annotations:28.0.0'
     api 'com.umeng.analytics:analytics:latest.integration'
     api 'com.github.bumptech.glide:glide:3.8.0'
-    api 'com.hjq:toast:5.6'
+    api 'com.github.getActivity:ToastUtils:9.0'
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    //AS的bug 这条注释放这里有用的
-    annotationProcessor "com.android.databinding:compiler:$binding_version"
-    //AS的BUG上条必须放到最后
+    annotationProcessor "com.android.databinding:compiler:$gradle_version"
 }
