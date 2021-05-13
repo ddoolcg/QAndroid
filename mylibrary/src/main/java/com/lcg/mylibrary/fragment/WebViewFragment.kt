@@ -159,7 +159,7 @@ class WebViewFragment : BaseFragment() {
         val token = getToken()
         header[Token.TOKEN] = token
         header["os"] = "android"
-        root!!.wv.loadUrl(url, header)
+        root!!.wv.loadUrl(url ?: "", header)
     }
 
     /**
@@ -294,7 +294,7 @@ class WebViewFragment : BaseFragment() {
     fun onBackPressed(): Boolean {
         return if (root?.wv != null && root!!.wv.canGoBack()) {
             val url = root!!.wv.url
-            if (TextUtils.isEmpty(url) || url.contains("noback=1")) {
+            if (TextUtils.isEmpty(url) || url?.contains("noback=1") == true) {
                 false
             } else {
                 root!!.wv.goBack() // 返回前一个页面

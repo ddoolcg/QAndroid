@@ -106,7 +106,7 @@ object PreferenceKTX {
 
     @JvmStatic
     fun getString(key: String, defaultValue: String = ""): String {
-        return getSharedPreferences().getString(key, defaultValue)
+        return getSharedPreferences().getString(key, defaultValue)!!
     }
 
     @JvmStatic

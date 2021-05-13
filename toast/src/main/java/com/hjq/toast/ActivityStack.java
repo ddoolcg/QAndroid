@@ -5,10 +5,10 @@ import android.app.Application;
 import android.os.Bundle;
 
 /**
- *    author : Android 轮子哥
- *    github : https://github.com/getActivity/ToastUtils
- *    time   : 2021/04/07
- *    desc   : Activity 生命周期监控
+ * author : Android 轮子哥
+ * github : https://github.com/getActivity/ToastUtils
+ * time   : 2021/04/07
+ * desc   : Activity 生命周期监控
  */
 final class ActivityStack implements Application.ActivityLifecycleCallbacks {
 
@@ -21,7 +21,9 @@ final class ActivityStack implements Application.ActivityLifecycleCallbacks {
         return lifecycle;
     }
 
-    /** 前台 Activity 对象 */
+    /**
+     * 前台 Activity 对象
+     */
     private Activity mForegroundActivity;
 
     public Activity getForegroundActivity() {
@@ -29,10 +31,12 @@ final class ActivityStack implements Application.ActivityLifecycleCallbacks {
     }
 
     @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {}
+    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+    }
 
     @Override
-    public void onActivityStarted(Activity activity) {}
+    public void onActivityStarted(Activity activity) {
+    }
 
     @Override
     public void onActivityResumed(Activity activity) {
@@ -48,11 +52,14 @@ final class ActivityStack implements Application.ActivityLifecycleCallbacks {
     }
 
     @Override
-    public void onActivityStopped(Activity activity) {}
+    public void onActivityStopped(Activity activity) {
+    }
 
     @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
+    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+    }
 
     @Override
-    public void onActivityDestroyed(Activity activity) {}
+    public void onActivityDestroyed(Activity activity) {
+    }
 }
