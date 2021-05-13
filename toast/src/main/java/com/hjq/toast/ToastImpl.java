@@ -11,30 +11,42 @@ import android.widget.Toast;
 import com.hjq.toast.config.IToast;
 
 /**
- *    author : Android 轮子哥
- *    github : https://github.com/getActivity/ToastUtils
- *    time   : 2018/11/02
- *    desc   : 自定义 Toast 实现类
+ * author : Android 轮子哥
+ * github : https://github.com/getActivity/ToastUtils
+ * time   : 2018/11/02
+ * desc   : 自定义 Toast 实现类
  */
 final class ToastImpl {
 
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
 
-    /** 短吐司显示的时长 */
+    /**
+     * 短吐司显示的时长
+     */
     private static final int SHORT_DURATION_TIMEOUT = 2000;
-    /** 长吐司显示的时长 */
+    /**
+     * 长吐司显示的时长
+     */
     private static final int LONG_DURATION_TIMEOUT = 3500;
 
-    /** 当前的吐司对象 */
+    /**
+     * 当前的吐司对象
+     */
     private final IToast mToast;
 
-    /** WindowManager 辅助类 */
+    /**
+     * WindowManager 辅助类
+     */
     private final WindowLifecycle mWindowLifecycle;
 
-    /** 当前应用的包名 */
+    /**
+     * 当前应用的包名
+     */
     private final String mPackageName;
 
-    /** 当前是否已经显示 */
+    /**
+     * 当前是否已经显示
+     */
     private boolean mShow;
 
     ToastImpl(Activity activity, IToast toast) {
@@ -111,7 +123,7 @@ final class ToastImpl {
                 // 当前已经显示
                 setShow(true);
                 // 注册生命周期管控
-                mWindowLifecycle.register(ToastImpl.this);
+                mWindowLifecycle.register(ToastImpl.this, activity);
 
             } catch (IllegalStateException | WindowManager.BadTokenException e) {
                 // 如果这个 View 对象被重复添加到 WindowManager 则会抛出异常
@@ -127,20 +139,17 @@ final class ToastImpl {
 
         @Override
         public void run() {
-
+            Activity activity = mWindowLifecycle.getActivity();
+            if (activity == null) {
+                return;
+            }
+            //
             try {
-                Activity activity = mWindowLifecycle.getActivity();
-                if (activity == null) {
-                    return;
-                }
-
                 WindowManager manager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
                 if (manager == null) {
                     return;
                 }
-
                 manager.removeViewImmediate(mToast.getView());
-
             } catch (IllegalArgumentException e) {
                 // 如果当前 WindowManager 没有附加这个 View 则会抛出异常
                 // java.lang.IllegalArgumentException: View=android.widget.TextView not attached to window manager
@@ -149,7 +158,7 @@ final class ToastImpl {
                 // 当前没有显示
                 setShow(false);
                 // 反注册生命周期管控
-                mWindowLifecycle.unregister();
+                mWindowLifecycle.unregister(activity);
             }
         }
     };

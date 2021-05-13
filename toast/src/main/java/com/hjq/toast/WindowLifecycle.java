@@ -80,27 +80,27 @@ final class WindowLifecycle implements Application.ActivityLifecycleCallbacks {
         if (mActivity != activity) {
             return;
         }
-        unregister();
+        unregister(mActivity);
         mActivity = null;
     }
 
-    void register(ToastImpl impl) {
+    void register(ToastImpl impl, Activity activity) {
         mToastImpl = impl;
-        if (mActivity != null)
+        if (activity != null)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                mActivity.registerActivityLifecycleCallbacks(this);
+                activity.registerActivityLifecycleCallbacks(this);
             } else {
-                mActivity.getApplication().registerActivityLifecycleCallbacks(this);
+                activity.getApplication().registerActivityLifecycleCallbacks(this);
             }
     }
 
-    void unregister() {
+    void unregister(Activity activity) {
         mToastImpl = null;
-        if (mActivity != null)
+        if (activity != null)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                mActivity.unregisterActivityLifecycleCallbacks(this);
+                activity.unregisterActivityLifecycleCallbacks(this);
             } else {
-                mActivity.getApplication().unregisterActivityLifecycleCallbacks(this);
+                activity.getApplication().unregisterActivityLifecycleCallbacks(this);
             }
     }
 }
