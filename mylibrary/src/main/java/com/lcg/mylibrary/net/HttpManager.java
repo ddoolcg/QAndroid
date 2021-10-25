@@ -20,7 +20,7 @@ import java.io.RandomAccessFile;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.MappedByteBuffer;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Date;
 import java.util.HashMap;
@@ -434,11 +434,12 @@ public class HttpManager {
                             int len;
                             long bytesWritten = code == 200 ? 0 : startsPoint;
                             long totalLength = code == 200 ? contentLength : startsPoint + contentLength;
-                            MappedByteBuffer mappedBuffer = channelOut.map(FileChannel.MapMode
-                                    .READ_WRITE, bytesWritten, totalLength);
-                            byte[] buffer = new byte[5120];
-                            while ((len = in.read(buffer)) != -1 && !call.isCanceled()) {
-                                mappedBuffer.put(buffer, 0, len);
+                            ByteBuffer buffer = ByteBuffer.allocate(5120);
+                            byte[] array = buffer.array();
+                            while ((len = in.read(array)) != -1 && !call.isCanceled()) {
+                                buffer.position(0);
+                                buffer.limit(len);
+                                channelOut.write(buffer, bytesWritten);
                                 bytesWritten += len;
                                 handler.progress(bytesWritten, totalLength);
                             }
