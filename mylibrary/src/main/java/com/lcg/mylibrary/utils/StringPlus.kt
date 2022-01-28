@@ -40,7 +40,7 @@ fun String?.containsEmoji(): Boolean {
 }
 
 private fun isEmojiCharacter(codePoint: Char): Boolean {
-    val toInt = codePoint.toInt()
+    val toInt = codePoint.code
     return !(toInt == 0x0 ||
             toInt == 0x9 ||
             toInt == 0xA ||
