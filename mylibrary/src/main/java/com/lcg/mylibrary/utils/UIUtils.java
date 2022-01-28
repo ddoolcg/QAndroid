@@ -21,7 +21,6 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.hjq.toast.ToastUtils;
 import com.hjq.toast.config.IToastStyle;
-import com.umeng.analytics.MobclickAgent;
 
 import java.util.List;
 
@@ -60,9 +59,6 @@ public class UIUtils {
         for (ActivityManager.RunningAppProcessInfo info : runningAppProcesses) {
             if (info.pid == myPid) {
                 if (!info.processName.contains(":")) {
-                    MobclickAgent.setScenarioType(app, MobclickAgent.EScenarioType.E_UM_NORMAL);
-                    MobclickAgent.enableEncrypt(true);
-                    MobclickAgent.setCatchUncaughtExceptions(false);
                     return true;
                 }
                 break;

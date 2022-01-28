@@ -20,7 +20,7 @@ allprojects {
 ~~~
 ~~~gradle
 dependencies {
-    api 'com.github.ddoolcg:QAndroid:1.9.66'
+    api 'com.github.ddoolcg:QAndroid:1.9.67'
 }
 ~~~
 
@@ -151,13 +151,6 @@ val bundle = Bundle().apply {
     putString("id", "my id")
 }
 ListActivity.start(this@MainActivity, ListViewModelDemo::class.java, bundle)
-~~~
-
-
-# 开启友盟统计
-在AndroidManifest.xml文件中修改 
-~~~xml
-<meta-data android:name="UMENG_APPKEY" android:value="您的UMENG_APPKEY"/>
 ~~~
 
 # DataEntry无法满足你的需求可参考：
