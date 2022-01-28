@@ -9,9 +9,7 @@ import android.support.v4.app.FragmentActivity
 import android.view.View
 import android.view.WindowManager
 import com.lcg.mylibrary.dialog.ProgressDialog
-import com.umeng.analytics.MobclickAgent
 import okhttp3.Call
-import java.util.*
 
 /**
  * 所有activity的基类
@@ -22,6 +20,7 @@ import java.util.*
  */
 open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
     private var mProgressDialog: ProgressDialog? = null
+
     /**手机状态栏是否被设置过*/
     private var statusBySet = false
     var initStatusBarFontDark = statusFontDark
@@ -30,16 +29,6 @@ open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
         super.onCreate(savedInstanceState)
         activities.add(this)
         setStatusBarFontDark(initStatusBarFontDark)
-    }
-
-    public override fun onResume() {
-        super.onResume()
-        MobclickAgent.onResume(this)
-    }
-
-    public override fun onPause() {
-        super.onPause()
-        MobclickAgent.onPause(this)
     }
 
     override fun onDestroy() {
@@ -101,7 +90,8 @@ open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     val window = window
                     window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-                    window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    window.decorView.systemUiVisibility =
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                     window.statusBarColor = Color.TRANSPARENT
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -124,7 +114,11 @@ open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
             val layoutParams = Class.forName("android.view.MiuiWindowManager\$LayoutParams")
             val field = layoutParams.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE")
             val darkModeFlag = field.getInt(layoutParams)
-            val extraFlagField = clazz.getMethod("setExtraFlags", Int::class.javaPrimitiveType, Int::class.javaPrimitiveType)
+            val extraFlagField = clazz.getMethod(
+                "setExtraFlags",
+                Int::class.javaPrimitiveType,
+                Int::class.javaPrimitiveType
+            )
             if (dark) {    //状态栏亮色且黑色字体
                 extraFlagField.invoke(window, darkModeFlag, darkModeFlag)
             } else {       //清除黑色字体
@@ -137,7 +131,8 @@ open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
         try {
             val window = window
             val lp = window.attributes
-            val darkFlag = WindowManager.LayoutParams::class.java.getDeclaredField("MEIZU_FLAG_DARK_STATUS_BAR_ICON")
+            val darkFlag =
+                WindowManager.LayoutParams::class.java.getDeclaredField("MEIZU_FLAG_DARK_STATUS_BAR_ICON")
             val meizuFlags = WindowManager.LayoutParams::class.java.getDeclaredField("meizuFlags")
             darkFlag.isAccessible = true
             meizuFlags.isAccessible = true
@@ -156,9 +151,11 @@ open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
         // android6.0+系统
         if (Build.VERSION.SDK_INT >= 23) {
             if (dark) {
-                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                window.decorView.systemUiVisibility =
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             } else {
-                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or 0x00000010 //View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+                window.decorView.systemUiVisibility =
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or 0x00000010 //View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
             }
         }
     }
@@ -166,9 +163,11 @@ open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
     companion object {
         @JvmStatic
         var activities = ArrayList<Activity>()
+
         /**全局透明状态控制*/
         @JvmStatic
         var translucentStatusTheme = false
+
         /**标题栏黑色字体*/
         @JvmStatic
         var statusFontDark = false
