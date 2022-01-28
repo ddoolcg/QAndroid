@@ -43,7 +43,6 @@ open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
      * @param msg  你想要显示的消息
      * @param call 网络请求的call
      */
-    @JvmOverloads
     override fun showProgressDialog(msg: String, call: Call?, cancelable: Boolean) {
         if (mProgressDialog == null)
             mProgressDialog = ProgressDialog(this)
@@ -57,7 +56,6 @@ open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
      *
      * @param msg 如果不为空，则只会关闭与之匹配的进度对话框。
      */
-    @JvmOverloads
     override fun dismissProgressDialog(msg: String?) {
         if (mProgressDialog != null) {
             try {

@@ -1,6 +1,6 @@
 package com.lcg.mylibrary
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -18,12 +18,16 @@ import okhttp3.Call
  */
 open class BaseFragment : Fragment(), ProgressDialogInterface {
     protected var activity: BaseActivity? = null
-    override fun onAttach(activity: Activity) {
-        super.onAttach(activity)
-        if (activity is BaseActivity) this.activity = activity
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        if (context is BaseActivity) this.activity = context
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val textView = TextView(container!!.context)
         textView.text = "开发中..."
         return textView
@@ -50,11 +54,15 @@ open class BaseFragment : Fragment(), ProgressDialogInterface {
      * @param enterAnimation 为0时无动画
      * @param exitAnimation  为0时无动画
      */
-    protected fun replaceFragment(fragment: Fragment?, isBack: Boolean,
-                                  enterAnimation: Int, exitAnimation: Int) {
+    protected fun replaceFragment(
+        fragment: Fragment?, isBack: Boolean,
+        enterAnimation: Int, exitAnimation: Int
+    ) {
         val transaction = fragmentManager!!.beginTransaction()
-        transaction.setCustomAnimations(enterAnimation, exitAnimation,
-                enterAnimation, exitAnimation)
+        transaction.setCustomAnimations(
+            enterAnimation, exitAnimation,
+            enterAnimation, exitAnimation
+        )
         transaction.replace(this.id, fragment!!)
         if (isBack) {
             transaction.addToBackStack(null)
