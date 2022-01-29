@@ -1,6 +1,6 @@
 package com.lcg.mylibrary
 
-import android.content.Context
+import android.app.Activity
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -18,9 +18,9 @@ import okhttp3.Call
  */
 open class BaseFragment : Fragment(), ProgressDialogInterface {
     protected var activity: BaseActivity? = null
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        if (context is BaseActivity) this.activity = context
+    override fun onAttach(activity: Activity) {
+        super.onAttach(activity)
+        if (activity is BaseActivity) this.activity = activity
     }
 
     override fun onCreateView(
