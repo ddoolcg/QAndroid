@@ -1,10 +1,13 @@
 package com.lcg.mylibrary.net;
 
+import static okhttp3.Request.Builder;
+
 import android.content.pm.PackageInfo;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.webkit.MimeTypeMap;
 
 import com.lcg.mylibrary.utils.L;
 import com.lcg.mylibrary.utils.MD5;
@@ -38,8 +41,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-
-import static okhttp3.Request.Builder;
 
 /**
  * http请求
@@ -369,7 +370,16 @@ public class HttpManager {
                 builder.addFormDataPart(key, object.toString());
             } else {
                 File file = (File) object;
-                builder.addFormDataPart(key, file.getName(), RequestBody.create(null, file));
+                String fileName = file.getName();
+                MediaType contentType = null;
+                int i = fileName.lastIndexOf(".");
+                if (i > 0 && i < fileName.length() - 1) {
+                    String substring = fileName.substring(i + 1);
+                    String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(substring);
+                    if (!TextUtils.isEmpty(type))
+                        contentType = MediaType.parse(type);
+                }
+                builder.addFormDataPart(key, fileName, RequestBody.create(contentType, file));
             }
         }
         //创建RequestBody
