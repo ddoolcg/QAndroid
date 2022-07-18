@@ -72,6 +72,13 @@ open class HttpUrl(private val url: String) {
         return this
     }
 
+    /**html表单方式请求*/
+    fun formBody(vararg formMap: Pair<String, String?>): HttpUrl {
+        this.body = null
+        this.formMap = formMap.toMap(hashMapOf())
+        return this
+    }
+
     /**application/json 方式请求*/
     fun jsonBody(json: String?): HttpUrl {
         this.body = json
@@ -80,7 +87,11 @@ open class HttpUrl(private val url: String) {
     }
 
     /**接入进度对话框，用户关闭对话框会中断请求*/
-    fun join(progressDialog: ProgressDialogInterface?, msg: String = "加载中...", autoClose: Boolean = true): HttpUrl {
+    fun join(
+        progressDialog: ProgressDialogInterface?,
+        msg: String = "加载中...",
+        autoClose: Boolean = true
+    ): HttpUrl {
         this.progress = progressDialog
         this.msg = msg
         this.progressDialogClose = autoClose
@@ -138,9 +149,12 @@ open class HttpUrl(private val url: String) {
     @Deprecated("不建议使用")
     fun <T> post(listener: OnSuccessListener<T>? = null): Call {
         return when {
-            formMap != null -> HttpManager.getInstance().post(url, formMap, responseHandler(listener = listener))
-            body != null -> HttpManager.getInstance().post(url, body, responseHandler(listener = listener))
-            else -> HttpManager.getInstance().post(url, hashMapOf(), responseHandler(listener = listener))
+            formMap != null -> HttpManager.getInstance()
+                .post(url, formMap, responseHandler(listener = listener))
+            body != null -> HttpManager.getInstance()
+                .post(url, body, responseHandler(listener = listener))
+            else -> HttpManager.getInstance()
+                .post(url, hashMapOf(), responseHandler(listener = listener))
         }
     }
 
@@ -148,8 +162,10 @@ open class HttpUrl(private val url: String) {
     @Deprecated("不建议使用")
     fun <T> delete(listener: OnSuccessListener<T>? = null): Call {
         return when {
-            formMap != null -> HttpManager.getInstance().delete(url, formMap, responseHandler(listener = listener))
-            body != null -> HttpManager.getInstance().delete(url, body, responseHandler(listener = listener))
+            formMap != null -> HttpManager.getInstance()
+                .delete(url, formMap, responseHandler(listener = listener))
+            body != null -> HttpManager.getInstance()
+                .delete(url, body, responseHandler(listener = listener))
             else -> HttpManager.getInstance().delete(url, responseHandler(listener = listener))
         }
     }
@@ -158,9 +174,12 @@ open class HttpUrl(private val url: String) {
     @Deprecated("不建议使用")
     fun <T> put(listener: OnSuccessListener<T>? = null): Call {
         return when {
-            formMap != null -> HttpManager.getInstance().put(url, formMap, responseHandler(listener = listener))
-            body != null -> HttpManager.getInstance().put(url, body, responseHandler(listener = listener))
-            else -> HttpManager.getInstance().put(url, hashMapOf(), responseHandler(listener = listener))
+            formMap != null -> HttpManager.getInstance()
+                .put(url, formMap, responseHandler(listener = listener))
+            body != null -> HttpManager.getInstance()
+                .put(url, body, responseHandler(listener = listener))
+            else -> HttpManager.getInstance()
+                .put(url, hashMapOf(), responseHandler(listener = listener))
         }
     }
 
