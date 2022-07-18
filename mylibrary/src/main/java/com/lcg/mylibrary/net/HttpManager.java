@@ -371,15 +371,15 @@ public class HttpManager {
             } else {
                 File file = (File) object;
                 String fileName = file.getName();
-                int indexOf = fileName.lastIndexOf(".");
-                MediaType type = null;
-                if (indexOf >= 0 && indexOf < fileName.length() - 1) {
-                    String extension = fileName.substring(indexOf + 1);
-                    String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-                    if (mimeType != null)
-                        type = MediaType.parse(mimeType);
+                MediaType contentType = null;
+                int i = fileName.lastIndexOf(".");
+                if (i > 0 && i < fileName.length() - 1) {
+                    String substring = fileName.substring(i + 1);
+                    String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(substring);
+                    if (!TextUtils.isEmpty(type))
+                        contentType = MediaType.parse(type);
                 }
-                builder.addFormDataPart(key, fileName, RequestBody.create(type, file));
+                builder.addFormDataPart(key, fileName, RequestBody.create(contentType, file));
             }
         }
         //创建RequestBody
