@@ -17,11 +17,11 @@ import com.lcg.mylibrary.utils.inflateBinding
  * @version 1.0
  * @since 2019/01/16 13:57
  */
-class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private var data: ArrayList<out BaseObservable>
-    private var mLayoutId: Int? = null
-    private var mVariableId: Int? = null
-    private var footer: FooterToolInterface? = null
+open class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    protected var data: ArrayList<out BaseObservable>
+    protected var mLayoutId: Int? = null
+    protected var mVariableId: Int? = null
+    protected var footer: FooterToolInterface? = null
 
     @JvmOverloads
     constructor(data: ArrayList<out Item>, footer: FooterToolInterface? = null) : super() {
@@ -30,10 +30,12 @@ class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @JvmOverloads
-    constructor(data: ArrayList<out BaseObservable>,
-                layoutId: Int,
-                variableId: Int,
-                footer: FooterToolInterface? = null) : super() {
+    constructor(
+        data: ArrayList<out BaseObservable>,
+        layoutId: Int,
+        variableId: Int,
+        footer: FooterToolInterface? = null
+    ) : super() {
         this.data = data
         this.mLayoutId = layoutId
         this.mVariableId = variableId
@@ -52,7 +54,7 @@ class CommentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else {
             val layoutId = if (viewType == 0) mLayoutId!! else viewType
             val binding = LayoutInflater.from(parent.context)
-                    .inflateBinding<ViewDataBinding>(layoutId, parent, false)
+                .inflateBinding<ViewDataBinding>(layoutId, parent, false)
             ContentHolder(binding.root).apply {
                 this.binding = binding
             }
