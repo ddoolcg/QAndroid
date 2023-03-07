@@ -21,15 +21,17 @@ import com.lcg.mylibrary.utils.UIUtils
 object QAndroid {
     /**初始化http认证*/
     @JvmOverloads
-    fun initToken(headerKey: String = "Authorization", login: (showToast: Boolean) -> Unit): QAndroid {
+    fun initToken(
+        headerKey: String = "Authorization",
+        login: (showToast: Boolean) -> Unit
+    ): QAndroid {
         Token.init(headerKey, login)
         return this
     }
 
     /**初始化UIUtils工具类*/
-    fun initUIUtils(app: Application, completed: (isMain: Boolean) -> Unit): QAndroid {
-        val isMain = UIUtils.init(app)
-        completed.invoke(isMain)
+    fun initUIUtils(app: Application): QAndroid {
+        UIUtils.init(app)
         return this
     }
 
@@ -61,8 +63,10 @@ object QAndroid {
 
     /**设置newAlert的AlertDialog样式*/
     @JvmOverloads
-    fun setAlert(background: Int = -0x1, textColor: Int = -0x1000000,
-                 @LayoutRes layoutId: Int = R.layout.dialog_alert, variableId: Int = BR.dialog): QAndroid {
+    fun setAlert(
+        background: Int = -0x1, textColor: Int = -0x1000000,
+        @LayoutRes layoutId: Int = R.layout.dialog_alert, variableId: Int = BR.dialog
+    ): QAndroid {
         AlertDialogObservable.background = background
         AlertDialogObservable.textColor = textColor
         AlertDialogObservable.layoutId = layoutId

@@ -20,13 +20,14 @@ allprojects {
 ~~~
 ~~~gradle
 dependencies {
-    api 'com.github.ddoolcg:QAndroid:1.9.74'
+    api 'com.github.ddoolcg:QAndroid:1.9.75'
 }
 ~~~
 
 # 核心类QAndroid
 ~~~java
        QAndroid.INSTANCE
+                .initUIUtils(this)
                 .initToken("Authorization", new Function1<Boolean, Unit>() {
                     @Override
                     public Unit invoke(Boolean showToast) {
@@ -34,14 +35,7 @@ dependencies {
                         return null;
                     }
                 })
-                .setTranslucentStatusTheme(false)
-                .initUIUtils(this, new Function1<Boolean, Unit>() {
-                    @Override
-                    public Unit invoke(Boolean main) {
-                        if (main) onInitMainProcesses();
-                        return null;
-                    }
-                });
+                .setTranslucentStatusTheme(false);
 ~~~
 
 # 联网调用

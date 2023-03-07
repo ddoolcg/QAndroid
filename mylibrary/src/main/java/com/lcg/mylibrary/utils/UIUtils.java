@@ -1,7 +1,6 @@
 package com.lcg.mylibrary.utils;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -12,7 +11,6 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Process;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -21,8 +19,6 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.hjq.toast.ToastUtils;
 import com.hjq.toast.config.IToastStyle;
-
-import java.util.List;
 
 public class UIUtils {
     private static Handler handler;
@@ -34,37 +30,17 @@ public class UIUtils {
     /**
      * 初始化
      */
-    public static boolean init(Application app) {
-        return init(app, MyToastStyle.INSTANCE);
+    public static void init(Application app) {
+        init(app, MyToastStyle.INSTANCE);
     }
 
     /**
      * 初始化
      */
-    public static boolean init(Application app, IToastStyle<? extends View> toastStyle) {
+    public static void init(Application app, IToastStyle<? extends View> toastStyle) {
         sMainThread = Thread.currentThread();
         application = app;
         ToastUtils.init(app, toastStyle);
-        return initMainProcesses(app);
-    }
-
-    /**
-     * 在主进程初始化友盟统计，发送奔溃日志的服务
-     */
-    private static boolean initMainProcesses(Application app) {
-        ActivityManager am = (ActivityManager) app.getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = am
-                .getRunningAppProcesses();
-        int myPid = Process.myPid();
-        for (ActivityManager.RunningAppProcessInfo info : runningAppProcesses) {
-            if (info.pid == myPid) {
-                if (!info.processName.contains(":")) {
-                    return true;
-                }
-                break;
-            }
-        }
-        return false;
     }
 
     public static Context getContext() {
