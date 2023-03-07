@@ -2,9 +2,6 @@ package com.lcg.mylibrary;
 
 import android.app.Application;
 
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
-
 /**
  * BaseApplication
  *
@@ -18,27 +15,13 @@ public abstract class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         QAndroid.INSTANCE
-                .initToken("token", new Function1<Boolean, Unit>() {
-                    @Override
-                    public Unit invoke(Boolean showToast) {
-                        gotoLoin(showToast);
-                        return null;
-                    }
+                .initToken("token", showToast -> {
+                    gotoLoin(showToast);
+                    return null;
                 })
                 .setTranslucentStatusTheme(false)
-                .initUIUtils(this, new Function1<Boolean, Unit>() {
-                    @Override
-                    public Unit invoke(Boolean main) {
-                        if (main) onInitMainProcesses();
-                        return null;
-                    }
-                });
+                .initUIUtils(this);
     }
-
-    /**
-     * 被主进程初始化调用
-     */
-    protected abstract void onInitMainProcesses();
 
     /**
      * 去登陆
