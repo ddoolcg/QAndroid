@@ -40,9 +40,9 @@ public class CrashHandler implements UncaughtExceptionHandler {
      * Debug LogUntil tag
      */
     private static final String TAG = "CrashHandler";
-    private UncaughtExceptionHandler mDefaultHandler;
-    private Application mContext;
-    private Map<String, String> mDeviceCrashInfo = new HashMap<>();
+    private final UncaughtExceptionHandler mDefaultHandler;
+    private final Application mContext;
+    private final Map<String, String> mDeviceCrashInfo = new HashMap<>();
 
     private static String mUrl;
     private static final String VERSION_NAME = "versionName";
@@ -131,20 +131,17 @@ public class CrashHandler implements UncaughtExceptionHandler {
             }
         } catch (Exception ignored) {
         }
-        ThreadPoolUntil.getInstance().run(new Runnable() {
-            @Override
-            public void run() {
-                final String[] crFiles = getCrashReportFiles(ctx);
-                if (crFiles != null && crFiles.length > 0) {
-                    try {
-                        for (String fileName : crFiles) {
-                            File cr = new File(ctx.getFilesDir(), fileName);
-                            postReport(cr);
-                            // cr.delete();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+        ThreadPoolUntil.getInstance().run(() -> {
+            final String[] crFiles = getCrashReportFiles(ctx);
+            if (crFiles != null && crFiles.length > 0) {
+                try {
+                    for (String fileName : crFiles) {
+                        File cr = new File(ctx.getFilesDir(), fileName);
+                        postReport(cr);
+                        // cr.delete();
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -240,7 +237,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         StringBuffer sb = info.getBuffer();
         printWriter.close();
         //缓存到文件规则
-        String fileNameString = MD5.GetMD5Code(sbTag.toString() + mDeviceCrashInfo.get(VERSION_CODE));
+        String fileNameString = MD5.GetMD5Code(sbTag + mDeviceCrashInfo.get(VERSION_CODE));
         String fileName = fileNameString + CRASH_REPORTER_EXTENSION;
         String[] fileList = mContext.fileList();
         for (String s : fileList) {

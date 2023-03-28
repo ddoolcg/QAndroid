@@ -240,7 +240,7 @@ public class UIUtils {
     /**
      * 对toast的简易封装。线程安全，可以在非UI线程调用。
      */
-    public static void showToastSafe(final String str) {
+    public static void showToastSafe(final CharSequence str) {
         if (isRunInMainThread()) {
             showToast(str);
         } else {
@@ -253,7 +253,7 @@ public class UIUtils {
         }
     }
 
-    private static void showToast(String str) {
+    private static void showToast(CharSequence str) {
         ToastUtils.show(str);
     }
 

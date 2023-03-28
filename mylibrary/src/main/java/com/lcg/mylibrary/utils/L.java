@@ -1,7 +1,11 @@
 package com.lcg.mylibrary.utils;
 
+import android.os.Environment;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -30,7 +34,28 @@ public class L {
     }
 
     public static void file(String msg) {
-        FileUtils.save(UIUtils.getContext().getPackageName() + ".log", msg, true);
+        save(UIUtils.getContext().getPackageName() + ".log", msg, true);
+    }
+
+    /**
+     * 保存string到文件fileName
+     */
+    public static void save(String fileName, String string, boolean append) {
+        try {
+            File file = new File(Environment
+                    .getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_DOWNLOADS).getPath()
+                    + "/" + fileName);
+            if (append && file.lastModified() < System.currentTimeMillis() - 3600000)
+                append = false;
+            FileWriter w = new FileWriter(file, append);
+            w.write("\n--------------------------\n");
+            w.write(string);
+            w.flush();
+            w.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void file(Throwable error) {
@@ -39,7 +64,7 @@ public class L {
         error.printStackTrace(printWriter);
         String result = info.toString();
         printWriter.close();
-        file(error.toString() + "\n\n" + result + "\n\n\n\n");
+        file(error + "\n\n" + result + "\n\n\n\n");
     }
 
     public static void v(String tag, String msg) {

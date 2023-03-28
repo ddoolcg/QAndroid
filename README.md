@@ -20,7 +20,7 @@ allprojects {
 ~~~
 ~~~gradle
 dependencies {
-    api 'com.github.ddoolcg:QAndroid:1.9.75'
+    api 'com.github.ddoolcg:QAndroid:1.9.76'
 }
 ~~~
 
@@ -60,30 +60,6 @@ preferenceEdit {
     putBoolean()
     putString()
 }
-~~~
-
-# view的一些实用扩展
-#### doOnGlobalLayout
-~~~kotlin
-view.doOnGlobalLayout {
-    if (Boolean) {
-        action()
-        true
-    } else {
-        false
-    }
-}
-~~~
-#### doOnPreDraw
-~~~kotlin
-view.doOnPreDraw {
-    action()
-}
-~~~
-#### ViewGroup
-~~~kotlin
-viewGroup += view//addView
-viewGroup -= view//removeView
 ~~~
 
 # List简单实现
