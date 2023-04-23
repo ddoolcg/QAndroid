@@ -32,7 +32,7 @@ public abstract class FileDownloadHandler {
         if (sync) {
             onNetFinish();
         } else {
-            UIUtils.runInMainThread(() -> onNetFinish());
+            UIUtils.runInMainThread(this::onNetFinish);
         }
     }
 

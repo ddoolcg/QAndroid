@@ -244,12 +244,7 @@ public class UIUtils {
         if (isRunInMainThread()) {
             showToast(str);
         } else {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    showToast(str);
-                }
-            });
+            post(() -> showToast(str));
         }
     }
 
@@ -323,7 +318,7 @@ public class UIUtils {
                 String packageName = UIUtils.getContext().getPackageName();
                 pi = pm.getPackageInfo(packageName,
                         PackageManager.GET_ACTIVITIES);
-            } catch (PackageManager.NameNotFoundException e) {
+            } catch (PackageManager.NameNotFoundException ignored) {
             }
         return pi;
     }

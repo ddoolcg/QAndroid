@@ -30,45 +30,25 @@ import okhttp3.Call;
 public abstract class BaseResponseHandler<S, E> implements ResponseHandler {
     @Override
     public void start(final Call call) {
-        UIUtils.runInMainThread(new Runnable() {
-            @Override
-            public void run() {
-                onStart(call);
-            }
-        });
+        UIUtils.runInMainThread(() -> onStart(call));
     }
 
     @Override
     public void netFinish() {
-        UIUtils.runInMainThread(new Runnable() {
-            @Override
-            public void run() {
-                onNetFinish();
-            }
-        });
+        UIUtils.runInMainThread(this::onNetFinish);
     }
 
     @Override
     public void fail(final int code, String errorData) {
         final Object data = parseData(errorData, 1);
-        UIUtils.runInMainThread(new Runnable() {
-            @Override
-            public void run() {
-                onFail(code, (E) data);
-            }
-        });
+        UIUtils.runInMainThread(() -> onFail(code, (E) data));
     }
 
     @Override
     public void success(String successData) {
         final Object data = parseData(successData, 0);
         if (data == null) fail(200, successData);
-        else UIUtils.runInMainThread(new Runnable() {
-            @Override
-            public void run() {
-                onSuccess((S) data);
-            }
-        });
+        else UIUtils.runInMainThread(() -> onSuccess((S) data));
     }
 
     /**
@@ -148,7 +128,7 @@ public abstract class BaseResponseHandler<S, E> implements ResponseHandler {
                 SimpleData simpleData = null;
                 try {
                     simpleData = JSON.parseObject((String) data, SimpleData.class);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
                 if (simpleData == null) {
                     UIUtils.showToastSafe("服务器繁忙（" + code + "）！");
@@ -167,8 +147,6 @@ public abstract class BaseResponseHandler<S, E> implements ResponseHandler {
 
     /**
      * 服务器返回正确的数据时调用
-     *
-     * @param data
      */
     public abstract void onSuccess(S data);
 }
