@@ -1,8 +1,7 @@
 package com.lcg.mylibrary
 
 import android.app.Application
-import android.support.annotation.LayoutRes
-import com.android.databinding.library.baseAdapters.BR
+import androidx.annotation.LayoutRes
 import com.lcg.mylibrary.dialog.ProgressDialog
 import com.lcg.mylibrary.model.AlertDialogObservable
 import com.lcg.mylibrary.net.HttpManager

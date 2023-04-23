@@ -1,9 +1,9 @@
 package com.lcg.mylibrary
 
 import android.app.Activity
-import android.databinding.BaseObservable
-import android.databinding.Bindable
 import android.view.View
+import androidx.databinding.BaseObservable
+import androidx.databinding.Bindable
 import com.alibaba.fastjson.annotation.JSONType
 import com.lcg.mylibrary.utils.L
 import okhttp3.Call

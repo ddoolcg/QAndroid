@@ -1,8 +1,8 @@
 package com.lcg.mylibrary
 
 import android.content.pm.PackageManager
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 /**
  * activity申请权限基类，目前想到的最省事的写法

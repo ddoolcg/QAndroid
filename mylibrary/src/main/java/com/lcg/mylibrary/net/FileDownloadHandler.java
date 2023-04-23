@@ -1,6 +1,6 @@
 package com.lcg.mylibrary.net;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.lcg.mylibrary.utils.L;
 import com.lcg.mylibrary.utils.UIUtils;
@@ -32,12 +32,7 @@ public abstract class FileDownloadHandler {
         if (sync) {
             onNetFinish();
         } else {
-            UIUtils.runInMainThread(new Runnable() {
-                @Override
-                public void run() {
-                    onNetFinish();
-                }
-            });
+            UIUtils.runInMainThread(() -> onNetFinish());
         }
     }
 
@@ -48,12 +43,7 @@ public abstract class FileDownloadHandler {
         if (sync) {
             onFail(code, t);
         } else {
-            UIUtils.runInMainThread(new Runnable() {
-                @Override
-                public void run() {
-                    onFail(code, t);
-                }
-            });
+            UIUtils.runInMainThread(() -> onFail(code, t));
         }
     }
 
@@ -66,12 +56,7 @@ public abstract class FileDownloadHandler {
         if (sync) {
             onSuccess(file);
         } else {
-            UIUtils.runInMainThread(new Runnable() {
-                @Override
-                public void run() {
-                    onSuccess(file);
-                }
-            });
+            UIUtils.runInMainThread(() -> onSuccess(file));
         }
     }
 
@@ -85,12 +70,7 @@ public abstract class FileDownloadHandler {
         if (sync) {
             onProgress(bytesWritten, totalSize);
         } else {
-            UIUtils.runInMainThread(new Runnable() {
-                @Override
-                public void run() {
-                    onProgress(bytesWritten, totalSize);
-                }
-            });
+            UIUtils.runInMainThread(() -> onProgress(bytesWritten, totalSize));
         }
     }
 

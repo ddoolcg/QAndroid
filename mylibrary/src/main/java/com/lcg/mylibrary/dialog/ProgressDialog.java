@@ -3,13 +3,13 @@ package com.lcg.mylibrary.dialog;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Build;
-import android.support.annotation.LayoutRes;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.LayoutRes;
 
 import com.lcg.mylibrary.ProgressDialogInterface;
 import com.lcg.mylibrary.R;
@@ -28,7 +28,7 @@ import okhttp3.Call;
  */
 public class ProgressDialog extends Dialog implements ProgressDialogInterface {
     private Call mCall;
-    private TextView tvMsg;
+    private final TextView tvMsg;
     @LayoutRes
     private static int sLayout = R.layout.dialog_loading;
 
@@ -49,13 +49,9 @@ public class ProgressDialog extends Dialog implements ProgressDialogInterface {
         View view = LayoutInflater.from(context).inflate(sLayout, null);
         tvMsg = view.findViewById(R.id.tv_msg);
         setContentView(view);
-        setOnCancelListener(new OnCancelListener() {
-
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                if (mCall != null) {
-                    mCall.cancel();
-                }
+        setOnCancelListener(dialog -> {
+            if (mCall != null) {
+                mCall.cancel();
             }
         });
     }

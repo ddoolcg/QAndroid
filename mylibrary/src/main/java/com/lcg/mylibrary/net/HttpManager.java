@@ -5,9 +5,10 @@ import static okhttp3.Request.Builder;
 import android.content.pm.PackageInfo;
 import android.os.Environment;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
+
+import androidx.annotation.NonNull;
 
 import com.lcg.mylibrary.utils.L;
 import com.lcg.mylibrary.utils.MD5;
@@ -83,14 +84,11 @@ public class HttpManager {
      * 添加默认Interceptor
      */
     private void addDefaultInterceptor(OkHttpClient.Builder builder) {
-        builder.addInterceptor(new Interceptor() {
-            @Override
-            public Response intercept(@NonNull Chain chain) throws IOException {
-                if (mInterceptor != null) {
-                    return mInterceptor.intercept(chain);
-                } else {
-                    return chain.proceed(chain.request());
-                }
+        builder.addInterceptor(chain -> {
+            if (mInterceptor != null) {
+                return mInterceptor.intercept(chain);
+            } else {
+                return chain.proceed(chain.request());
             }
         });
     }
@@ -290,7 +288,7 @@ public class HttpManager {
                 }
                 if (sb.length() > 0) {
                     sb.deleteCharAt(sb.length() - 1);
-                    params = "Form{" + sb.toString() + "}";
+                    params = "Form{" + sb + "}";
                 }
             }
             L.d("NET[" + id + "]", request.method() + "->" + url

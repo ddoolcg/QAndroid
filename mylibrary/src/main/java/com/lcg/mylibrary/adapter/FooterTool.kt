@@ -1,11 +1,11 @@
 package com.lcg.mylibrary.adapter
 
-import android.support.annotation.LayoutRes
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.LayoutRes
+import androidx.recyclerview.widget.RecyclerView
 import com.lcg.mylibrary.R
 
 /**
@@ -27,7 +27,10 @@ interface FooterToolInterface {
     fun bind(count: Int)
 }
 
-open class FooterTool(@LayoutRes private val layout: Int = R.layout.listview_footer, private val load: FooterTool.() -> Unit) : FooterToolInterface {
+open class FooterTool(
+    @LayoutRes private val layout: Int = R.layout.listview_footer,
+    private val load: FooterTool.() -> Unit
+) : FooterToolInterface {
     protected var rootView: View? = null
     protected lateinit var pb: View
     protected lateinit var tv: TextView

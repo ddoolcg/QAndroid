@@ -1,11 +1,11 @@
 package com.lcg.mylibrary.adapter
 
-import android.databinding.BaseObservable
-import android.databinding.ViewDataBinding
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.BaseObservable
+import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.RecyclerView
 import com.lcg.mylibrary.BaseActivity
 import com.lcg.mylibrary.BaseObservableMe
 import com.lcg.mylibrary.utils.inflateBinding

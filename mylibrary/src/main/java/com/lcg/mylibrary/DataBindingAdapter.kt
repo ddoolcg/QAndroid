@@ -1,14 +1,17 @@
 package com.lcg.mylibrary
 
-import android.databinding.BindingAdapter
-import android.databinding.ViewDataBinding
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.text.Html
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.databinding.BindingAdapter
+import androidx.databinding.BindingMethod
+import androidx.databinding.BindingMethods
+import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.lcg.mylibrary.adapter.CommentAdapter
 import com.lcg.mylibrary.utils.inflateBinding
@@ -20,6 +23,18 @@ import com.lcg.mylibrary.utils.inflateBinding
  * @version 1.0
  * @since 2017/7/14 19:29
  */
+@BindingMethods(
+    BindingMethod(
+        type = TextView::class,
+        attribute = "android:drawableTint",
+        method = "setCompoundDrawableTintList"
+    ),
+    BindingMethod(
+        type = View::class,
+        attribute = "android:foregroundTint",
+        method = "setForegroundTintList"
+    ),
+)
 object DataBindingAdapter {
 
     @BindingAdapter("html")
@@ -43,7 +58,8 @@ object DataBindingAdapter {
     @JvmStatic
     fun recyclerViewAdapter(rv: RecyclerView, adapter: RecyclerView.Adapter<*>?) {
         if (rv.layoutManager == null)
-            rv.layoutManager = LinearLayoutManager(rv.context)
+            rv.layoutManager =
+                LinearLayoutManager(rv.context)
         rv.adapter = adapter
     }
 
@@ -52,7 +68,8 @@ object DataBindingAdapter {
     @JvmStatic
     fun <T : CommentAdapter.Item> recyclerViewItems(rv: RecyclerView, items: ArrayList<T>?) {
         if (rv.layoutManager == null)
-            rv.layoutManager = LinearLayoutManager(rv.context)
+            rv.layoutManager =
+                LinearLayoutManager(rv.context)
         val adapter = rv.adapter
         val data = items ?: arrayListOf()
         if (adapter != null && adapter is CommentAdapter) {

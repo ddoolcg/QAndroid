@@ -5,9 +5,9 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
 import android.view.View
 import android.view.WindowManager
+import androidx.fragment.app.FragmentActivity
 import com.lcg.mylibrary.dialog.ProgressDialog
 import okhttp3.Call
 
@@ -122,7 +122,7 @@ open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
             } else {       //清除黑色字体
                 extraFlagField.invoke(window, 0, darkModeFlag)
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
 
         // 魅族FlymeUI
@@ -143,7 +143,7 @@ open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
             }
             meizuFlags.setInt(lp, value)
             window.attributes = lp
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
 
         // android6.0+系统

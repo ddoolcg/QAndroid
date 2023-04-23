@@ -1,21 +1,21 @@
 package com.lcg.mylibrary.fragment
 
-import android.arch.lifecycle.LifecycleObserver
-import android.databinding.DataBindingUtil
-import android.databinding.ViewDataBinding
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.support.annotation.LayoutRes
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.annotation.LayoutRes
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import androidx.lifecycle.LifecycleObserver
 import com.lcg.mylibrary.BaseActivity
 import com.lcg.mylibrary.BaseObservableMe
 import com.lcg.mylibrary.model.AlertDialogObservable
 
 /**弹窗*/
-class DialogFragment : android.support.v4.app.DialogFragment() {
+class DialogFragment : androidx.fragment.app.DialogFragment() {
     var binding: ViewDataBinding? = null
 
     @LayoutRes
@@ -38,7 +38,10 @@ class DialogFragment : android.support.v4.app.DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null)
-            isCanceledOnTouchOutside = savedInstanceState.getBoolean("android:isCanceledOnTouchOutside", isCanceledOnTouchOutside)
+            isCanceledOnTouchOutside = savedInstanceState.getBoolean(
+                "android:isCanceledOnTouchOutside",
+                isCanceledOnTouchOutside
+            )
         layoutId = arguments?.getInt("layoutId") ?: 0
         variableId = arguments?.getInt("variableId") ?: 0
         variable?.also {
@@ -53,8 +56,12 @@ class DialogFragment : android.support.v4.app.DialogFragment() {
         if (showsDialog) dialog?.setCanceledOnTouchOutside(isCanceledOnTouchOutside)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
         binding = DataBindingUtil.inflate(inflater, layoutId, container, false)
         binding!!.setVariable(variableId, variable)
         return binding!!.root
@@ -76,7 +83,7 @@ class DialogFragment : android.support.v4.app.DialogFragment() {
     fun show(activity: BaseActivity) {
         try {
             super.show(activity.supportFragmentManager, variable?.titleText ?: "")
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
     }
 
@@ -93,7 +100,8 @@ class DialogFragment : android.support.v4.app.DialogFragment() {
 
 /**新建一个通知弹窗*/
 fun newAlert(alert: AlertDialogObservable.() -> Unit): DialogFragment {
-    val dialog = DialogFragment.newInstance(AlertDialogObservable.layoutId, AlertDialogObservable.variableId)
+    val dialog =
+        DialogFragment.newInstance(AlertDialogObservable.layoutId, AlertDialogObservable.variableId)
     val observable = AlertDialogObservable(null, dialog)
     alert.invoke(observable)
     dialog.variable = observable

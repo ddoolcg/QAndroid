@@ -1,9 +1,9 @@
 package com.lcg.mylibrary.model
 
-import android.databinding.Bindable
-import android.support.annotation.LayoutRes
 import android.view.View
-import com.android.databinding.library.baseAdapters.BR
+import androidx.annotation.LayoutRes
+import androidx.databinding.Bindable
+import com.lcg.mylibrary.BR
 import com.lcg.mylibrary.BaseActivity
 import com.lcg.mylibrary.BaseObservableMe
 import com.lcg.mylibrary.R
