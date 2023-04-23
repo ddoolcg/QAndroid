@@ -2,6 +2,9 @@ package com.lcg.mylibrary.utils
 
 import android.app.Activity
 import android.content.Intent
+import androidx.activity.ComponentActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -49,7 +52,7 @@ fun Any.bean2map(): HashMap<String, String> {
                     }
                 }
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
     }
     return map
@@ -62,6 +65,25 @@ fun <T : Activity> Activity.startActivityForResult(clazz: Class<T>) {
 
 /**just startActivityForResult code=clazz.unitNo.hashCode() and 0X0000ffff*/
 fun <T : Activity> Class<T>.getRequestCode() = this.name.hashCode() and 0X0000ffff
+
+/**registerForActivityResult for RESULT_OK*/
+inline fun ComponentActivity.registerForResultOk(crossinline callback: (Intent?) -> Unit): ActivityResultLauncher<Intent> {
+    return this.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == FragmentActivity.RESULT_OK) {
+            callback(result.data)
+        }
+    }
+}
+
+
+/**registerForActivityResult for RESULT_OK*/
+inline fun Fragment.registerForResultOk(crossinline callback: (Intent?) -> Unit): ActivityResultLauncher<Intent> {
+    return registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == FragmentActivity.RESULT_OK) {
+            callback(result.data)
+        }
+    }
+}
 
 /**线程池执行线程*/
 fun thread(runnable: () -> Unit) {
