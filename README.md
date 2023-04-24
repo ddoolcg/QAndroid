@@ -11,15 +11,6 @@
 # 关于使用
 
 ~~~gradle
-buildscript {
-    ext.kotlin_version = '1.8.0'
-    ext.gradle_version = '7.0.4'
-    ...
-    dependencies {
-        classpath "com.android.tools.build:gradle:$gradle_version"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
 allprojects {
     repositories {
         ...
