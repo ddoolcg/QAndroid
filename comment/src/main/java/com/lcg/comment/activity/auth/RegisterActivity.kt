@@ -1,7 +1,7 @@
 package com.lcg.comment.activity.auth
 
-import android.databinding.DataBindingUtil
 import android.os.Bundle
+import androidx.databinding.DataBindingUtil
 import com.lcg.comment.R
 import com.lcg.comment.databinding.ActivityRegisterBinding
 import com.lcg.comment.model.Register

@@ -1,10 +1,10 @@
 package com.lcg.comment.model
 
 import android.app.Activity
-import android.databinding.Bindable
 import android.text.TextUtils
 import android.view.View
-import com.android.databinding.library.baseAdapters.BR
+import androidx.databinding.Bindable
+import androidx.databinding.library.baseAdapters.BR
 import com.lcg.comment.HttpUrl
 import com.lcg.comment.activity.auth.LoginActivity
 import com.lcg.comment.bean.AuthUser

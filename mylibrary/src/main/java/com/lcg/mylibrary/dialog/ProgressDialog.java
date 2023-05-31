@@ -46,7 +46,6 @@ public class ProgressDialog extends Dialog implements ProgressDialogInterface {
         super(context, R.style.dialog_style);
         if (context instanceof Activity)
             setOwnerActivity((Activity) context);
-        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         View view = LayoutInflater.from(context).inflate(sLayout, null);
         tvMsg = view.findViewById(R.id.tv_msg);
         setContentView(view);

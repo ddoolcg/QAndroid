@@ -1,6 +1,6 @@
 package com.lcg.expressbus.model
 
-import android.arch.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleOwner
 import com.lcg.comment.ListActivity
 import com.lcg.expressbus.BR
 import com.lcg.expressbus.R
@@ -33,7 +33,7 @@ class ListViewModelDemo(activity: BaseActivity) : ListActivity.ListViewModel(act
             (0..10).forEach {
                 items.add(ItemDemo(activity, "内容$it"))
             }
-            adapter.notifyDataSetChanged()
+//            adapter.notifyDataSetChanged()
         }
     }
 

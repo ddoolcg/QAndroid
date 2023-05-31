@@ -1,5 +1,6 @@
 package com.lcg.comment
 
+import android.app.ActivityManager
 import android.content.Intent
 import com.lcg.comment.activity.auth.LoginActivity
 import com.lcg.mylibrary.BaseActivity
@@ -16,10 +17,33 @@ import com.lcg.mylibrary.utils.saveToken
  * @since 2018/3/19 15:29
  */
 class MyApplication : BaseApplication() {
-    override fun onInitMainProcesses() {
+    override fun onCreate() {
+        super.onCreate()
+        initMainProcesses()
+    }
+
+    /**
+     * 在主进程初始化友盟统计，发送奔溃日志的服务
+     */
+    private fun initMainProcesses() {
+        val am = getSystemService(ActivityManager::class.java)
+        val runningAppProcesses = am.runningAppProcesses
+        val myPid = android.os.Process.myPid()
+        for (info in runningAppProcesses) {
+            if (info.pid == myPid) {
+                if (!info.processName.contains(":")) {
+                    onInitMainProcesses()
+                    return
+                }
+                break
+            }
+        }
+    }
+
+    private fun onInitMainProcesses() {
         QAndroid.setTranslucentStatusTheme(true)
-                .setDebug(true)
-                .setCrashURL(this, "https://ddoolcg.pythonanywhere.com/error")
+            .setDebug(true)
+            .setCrashURL(this, "https://ddoolcg.pythonanywhere.com/error")
     }
 
     override fun gotoLoin(showToast: Boolean) {

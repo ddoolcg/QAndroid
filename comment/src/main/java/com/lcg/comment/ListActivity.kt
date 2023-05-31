@@ -1,9 +1,9 @@
 package com.lcg.comment
 
-import android.arch.lifecycle.DefaultLifecycleObserver
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.lcg.comment.databinding.ActivityListBinding
 import com.lcg.mylibrary.BaseActivity
 import com.lcg.mylibrary.BaseObservableMe

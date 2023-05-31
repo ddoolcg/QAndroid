@@ -9,8 +9,6 @@ import com.lcg.expressbus.model.ListViewModelDemo
 import com.lcg.mylibrary.BaseActivity
 import com.lcg.mylibrary.fragment.newAlert
 import com.lcg.mylibrary.utils.UIUtils
-import com.lcg.mylibrary.utils.doOnGlobalLayout
-import com.lcg.mylibrary.utils.plusAssign
 
 class MainActivity : BaseActivity() {
 
@@ -19,7 +17,7 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
         val linearLayout = findViewById<LinearLayout>(R.id.ll)
         for (i in 0..100) {
-            linearLayout += Button(this).apply {
+            linearLayout.addView(Button(this).apply {
                 text = "Button$i"
                 setOnClickListener {
                     val bundle = Bundle().apply {
@@ -27,15 +25,13 @@ class MainActivity : BaseActivity() {
                     }
                     ListActivity.start(this@MainActivity, ListViewModelDemo::class.java, bundle)
                 }
-            }
+            })
         }
-        linearLayout.doOnGlobalLayout {
-            if (it.isShown) {
-                UIUtils.post { (linearLayout.parent as? ScrollView)?.scrollTo(0, 50 * UIUtils.dip2px(48f)) }
-                true
-            } else {
-                false
-            }
+        UIUtils.post {
+            (linearLayout.parent as? ScrollView)?.scrollTo(
+                0,
+                50 * UIUtils.dip2px(48f)
+            )
         }
         //
         newAlert {
