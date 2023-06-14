@@ -1,6 +1,9 @@
 package com.lcg.mylibrary
 
 import android.app.Application
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.annotation.LayoutRes
 import com.lcg.mylibrary.dialog.ProgressDialog
 import com.lcg.mylibrary.model.AlertDialogObservable
@@ -9,6 +12,7 @@ import com.lcg.mylibrary.net.HttpUrl
 import com.lcg.mylibrary.utils.L
 import com.lcg.mylibrary.utils.Token
 import com.lcg.mylibrary.utils.UIUtils
+import java.util.Date
 
 /**
  * 核心
@@ -73,10 +77,40 @@ object QAndroid {
         return this
     }
 
-    /**设置奔溃信息收集服务器地址*/
+    /**设置奔溃信息收集服务器地址
+     * @param url post请求， 请求表单：
+     *
+     * title：file.getName()
+     *
+     * app_name：app包名
+     *
+     *version_code：app的versionCode
+     *
+     * version_name：app的versionName
+     *
+     * content： 异常内容
+     * @param attach 异常后面附加信息
+     */
     @Synchronized
-    fun setCrashURL(app: Application, url: String): QAndroid {
-        val crashHandler = CrashHandler.getInstance(app, url)
+    fun setCrashURL(
+        app: Application, url: String, attach: () -> String = {
+            val code = try {
+                val pi = app.packageManager.getPackageInfo(
+                    app.packageName,
+                    PackageManager.GET_ACTIVITIES
+                )
+                pi?.versionCode ?: -1
+            } catch (e: Exception) {
+                -1
+            }
+            """------------------------------------------------------------------------------------------
+                异常时间：${Date().toLocaleString()} 异常版本：$code
+                DEVICE：os=${Build.VERSION.SDK_INT} d=${Build.MANUFACTURER} ${Build.MODEL} ${Build.DEVICE} cpu=${Build.CPU_ABI}${Build.CPU_ABI2}
+                FINGERPRINT：${Build.FINGERPRINT}
+            """.trimIndent()
+        }
+    ): QAndroid {
+        val crashHandler = CrashHandler.getInstance(app, url, attach)
         Thread.setDefaultUncaughtExceptionHandler(crashHandler)
         crashHandler.sendPreviousReportsToServer()
         return this

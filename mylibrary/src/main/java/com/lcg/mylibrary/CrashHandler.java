@@ -5,15 +5,12 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Build;
 import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
 import com.lcg.mylibrary.net.HttpManager;
 import com.lcg.mylibrary.net.ResponseHandler;
-import com.lcg.mylibrary.utils.L;
 import com.lcg.mylibrary.utils.MD5;
 import com.lcg.mylibrary.utils.ThreadPoolUntil;
 
@@ -27,8 +24,6 @@ import java.io.StringWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 import okhttp3.Call;
 
@@ -36,40 +31,46 @@ import okhttp3.Call;
  * 异常退出信息收集类
  */
 public class CrashHandler implements UncaughtExceptionHandler {
-    private static CrashHandler INSTANCE;
-    /**
-     * Debug LogUntil tag
-     */
-    private static final String TAG = "CrashHandler";
-    private final UncaughtExceptionHandler mDefaultHandler;
-    private final Application mContext;
-    private final Map<String, String> mDeviceCrashInfo = new HashMap<>();
-
-    private static String mUrl;
-    private static final String VERSION_NAME = "versionName";
-    private static final String VERSION_CODE = "versionCode";
-    private static final String APP_NAME = "appName";
     private static final String CRASH_REPORTER_EXTENSION = ".log";
+    private static CrashHandler INSTANCE;
+    private final Application mContext;
+    private final String mUrl;
+    private final Attach mAttach;
+    //
+    private final String packageName;
+    private String versionName = "未知";
+    private int versionCode = -1;
 
-    private CrashHandler(Application ctx) {
+    private CrashHandler(Application ctx, String url, Attach attach) {
         mContext = ctx;
-        mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+        mUrl = url;
+        mAttach = attach;
+        packageName = ctx.getPackageName();
+        try {
+            PackageManager pm = ctx.getPackageManager();
+            PackageInfo pi = pm.getPackageInfo(packageName,
+                    PackageManager.GET_ACTIVITIES);
+            if (pi != null) {
+                versionName = pi.versionName;
+                versionCode = pi.versionCode;
+            }
+        } catch (Exception ignored) {
+        }
     }
 
-    public static CrashHandler getInstance(Application ctx, String url) {
+    public static CrashHandler getInstance(Application ctx, String url, Attach attach) {
         if (INSTANCE == null) {
-            INSTANCE = new CrashHandler(ctx);
+            INSTANCE = new CrashHandler(ctx, url, attach);
         }
-        mUrl = url;
         return INSTANCE;
     }
 
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
         ex.printStackTrace();
-        if (!handleException(ex) && mDefaultHandler != null) {
-            // 如果用户没有处理则让系统默认的异常处理器来处理
-            mDefaultHandler.uncaughtException(thread, ex);
+        if (!handleException(ex)) {// 如果用户没有处理则让系统默认的异常处理器来处理
+            UncaughtExceptionHandler handler = Thread.getDefaultUncaughtExceptionHandler();
+            if (handler != null) handler.uncaughtException(thread, ex);
         } else {
             //下面代码解决：activity创建生命周期时奔溃导致无限重启，在创建中的时候奔溃会把上一个activity关闭
             ArrayList<Activity> activities = BaseActivity.getActivities();
@@ -85,131 +86,17 @@ public class CrashHandler implements UncaughtExceptionHandler {
     }
 
     private boolean handleException(final Throwable ex) {
-        if (ex == null) {
-            L.w(TAG, "handleException --- ex==null");
-            return true;
-        }
         if (TextUtils.isEmpty(mUrl)) {
-            L.w(TAG, "handleException --- mUrl==null");
+            return false;
+        } else {
+            saveCrashInfoToFile(ex);
             return true;
         }
-        // 收集设备信息
-        collectCrashDeviceInfo(mContext);
-        // 保存错误报告文件
-        saveCrashInfoToFile(ex);
-        // 发送错误报告到服务器
-        // sendCrashReportsToServer(mContext);
-        // 尝试等待发送报告结束
-//        try {
-//            Thread.sleep(1000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-        return true;
     }
 
     /**
-     * 发送之前的异常
+     * 保存错误报告文件
      */
-    public synchronized void sendPreviousReportsToServer() {
-        sendCrashReportsToServer(mContext);
-    }
-
-    /**
-     * 发送异常
-     */
-    private void sendCrashReportsToServer(final Context ctx) {
-        try {
-            PackageManager pm = ctx.getPackageManager();
-            String packageName = ctx.getPackageName();
-            mDeviceCrashInfo.put(APP_NAME, packageName);
-            PackageInfo pi = pm.getPackageInfo(packageName,
-                    PackageManager.GET_ACTIVITIES);
-            if (pi != null) {
-                mDeviceCrashInfo.put(VERSION_NAME,
-                        pi.versionName == null ? "not set" : pi.versionName);
-                mDeviceCrashInfo.put(VERSION_CODE, "" + pi.versionCode);
-            }
-        } catch (Exception ignored) {
-        }
-        ThreadPoolUntil.getInstance().run(() -> {
-            final String[] crFiles = getCrashReportFiles(ctx);
-            if (crFiles != null && crFiles.length > 0) {
-                try {
-                    for (String fileName : crFiles) {
-                        File cr = new File(ctx.getFilesDir(), fileName);
-                        postReport(cr);
-                        // cr.delete();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private String[] getCrashReportFiles(Context ctx) {
-        File filesDir = ctx.getFilesDir();
-        FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.endsWith(CRASH_REPORTER_EXTENSION);
-            }
-        };
-        return filesDir.list(filter);
-    }
-
-    private void postReport(File file) {
-        FileReader fr;
-        try {
-            fr = new FileReader(file);
-            BufferedReader reader = new BufferedReader(fr);
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line.trim()).append("<br/>");
-            }
-            reader.close();
-            sendMsg(file, sb.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 发送消息实体
-     */
-    private void sendMsg(final File file, String msg) {
-        if (!TextUtils.isEmpty(mUrl)) {
-            HashMap<String, String> params = new HashMap<>();
-//            params.put("toemail", "475825657@qq.com");
-            params.put("title", file.getName());
-            params.put("app_name", mDeviceCrashInfo.get(APP_NAME));
-            params.put("version_code", mDeviceCrashInfo.get(VERSION_CODE));
-            params.put("version_name", mDeviceCrashInfo.get(VERSION_NAME));
-            params.put("content", msg);
-            HttpManager.getInstance().post(mUrl, params,
-                    new ResponseHandler() {
-
-                        @Override
-                        public void start(Call call) {
-                        }
-
-                        @Override
-                        public void netFinish() {
-                        }
-
-                        @Override
-                        public void fail(int code, String errorData) {
-                        }
-
-                        @Override
-                        public void success(String successData) {
-                            file.delete();
-                        }
-                    });
-        }
-    }
-
     private void saveCrashInfoToFile(Throwable ex) {
         final StringBuilder sbTag = new StringBuilder();
         StringWriter info = new StringWriter();
@@ -238,7 +125,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         StringBuffer sb = info.getBuffer();
         printWriter.close();
         //缓存到文件规则
-        String fileNameString = MD5.GetMD5Code(sbTag + mDeviceCrashInfo.get(VERSION_CODE));
+        String fileNameString = MD5.GetMD5Code(sbTag.toString() + versionCode);
         String fileName = fileNameString + CRASH_REPORTER_EXTENSION;
         String[] fileList = mContext.fileList();
         for (String s : fileList) {
@@ -247,38 +134,96 @@ public class CrashHandler implements UncaughtExceptionHandler {
             }
         }
         //保存文件
-        Set<String> keySet = mDeviceCrashInfo.keySet();
-        for (String key : keySet) {
-            sb.append(key).append(":").append(mDeviceCrashInfo.get(key)).append("<br/>");
-        }
+        if (mAttach != null) sb.append(mAttach.onAttach());
         try {
             FileOutputStream trace = mContext.openFileOutput(fileName, Context.MODE_PRIVATE);
-            trace.write(sb.toString().replace("\t", "<br/>").getBytes());
+            trace.write(sb.toString().getBytes());
             trace.flush();
             trace.close();
         } catch (Exception e) {
-            L.e(TAG, "an error occured while writing report file..." + e);
+            e.printStackTrace();
         }
     }
 
-    private void collectCrashDeviceInfo(Context ctx) {
-        try {
-            PackageManager pm = ctx.getPackageManager();
-            PackageInfo pi = pm.getPackageInfo(ctx.getPackageName(),
-                    PackageManager.GET_ACTIVITIES);
-            if (pi != null) {
-                mDeviceCrashInfo.put(VERSION_NAME,
-                        pi.versionName == null ? "not set" : pi.versionName);
-                mDeviceCrashInfo.put(VERSION_CODE, "" + pi.versionCode);
+    /**
+     * 发送之前的异常
+     */
+    public void sendPreviousReportsToServer() {
+        ThreadPoolUntil.getInstance().run(() -> {
+            final String[] crFiles = getCrashReportFiles();
+            if (crFiles != null && crFiles.length > 0) {
+                try {
+                    for (String fileName : crFiles) {
+                        File cr = new File(mContext.getFilesDir(), fileName);
+                        postReport(cr);
+                        // cr.delete();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        } catch (NameNotFoundException e) {
-            L.e(TAG, "Error while collect package info" + e);
-        }
-        //保留有效设备信息
-        mDeviceCrashInfo.put("TIME", Build.TIME + "");
-        mDeviceCrashInfo.put("FINGERPRINT", Build.FINGERPRINT + "");
-        mDeviceCrashInfo.put("DEVICE", Build.MANUFACTURER + "/" + Build.MODEL + "/" + Build.DEVICE + " os=" + Build.VERSION.SDK_INT);
-        mDeviceCrashInfo.put("CPU_ABI", Build.CPU_ABI + " " + Build.CPU_ABI2);
+        });
     }
 
+    private String[] getCrashReportFiles() {
+        File filesDir = mContext.getFilesDir();
+        FilenameFilter filter = (dir, name) -> name.endsWith(CRASH_REPORTER_EXTENSION);
+        return filesDir.list(filter);
+    }
+
+    private void postReport(File file) {
+        FileReader fr;
+        try {
+            fr = new FileReader(file);
+            BufferedReader reader = new BufferedReader(fr);
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line.trim()).append("<br/>");
+            }
+            reader.close();
+            sendMsg(file, sb.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 发送消息实体
+     */
+    private void sendMsg(final File file, String msg) {
+        if (!TextUtils.isEmpty(mUrl)) {
+            HashMap<String, String> params = new HashMap<>();
+//            params.put("toemail", "475825657@qq.com");
+            params.put("title", file.getName());
+            params.put("app_name", packageName);
+            params.put("version_code", versionCode + "");
+            params.put("version_name", versionName);
+            params.put("content", msg);
+            HttpManager.getInstance().post(mUrl, params,
+                    new ResponseHandler() {
+
+                        @Override
+                        public void start(Call call) {
+                        }
+
+                        @Override
+                        public void netFinish() {
+                        }
+
+                        @Override
+                        public void fail(int code, String errorData) {
+                        }
+
+                        @Override
+                        public void success(String successData) {
+                            file.delete();
+                        }
+                    });
+        }
+    }
+
+    interface Attach {
+        String onAttach();
+    }
 }
