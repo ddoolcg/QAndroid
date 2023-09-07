@@ -11,6 +11,7 @@ import com.lcg.mylibrary.net.HttpUrl
 import com.lcg.mylibrary.utils.L
 import com.lcg.mylibrary.utils.Token
 import com.lcg.mylibrary.utils.UIUtils
+import java.io.File
 import java.util.Date
 
 /**
@@ -92,24 +93,30 @@ object QAndroid {
      */
     @Synchronized
     fun setCrashURL(
-        app: Application, url: String, intercept: (String, StringBuffer) -> Boolean = { _, sb ->
-            val code = try {
-                val pi = app.packageManager.getPackageInfo(
-                    app.packageName,
-                    PackageManager.GET_ACTIVITIES
-                )
-                pi?.versionCode ?: -1
-            } catch (e: Exception) {
-                -1
-            }
-            sb.append(
-                """------------------------------------------------------------------------------------------
+        app: Application,
+        url: String,
+        intercept: (String, StringBuffer) -> Boolean = { fileName, sb ->
+            if (File(app.filesDir.path, fileName).exists()) {
+                true
+            } else {
+                val code = try {
+                    val pi = app.packageManager.getPackageInfo(
+                        app.packageName,
+                        PackageManager.GET_ACTIVITIES
+                    )
+                    pi?.versionCode ?: -1
+                } catch (e: Exception) {
+                    -1
+                }
+                sb.append(
+                    """------------------------------------------------------------------------------------------
                 异常时间：${Date().toLocaleString()} 异常版本：$code
                 DEVICE：os=${Build.VERSION.SDK_INT} d=${Build.MANUFACTURER} ${Build.MODEL} ${Build.DEVICE} cpu=${Build.CPU_ABI}${Build.CPU_ABI2}
                 FINGERPRINT：${Build.FINGERPRINT}
             """.trimIndent()
-            )
-            false
+                )
+                false
+            }
         }
     ): QAndroid {
         val crashHandler = CrashHandler.getInstance(app, url, intercept)

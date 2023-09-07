@@ -127,7 +127,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         //缓存到文件
         String fileNameString = MD5.GetMD5Code(sbTag.toString() + versionCode);
         String fileName = fileNameString + CRASH_REPORTER_EXTENSION;
-        if (!mIntercept.intercept(fileName, sb)) {
+        if (mIntercept == null || !mIntercept.intercept(fileName, sb)) {
             try {
                 FileOutputStream trace = mContext.openFileOutput(fileName, Context.MODE_PRIVATE);
                 trace.write(sb.toString().getBytes());

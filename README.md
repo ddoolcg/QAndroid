@@ -21,7 +21,7 @@ allprojects {
 
 ~~~gradle
 dependencies {
-    api 'com.github.ddoolcg:QAndroid:1.9.82'
+    api 'com.github.ddoolcg:QAndroid:1.9.83'
 }
 ~~~
 
