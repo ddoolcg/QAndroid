@@ -35,16 +35,16 @@ public class CrashHandler implements UncaughtExceptionHandler {
     private static CrashHandler INSTANCE;
     private final Application mContext;
     private final String mUrl;
-    private final Attach mAttach;
+    private final Intercept mIntercept;
     //
     private final String packageName;
     private String versionName = "未知";
     private int versionCode = -1;
 
-    private CrashHandler(Application ctx, String url, Attach attach) {
+    private CrashHandler(Application ctx, String url, Intercept intercept) {
         mContext = ctx;
         mUrl = url;
-        mAttach = attach;
+        mIntercept = intercept;
         packageName = ctx.getPackageName();
         try {
             PackageManager pm = ctx.getPackageManager();
@@ -58,7 +58,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         }
     }
 
-    public static CrashHandler getInstance(Application ctx, String url, Attach attach) {
+    public static CrashHandler getInstance(Application ctx, String url, Intercept attach) {
         if (INSTANCE == null) {
             INSTANCE = new CrashHandler(ctx, url, attach);
         }
@@ -124,24 +124,17 @@ public class CrashHandler implements UncaughtExceptionHandler {
         ex.printStackTrace(printWriter);
         StringBuffer sb = info.getBuffer();
         printWriter.close();
-        //缓存到文件规则
+        //缓存到文件
         String fileNameString = MD5.GetMD5Code(sbTag.toString() + versionCode);
         String fileName = fileNameString + CRASH_REPORTER_EXTENSION;
-        String[] fileList = mContext.fileList();
-        for (String s : fileList) {
-            if (s.equals(fileName)) {
-                return;
+        if (!mIntercept.intercept(fileName, sb)) {
+            try {
+                FileOutputStream trace = mContext.openFileOutput(fileName, Context.MODE_PRIVATE);
+                trace.write(sb.toString().getBytes());
+                trace.flush();
+                trace.close();
+            } catch (Exception ignored) {
             }
-        }
-        //保存文件
-        if (mAttach != null) sb.append(mAttach.onAttach());
-        try {
-            FileOutputStream trace = mContext.openFileOutput(fileName, Context.MODE_PRIVATE);
-            trace.write(sb.toString().getBytes());
-            trace.flush();
-            trace.close();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -223,7 +216,17 @@ public class CrashHandler implements UncaughtExceptionHandler {
         }
     }
 
-    interface Attach {
-        String onAttach();
+    /**
+     * 异常拦截
+     */
+    interface Intercept {
+        /**
+         * 拦截处理
+         *
+         * @param fileName 保存在files路径下的文件名
+         * @param info     异常信息
+         * @return 是否已被拦截处理
+         */
+        boolean intercept(String fileName, StringBuffer info);
     }
 }

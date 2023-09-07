@@ -1,7 +1,6 @@
 package com.lcg.mylibrary
 
 import android.app.Application
-import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.LayoutRes
@@ -89,11 +88,11 @@ object QAndroid {
      * version_name：app的versionName
      *
      * content： 异常内容
-     * @param attach 异常后面附加信息
+     * @param intercept 异常拦截
      */
     @Synchronized
     fun setCrashURL(
-        app: Application, url: String, attach: () -> String = {
+        app: Application, url: String, intercept: (String, StringBuffer) -> Boolean = { _, sb ->
             val code = try {
                 val pi = app.packageManager.getPackageInfo(
                     app.packageName,
@@ -103,14 +102,17 @@ object QAndroid {
             } catch (e: Exception) {
                 -1
             }
-            """------------------------------------------------------------------------------------------
+            sb.append(
+                """------------------------------------------------------------------------------------------
                 异常时间：${Date().toLocaleString()} 异常版本：$code
                 DEVICE：os=${Build.VERSION.SDK_INT} d=${Build.MANUFACTURER} ${Build.MODEL} ${Build.DEVICE} cpu=${Build.CPU_ABI}${Build.CPU_ABI2}
                 FINGERPRINT：${Build.FINGERPRINT}
             """.trimIndent()
+            )
+            false
         }
     ): QAndroid {
-        val crashHandler = CrashHandler.getInstance(app, url, attach)
+        val crashHandler = CrashHandler.getInstance(app, url, intercept)
         Thread.setDefaultUncaughtExceptionHandler(crashHandler)
         crashHandler.sendPreviousReportsToServer()
         return this
