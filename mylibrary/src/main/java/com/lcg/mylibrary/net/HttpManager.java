@@ -429,8 +429,8 @@ public class HttpManager {
                 if (call.isCanceled()) return;
                 //处理Response
                 int code = response.code();
-                ResponseBody body = response.body();
-                if (code >= 200 && code < 300 && body != null) {
+                ResponseBody body;
+                if (code >= 200 && code < 300 && (body = response.body()) != null) {
                     long contentLength = body.contentLength();
                     if (code != 200 || startsPoint != contentLength) {//还有未下载的数据
                         InputStream in = body.byteStream();

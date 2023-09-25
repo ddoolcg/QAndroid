@@ -6,7 +6,7 @@
 
 基于dataBinding的mvvm架构、使用kotlin开发更迅捷。
 
-框架已经集成okhttp、glide、fastjson和友盟统计。
+框架已经集成okhttp、glide和fastjson。
 
 # 关于使用
 
