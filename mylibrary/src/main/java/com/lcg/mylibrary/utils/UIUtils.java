@@ -318,7 +318,7 @@ public class UIUtils {
                 String packageName = UIUtils.getContext().getPackageName();
                 pi = pm.getPackageInfo(packageName,
                         PackageManager.GET_ACTIVITIES);
-            } catch (PackageManager.NameNotFoundException ignored) {
+            } catch (Exception ignored) {
             }
         return pi;
     }

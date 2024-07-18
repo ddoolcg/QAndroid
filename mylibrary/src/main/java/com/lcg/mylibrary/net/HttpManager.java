@@ -28,7 +28,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -55,7 +54,7 @@ public class HttpManager {
      * 输出日志
      */
     public static boolean logcat = false;
-    private volatile static HttpManager instance;
+    private static HttpManager instance;
     private OkHttpClient client;
     private final HashMap<String, String> header = new HashMap<>();
     private Interceptor mInterceptor;
@@ -63,8 +62,9 @@ public class HttpManager {
      * 服务器时间和boot时间差
      */
     private long timeDifference = 0;
+    private Builder requestBuilder = new Builder().addHeader("Content-Type", "application/json").addHeader("os", "android");
 
-    public static HttpManager getInstance() {
+    public static synchronized HttpManager getInstance() {
         if (instance == null) {
             HttpManager manager = new HttpManager();
             if (instance == null) {
@@ -78,6 +78,12 @@ public class HttpManager {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         addDefaultInterceptor(builder);
         client = builder.build();
+        //
+        PackageInfo packageInfo = UIUtils.getPackageInfo();
+        if (packageInfo != null)
+            this.requestBuilder.addHeader("ver", packageInfo.versionCode + "");
+        else
+            this.requestBuilder.addHeader("ver", "-1");
     }
 
     /**
@@ -94,41 +100,14 @@ public class HttpManager {
     }
 
     /**
-     * 初始化一个默认header
+     * 获取Request.Builder
      */
-    public void initDefaultHeaders(HashMap<String, String> header) {
-        this.header.clear();
-        if (header != null)
-            this.header.putAll(header);
-    }
-
-    /**
-     * 统一为请求添加头信息
-     */
-    private Builder addHeaders() {
-        Builder builder = new Builder()
-                .addHeader("Content-Type", "application/json")
-                .addHeader("os", "android");
+    public Builder getRequestBuilder() {
         String token = TokenUtilKt.getToken();
         if (!TextUtils.isEmpty(token)) {
-            builder.addHeader(Token.INSTANCE.getTOKEN(), token);
+            requestBuilder.addHeader(Token.INSTANCE.getTOKEN(), token);
         }
-        PackageInfo packageInfo = UIUtils.getPackageInfo();
-        if (packageInfo != null)
-            builder.addHeader("ver", packageInfo.versionCode + "");
-        else
-            builder.addHeader("ver", "-1");
-        for (Map.Entry<String, String> entry : header.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            if (!TextUtils.isEmpty(key))
-                if (TextUtils.isEmpty(value)) {
-                    builder.removeHeader(key);
-                } else {
-                    builder.addHeader(key, value);
-                }
-        }
-        return builder;
+        return requestBuilder;
     }
 
     /**
@@ -161,7 +140,7 @@ public class HttpManager {
                 url = url + start + tempParams.substring(0, tempParams.length() - 1);
             }
         }
-        Request request = addHeaders().url(url).build();
+        Request request = getRequestBuilder().url(url).build();
         return request(handler, request);
     }
 
@@ -170,7 +149,7 @@ public class HttpManager {
      */
     public Call post(String url, String content, final ResponseHandler handler) {
         RequestBody requestBody = getRequestBody(url, content);
-        Request request = addHeaders().url(url).post(requestBody).build();
+        Request request = getRequestBuilder().url(url).post(requestBody).build();
         return request(handler, request);
     }
 
@@ -179,7 +158,7 @@ public class HttpManager {
      */
     public Call post(String url, HashMap<String, String> paramsMap, final ResponseHandler handler) {
         RequestBody formBody = getRequestBody(paramsMap);
-        Request request = addHeaders().url(url).post(formBody).build();
+        Request request = getRequestBuilder().url(url).post(formBody).build();
         return request(handler, request);
     }
 
@@ -188,7 +167,7 @@ public class HttpManager {
      */
     public Call put(String url, HashMap<String, String> paramsMap, final ResponseHandler handler) {
         RequestBody formBody = getRequestBody(paramsMap);
-        Request request = addHeaders().url(url).put(formBody).build();
+        Request request = getRequestBuilder().url(url).put(formBody).build();
         return request(handler, request);
     }
 
@@ -197,7 +176,7 @@ public class HttpManager {
      */
     public Call put(String url, String content, final ResponseHandler handler) {
         RequestBody requestBody = getRequestBody(url, content);
-        Request request = addHeaders().url(url).put(requestBody).build();
+        Request request = getRequestBuilder().url(url).put(requestBody).build();
         return request(handler, request);
     }
 
@@ -230,7 +209,7 @@ public class HttpManager {
             String start = url.contains("?") ? "&" : "?";
             url = url + start + tempParams.substring(0, tempParams.length() - 1);
         }
-        Request request = addHeaders().url(url).delete().build();
+        Request request = getRequestBuilder().url(url).delete().build();
         return request(handler, request);
     }
 
@@ -239,7 +218,7 @@ public class HttpManager {
      */
     public Call delete(String url, String content, final ResponseHandler handler) {
         RequestBody requestBody = getRequestBody(url, content);
-        Request request = addHeaders().url(url).delete(requestBody).build();
+        Request request = getRequestBuilder().url(url).delete(requestBody).build();
         return request(handler, request);
     }
 
@@ -383,7 +362,7 @@ public class HttpManager {
         //创建RequestBody
         RequestBody body = builder.build();
         //
-        Request request = addHeaders().url(url).post(body).build();
+        Request request = getRequestBuilder().url(url).post(body).build();
         return request(handler, request);
     }
 
