@@ -56,13 +56,12 @@ public class HttpManager {
     public static boolean logcat = false;
     private static HttpManager instance;
     private OkHttpClient client;
-    private final HashMap<String, String> header = new HashMap<>();
     private Interceptor mInterceptor;
     /**
      * 服务器时间和boot时间差
      */
     private long timeDifference = 0;
-    private Builder requestBuilder = new Builder().addHeader("Content-Type", "application/json").addHeader("os", "android");
+    private final Builder requestBuilder = new Builder().addHeader("Content-Type", "application/json").addHeader("os", "android");
 
     public static synchronized HttpManager getInstance() {
         if (instance == null) {
