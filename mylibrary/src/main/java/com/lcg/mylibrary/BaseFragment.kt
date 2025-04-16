@@ -33,8 +33,13 @@ open class BaseFragment : Fragment(), ProgressDialogInterface {
         return textView
     }
 
-    override fun showProgressDialog(msg: String, call: Call?, cancelable: Boolean) {
-        activity?.showProgressDialog(msg, call, cancelable)
+    override fun showProgressDialog(
+        msg: String,
+        call: Call?,
+        cancelable: Boolean,
+        canceledOnTouchOutside: Boolean
+    ) {
+        activity?.showProgressDialog(msg, call, cancelable, canceledOnTouchOutside)
     }
 
     /**
