@@ -1,21 +1,18 @@
-package com.lcg.mylibrary.dialog;
+package com.lcg.mylibrary.dialog
 
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
-import android.os.Build;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
-
-import com.lcg.mylibrary.ProgressDialogInterface;
-import com.lcg.mylibrary.R;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import okhttp3.Call;
+import android.app.Activity
+import android.app.Dialog
+import android.content.Context
+import android.content.DialogInterface
+import android.os.Build
+import android.text.TextUtils
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.TextView
+import com.lcg.mylibrary.ProgressDialogInterface
+import com.lcg.mylibrary.ProgressDialogInterface.Companion.layout
+import com.lcg.mylibrary.R
+import okhttp3.Call
 
 /**
  * 进度对话框
@@ -24,67 +21,69 @@ import okhttp3.Call;
  * @version 1.0
  * @since 2016/10/21 11:45
  */
-public class ProgressDialog extends Dialog implements ProgressDialogInterface {
-    private Call mCall;
-    private final TextView tvMsg;
+class ProgressDialog(context: Context) : Dialog(context, R.style.dialog_style),
+    ProgressDialogInterface {
+    private var mCall: Call? = null
+    private val tvMsg: TextView?
 
-    public ProgressDialog(Context context) {
-        super(context, R.style.dialog_style);
-        if (context instanceof Activity)
-            setOwnerActivity((Activity) context);
-        View view = LayoutInflater.from(context).inflate(ProgressDialogInterface.Companion.getLayout$mylibrary_debug(), null);
-        tvMsg = view.findViewById(R.id.tv_msg);
-        setContentView(view);
-        setOnCancelListener(dialog -> {
+    init {
+        if (context is Activity) setOwnerActivity(context)
+        val view = LayoutInflater.from(context).inflate(layout, null)
+        tvMsg = view.findViewById<TextView?>(R.id.tv_msg)
+        setContentView(view)
+        setOnCancelListener(DialogInterface.OnCancelListener { dialog: DialogInterface? ->
             if (mCall != null) {
-                mCall.cancel();
+                mCall!!.cancel()
             }
-        });
+        })
     }
 
-    public void show(String msg) {
+    fun show(msg: String?) {
         if (tvMsg != null) {
             if (TextUtils.isEmpty(msg)) {
-                tvMsg.setVisibility(View.GONE);
+                tvMsg.visibility = View.GONE
             } else {
-                tvMsg.setVisibility(View.VISIBLE);
-                tvMsg.setText(msg);
+                tvMsg.visibility = View.VISIBLE
+                tvMsg.text = msg
             }
         }
-        boolean b = true;
+        var b = true
         if (Build.VERSION.SDK_INT >= 17) {
-            b = getOwnerActivity() == null || !getOwnerActivity().isDestroyed();
+            b = ownerActivity == null || !ownerActivity!!.isDestroyed
         }
-        if (!isShowing() && b)
-            show();
+        if (!isShowing && b) show()
     }
 
-    public void dismiss(String msg) throws Exception {
-        if (tvMsg == null || TextUtils.isEmpty(msg) || tvMsg.getText().toString().equals(msg)) {
-            dismiss();
+    @Throws(Exception::class)
+    fun dismiss(msg: String?) {
+        if (tvMsg == null || TextUtils.isEmpty(msg) || tvMsg.getText().toString() == msg) {
+            dismiss()
         } else {
-            throw new Exception("没有<" + msg + ">消息对话框实体");
+            throw Exception("没有<$msg>消息对话框实体")
         }
     }
 
-    public void setCall(Call call) {
-        mCall = call;
+    fun setCall(call: Call?) {
+        mCall = call
     }
 
-    @Override
-    public void showProgressDialog(@NotNull String msg, @Nullable Call call, boolean cancelable, boolean canceledOnTouchOutside) {
-        setCancelable(cancelable);
-        setCanceledOnTouchOutside(canceledOnTouchOutside);
-        setCall(call);
-        show(msg);
+    override fun showProgressDialog(
+        msg: String,
+        call: Call?,
+        cancelable: Boolean,
+        canceledOnTouchOutside: Boolean
+    ) {
+        setCancelable(cancelable)
+        setCanceledOnTouchOutside(canceledOnTouchOutside)
+        setCall(call)
+        show(msg)
     }
 
-    @Override
-    public void dismissProgressDialog(@Nullable String msg) {
+    override fun dismissProgressDialog(msg: String?) {
         try {
-            dismiss(msg);
-        } catch (Exception e) {
-            e.printStackTrace();
+            dismiss(msg)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }
