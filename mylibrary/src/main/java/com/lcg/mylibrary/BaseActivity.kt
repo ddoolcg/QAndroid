@@ -43,12 +43,15 @@ open class BaseActivity : FragmentActivity(), ProgressDialogInterface {
      * @param msg  你想要显示的消息
      * @param call 网络请求的call
      */
-    override fun showProgressDialog(msg: String, call: Call?, cancelable: Boolean) {
+    override fun showProgressDialog(
+        msg: String,
+        call: Call?,
+        cancelable: Boolean,
+        canceledOnTouchOutside: Boolean
+    ) {
         if (mProgressDialog == null)
             mProgressDialog = ProgressDialog(this)
-        mProgressDialog!!.setCancelable(cancelable)
-        mProgressDialog!!.setCall(call)
-        mProgressDialog!!.show(msg)
+        mProgressDialog!!.showProgressDialog(msg, call, cancelable, canceledOnTouchOutside)
     }
 
     /**

@@ -59,8 +59,14 @@ object QAndroid {
      * @param layout ID for an XML layout resource to load (e.g.,
      * `R.layout.dialog_loading`)
      */
-    fun setProgressLayout(@LayoutRes layout: Int): QAndroid {
-        ProgressDialog.setLayout(layout)
+    fun setProgressLayout(
+        @LayoutRes layout: Int,
+        cancelable: Boolean = true,
+        canceledOnTouchOutside: Boolean = true,
+    ): QAndroid {
+        ProgressDialogInterface.layout = layout
+        ProgressDialogInterface.cancelable = cancelable
+        ProgressDialogInterface.canceledOnTouchOutside = canceledOnTouchOutside
         return this
     }
 

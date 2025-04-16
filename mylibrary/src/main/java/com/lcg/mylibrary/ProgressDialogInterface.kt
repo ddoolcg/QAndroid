@@ -1,5 +1,6 @@
 package com.lcg.mylibrary
 
+import androidx.annotation.LayoutRes
 import okhttp3.Call
 
 /**
@@ -16,7 +17,12 @@ interface ProgressDialogInterface {
      * @param msg  你想要显示的消息
      * @param call 网络请求的call
      */
-    fun showProgressDialog(msg: String = "加载中...", call: Call? = null, cancelable: Boolean = true)
+    fun showProgressDialog(
+        msg: String = "加载中...",
+        call: Call? = null,
+        cancelable: Boolean = ProgressDialogInterface.cancelable,
+        canceledOnTouchOutside: Boolean = ProgressDialogInterface.canceledOnTouchOutside
+    )
 
     /**
      * 关闭进度对话框
@@ -24,4 +30,12 @@ interface ProgressDialogInterface {
      * @param msg 如果不为空，则只会关闭与之匹配的进度对话框。
      */
     fun dismissProgressDialog(msg: String? = null)
+
+    companion object {
+        internal var cancelable: Boolean = true
+        internal var canceledOnTouchOutside: Boolean = true
+
+        @LayoutRes
+        internal var layout: Int = R.layout.dialog_loading
+    }
 }

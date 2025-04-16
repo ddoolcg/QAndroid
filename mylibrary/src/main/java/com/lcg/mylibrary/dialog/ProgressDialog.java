@@ -9,8 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.annotation.LayoutRes;
-
 import com.lcg.mylibrary.ProgressDialogInterface;
 import com.lcg.mylibrary.R;
 
@@ -29,24 +27,12 @@ import okhttp3.Call;
 public class ProgressDialog extends Dialog implements ProgressDialogInterface {
     private Call mCall;
     private final TextView tvMsg;
-    @LayoutRes
-    private static int sLayout = R.layout.dialog_loading;
-
-    /**
-     * 设置进度对话框的layout布局
-     *
-     * @param layout ID for an XML layout resource to load (e.g.,
-     *               <code>R.layout.dialog_loading</code>)
-     */
-    public static void setLayout(@LayoutRes int layout) {
-        sLayout = layout;
-    }
 
     public ProgressDialog(Context context) {
         super(context, R.style.dialog_style);
         if (context instanceof Activity)
             setOwnerActivity((Activity) context);
-        View view = LayoutInflater.from(context).inflate(sLayout, null);
+        View view = LayoutInflater.from(context).inflate(ProgressDialogInterface.Companion.getLayout$mylibrary_debug(), null);
         tvMsg = view.findViewById(R.id.tv_msg);
         setContentView(view);
         setOnCancelListener(dialog -> {
@@ -86,8 +72,9 @@ public class ProgressDialog extends Dialog implements ProgressDialogInterface {
     }
 
     @Override
-    public void showProgressDialog(@NotNull String msg, @Nullable Call call, boolean cancelable) {
+    public void showProgressDialog(@NotNull String msg, @Nullable Call call, boolean cancelable, boolean canceledOnTouchOutside) {
         setCancelable(cancelable);
+        setCanceledOnTouchOutside(canceledOnTouchOutside);
         setCall(call);
         show(msg);
     }
