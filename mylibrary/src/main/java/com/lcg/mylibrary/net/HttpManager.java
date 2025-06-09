@@ -328,11 +328,14 @@ public class HttpManager {
                 }
                 if (l > timeDifference) timeDifference = l;
                 //数据
-                String data = response.body().string();
+                ResponseBody body = response.body();
+                String data = null;
+                if (body != null)
+                    data = body.string();
                 if (call.isCanceled())
                     return;
                 handler.netFinish();
-                if (response.isSuccessful()) {
+                if (response.isSuccessful() && data != null) {
                     handler.success(data);
                     //日志输出
                     if (logcat) {
