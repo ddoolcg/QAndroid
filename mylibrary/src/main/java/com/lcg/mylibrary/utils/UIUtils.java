@@ -1,5 +1,6 @@
 package com.lcg.mylibrary.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -70,7 +72,7 @@ public class UIUtils {
      */
     public static DisplayMetrics getDisplayMetrics() {
         if (sMetrics == null) {
-            sMetrics = getContext().getResources().getDisplayMetrics();
+            sMetrics = getResources().getDisplayMetrics();
         }
         return sMetrics;
     }
@@ -180,7 +182,7 @@ public class UIUtils {
      * 获取文字
      */
     public static String getString(int resId) {
-        return getResources().getString(resId);
+        return getContext().getString(resId);
     }
 
     /**
@@ -201,21 +203,33 @@ public class UIUtils {
      * 获取drawable
      */
     public static Drawable getDrawable(int resId) {
-        return getResources().getDrawable(resId);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return getContext().getDrawable(resId);
+        } else {
+            return getResources().getDrawable(resId);
+        }
     }
 
     /**
      * 获取颜色
      */
     public static int getColor(int resId) {
-        return getResources().getColor(resId);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return getContext().getColor(resId);
+        } else {
+            return getResources().getColor(resId);
+        }
     }
 
     /**
      * 获取颜色选择器
      */
     public static ColorStateList getColorStateList(int resId) {
-        return getResources().getColorStateList(resId);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return getContext().getColorStateList(resId);
+        } else {
+            return getResources().getColorStateList(resId);
+        }
     }
 
     public static boolean isRunInMainThread() {
@@ -281,10 +295,8 @@ public class UIUtils {
                 ApplicationInfo applicationInfo = packageManager
                         .getApplicationInfo(ctx.getPackageName(),
                                 PackageManager.GET_META_DATA);
-                if (applicationInfo != null) {
-                    if (applicationInfo.metaData != null) {
-                        resultData = applicationInfo.metaData.getString(key);
-                    }
+                if (applicationInfo.metaData != null) {
+                    resultData = applicationInfo.metaData.getString(key);
                 }
 
             }
@@ -300,7 +312,7 @@ public class UIUtils {
      */
     public static int getStatusBarHeight() {
         int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height",
+        @SuppressLint("InternalInsetResource") int resourceId = getResources().getIdentifier("status_bar_height",
                 "dimen", "android");
         if (resourceId > 0) {
             result = getResources().getDimensionPixelSize(resourceId);
